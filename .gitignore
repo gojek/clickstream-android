@@ -84,7 +84,6 @@ lint/outputs/
 lint/tmp/
 # lint/reports/
 /.idea/
-/buildSrc/
 /report/
 
 *.DS_Store

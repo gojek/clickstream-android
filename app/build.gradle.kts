@@ -63,12 +63,28 @@ hilt {
     enableExperimentalClasspathAggregation = true
 }
 
+// clickstream uses protobuf-life as an internal artifact.
+// However few google libraries uses protobuf-java transitively, hence we have to substitute
+// the protobuf-java to use protobuf-javalite
+configurations.all {
+    resolutionStrategy.dependencySubstitution {
+        substitute(module("com.google.protobuf:protobuf-java:3.11.0"))
+            .because("protobuf javalite supercedes protobuf-java")
+            .with(module("com.google.protobuf:protobuf-javalite:3.11.0"))
+
+        substitute(module("com.google.protobuf:protobuf-java:2.6.1"))
+            .because("protobuf javalite supercedes protobuf-java")
+            .with(module("com.google.protobuf:protobuf-javalite:3.11.0"))
+    }
+}
+
 dependencies {
     // Hilt
     implementation(deps.Dagger.hiltAndroid)
     kapt(deps.Dagger.hiltCompiler)
     kapt(deps.Dagger.hiltAndroidCompiler)
 
+    implementation(deps.utils.gson)
     implementation(deps.networkLibs.okHttp)
 
     implementation("io.github.reactivecircus.flowbinding:flowbinding-android:1.2.0")

@@ -1,0 +1,22 @@
+{
+  "eventTypes": [
+    {
+      "identifier": "realTime",
+      "eventNames": [
+        "MagicEvent"
+      ]
+    },
+    {
+      "identifier": "standard",
+      "eventNames": [
+        "FooEvent"
+      ]
+    },
+    {
+      "identifier": "instant",
+      "eventNames": [
+        "BarEvent"
+      ]
+    }
+  ]
+}
