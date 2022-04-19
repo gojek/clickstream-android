@@ -1,0 +1,962 @@
+public abstract interface class clickstream/ClickStream {
+	public static final field Companion Lclickstream/ClickStream$Companion;
+	public abstract fun trackEvent (Lclickstream/model/CSEvent;Z)V
+}
+
+public final class clickstream/ClickStream$Companion {
+	public final fun getInstance ()Lclickstream/ClickStream;
+	public final fun initialize (Lclickstream/config/CSConfiguration;)V
+	public final fun release ()V
+}
+
+public final class clickstream/config/CSConfig {
+	public fun <init> (Lclickstream/config/CSEventClassification;Lclickstream/config/CSEventSchedulerConfig;Lclickstream/config/CSNetworkConfig;)V
+	public final fun component1 ()Lclickstream/config/CSEventClassification;
+	public final fun component2 ()Lclickstream/config/CSEventSchedulerConfig;
+	public final fun component3 ()Lclickstream/config/CSNetworkConfig;
+	public final fun copy (Lclickstream/config/CSEventClassification;Lclickstream/config/CSEventSchedulerConfig;Lclickstream/config/CSNetworkConfig;)Lclickstream/config/CSConfig;
+	public static synthetic fun copy$default (Lclickstream/config/CSConfig;Lclickstream/config/CSEventClassification;Lclickstream/config/CSEventSchedulerConfig;Lclickstream/config/CSNetworkConfig;ILjava/lang/Object;)Lclickstream/config/CSConfig;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getEventProcessorConfiguration ()Lclickstream/config/CSEventClassification;
+	public final fun getEventSchedulerConfig ()Lclickstream/config/CSEventSchedulerConfig;
+	public final fun getNetworkConfig ()Lclickstream/config/CSNetworkConfig;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class clickstream/config/CSConfiguration {
+	public synthetic fun <init> (Landroid/content/Context;Lkotlinx/coroutines/CoroutineDispatcher;Lclickstream/model/CSInfo;Lclickstream/config/CSConfig;Lclickstream/logger/CSLogLevel;Lclickstream/config/timestamp/CSEventGeneratedTimestampListener;Lclickstream/connection/CSSocketConnectionListener;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getConfig$clickstream_release ()Lclickstream/config/CSConfig;
+	public final fun getContext$clickstream_release ()Landroid/content/Context;
+	public final fun getDispatcher$clickstream_release ()Lkotlinx/coroutines/CoroutineDispatcher;
+	public final fun getEventGeneratedTimeStamp$clickstream_release ()Lclickstream/config/timestamp/CSEventGeneratedTimestampListener;
+	public final fun getInfo$clickstream_release ()Lclickstream/model/CSInfo;
+	public final fun getLogLevel$clickstream_release ()Lclickstream/logger/CSLogLevel;
+	public final fun getSocketConnectionListener$clickstream_release ()Lclickstream/connection/CSSocketConnectionListener;
+}
+
+public final class clickstream/config/CSConfiguration$Builder {
+	public fun <init> (Landroid/content/Context;Lclickstream/model/CSInfo;Lclickstream/config/CSConfig;)V
+	public final fun build ()Lclickstream/config/CSConfiguration;
+	public final fun setDispatcher (Lkotlinx/coroutines/CoroutineDispatcher;)Lclickstream/config/CSConfiguration$Builder;
+	public final fun setEventGeneratedTimestamp (Lclickstream/config/timestamp/CSEventGeneratedTimestampListener;)Lclickstream/config/CSConfiguration$Builder;
+	public final fun setLogLevel (Lclickstream/logger/CSLogLevel;)Lclickstream/config/CSConfiguration$Builder;
+	public final fun setSocketConnectionListener (Lclickstream/connection/CSSocketConnectionListener;)Lclickstream/config/CSConfiguration$Builder;
+}
+
+public abstract interface class clickstream/config/CSDeviceInfo {
+	public abstract fun getDeviceHeight ()Ljava/lang/String;
+	public abstract fun getDeviceManufacturer ()Ljava/lang/String;
+	public abstract fun getDeviceModel ()Ljava/lang/String;
+	public abstract fun getDeviceWidth ()Ljava/lang/String;
+	public abstract fun getOperatingSystem ()Ljava/lang/String;
+	public abstract fun getSDKVersion ()Ljava/lang/String;
+}
+
+public final class clickstream/config/CSEventClassification {
+	public static final field Companion Lclickstream/config/CSEventClassification$Companion;
+	public fun <init> (Ljava/util/List;Ljava/util/List;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun component2 ()Ljava/util/List;
+	public final fun copy (Ljava/util/List;Ljava/util/List;)Lclickstream/config/CSEventClassification;
+	public static synthetic fun copy$default (Lclickstream/config/CSEventClassification;Ljava/util/List;Ljava/util/List;ILjava/lang/Object;)Lclickstream/config/CSEventClassification;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getInstantEvent ()Ljava/util/List;
+	public final fun getRealtimeEvents ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class clickstream/config/CSEventClassification$Companion {
+	public final fun default ()Lclickstream/config/CSEventClassification;
+}
+
+public final class clickstream/config/CSEventSchedulerConfig {
+	public static final field Companion Lclickstream/config/CSEventSchedulerConfig$Companion;
+	public fun <init> (IJZJZJ)V
+	public final fun component1 ()I
+	public final fun component2 ()J
+	public final fun component3 ()Z
+	public final fun component4 ()J
+	public final fun component5 ()Z
+	public final fun component6 ()J
+	public final fun copy (IJZJZJ)Lclickstream/config/CSEventSchedulerConfig;
+	public static synthetic fun copy$default (Lclickstream/config/CSEventSchedulerConfig;IJZJZJILjava/lang/Object;)Lclickstream/config/CSEventSchedulerConfig;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBackgroundTaskEnabled ()Z
+	public final fun getBatchPeriod ()J
+	public final fun getConnectionTerminationTimerWaitTimeInMillis ()J
+	public final fun getEventsPerBatch ()I
+	public final fun getFlushOnBackground ()Z
+	public final fun getWorkRequestDelayInHr ()J
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class clickstream/config/CSEventSchedulerConfig$Companion {
+	public final fun default ()Lclickstream/config/CSEventSchedulerConfig;
+}
+
+public final class clickstream/config/CSNetworkConfig {
+	public static final field Companion Lclickstream/config/CSNetworkConfig$Companion;
+	public fun <init> (Ljava/lang/String;JJJJJJIIJLokhttp3/OkHttpClient;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component10 ()J
+	public final fun component11 ()Lokhttp3/OkHttpClient;
+	public final fun component2 ()J
+	public final fun component3 ()J
+	public final fun component4 ()J
+	public final fun component5 ()J
+	public final fun component6 ()J
+	public final fun component7 ()J
+	public final fun component8 ()I
+	public final fun component9 ()I
+	public final fun copy (Ljava/lang/String;JJJJJJIIJLokhttp3/OkHttpClient;)Lclickstream/config/CSNetworkConfig;
+	public static synthetic fun copy$default (Lclickstream/config/CSNetworkConfig;Ljava/lang/String;JJJJJJIIJLokhttp3/OkHttpClient;ILjava/lang/Object;)Lclickstream/config/CSNetworkConfig;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getConnectTimeout ()J
+	public final fun getEndPoint ()Ljava/lang/String;
+	public final fun getInitialRetryDurationInMs ()J
+	public final fun getMaxConnectionRetryDurationInMs ()J
+	public final fun getMaxRequestAckTimeout ()J
+	public final fun getMaxRetriesPerBatch ()I
+	public final fun getMinBatteryLevel ()I
+	public final fun getOkHttpClient ()Lokhttp3/OkHttpClient;
+	public final fun getPingInterval ()J
+	public final fun getReadTimeout ()J
+	public final fun getWriteTimeout ()J
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class clickstream/config/CSNetworkConfig$Companion {
+	public final fun default (Lokhttp3/OkHttpClient;)Lclickstream/config/CSNetworkConfig;
+}
+
+public final class clickstream/config/CSNetworkConfigKt {
+}
+
+public abstract interface class clickstream/config/timestamp/CSEventGeneratedTimestampListener {
+	public abstract fun now ()J
+}
+
+public final class clickstream/config/timestamp/DefaultCSEventGeneratedTimestampListener : clickstream/config/timestamp/CSEventGeneratedTimestampListener {
+	public fun <init> ()V
+	public fun now ()J
+}
+
+public abstract class clickstream/connection/CSConnectionEvent {
+}
+
+public final class clickstream/connection/CSConnectionEvent$OnConnectionClosed : clickstream/connection/CSConnectionEvent {
+	public fun <init> (Lclickstream/connection/CSShutdownReason;)V
+	public final fun component1 ()Lclickstream/connection/CSShutdownReason;
+	public final fun copy (Lclickstream/connection/CSShutdownReason;)Lclickstream/connection/CSConnectionEvent$OnConnectionClosed;
+	public static synthetic fun copy$default (Lclickstream/connection/CSConnectionEvent$OnConnectionClosed;Lclickstream/connection/CSShutdownReason;ILjava/lang/Object;)Lclickstream/connection/CSConnectionEvent$OnConnectionClosed;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getShutdownReason ()Lclickstream/connection/CSShutdownReason;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class clickstream/connection/CSConnectionEvent$OnConnectionClosing : clickstream/connection/CSConnectionEvent {
+	public fun <init> (Lclickstream/connection/CSShutdownReason;)V
+	public final fun component1 ()Lclickstream/connection/CSShutdownReason;
+	public final fun copy (Lclickstream/connection/CSShutdownReason;)Lclickstream/connection/CSConnectionEvent$OnConnectionClosing;
+	public static synthetic fun copy$default (Lclickstream/connection/CSConnectionEvent$OnConnectionClosing;Lclickstream/connection/CSShutdownReason;ILjava/lang/Object;)Lclickstream/connection/CSConnectionEvent$OnConnectionClosing;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getShutdownReason ()Lclickstream/connection/CSShutdownReason;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class clickstream/connection/CSConnectionEvent$OnConnectionConnected : clickstream/connection/CSConnectionEvent {
+	public static final field INSTANCE Lclickstream/connection/CSConnectionEvent$OnConnectionConnected;
+}
+
+public final class clickstream/connection/CSConnectionEvent$OnConnectionConnecting : clickstream/connection/CSConnectionEvent {
+	public static final field INSTANCE Lclickstream/connection/CSConnectionEvent$OnConnectionConnecting;
+}
+
+public final class clickstream/connection/CSConnectionEvent$OnConnectionFailed : clickstream/connection/CSConnectionEvent {
+	public fun <init> (Ljava/lang/Throwable;)V
+	public final fun component1 ()Ljava/lang/Throwable;
+	public final fun copy (Ljava/lang/Throwable;)Lclickstream/connection/CSConnectionEvent$OnConnectionFailed;
+	public static synthetic fun copy$default (Lclickstream/connection/CSConnectionEvent$OnConnectionFailed;Ljava/lang/Throwable;ILjava/lang/Object;)Lclickstream/connection/CSConnectionEvent$OnConnectionFailed;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getThrowable ()Ljava/lang/Throwable;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class clickstream/connection/CSConnectionEvent$OnMessageReceived : clickstream/connection/CSConnectionEvent {
+	public fun <init> (Lclickstream/connection/CSMessage;)V
+	public final fun component1 ()Lclickstream/connection/CSMessage;
+	public final fun copy (Lclickstream/connection/CSMessage;)Lclickstream/connection/CSConnectionEvent$OnMessageReceived;
+	public static synthetic fun copy$default (Lclickstream/connection/CSConnectionEvent$OnMessageReceived;Lclickstream/connection/CSMessage;ILjava/lang/Object;)Lclickstream/connection/CSConnectionEvent$OnMessageReceived;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMessage ()Lclickstream/connection/CSMessage;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract class clickstream/connection/CSMessage {
+}
+
+public final class clickstream/connection/CSMessage$Bytes : clickstream/connection/CSMessage {
+	public fun <init> ([B)V
+	public final fun component1 ()[B
+	public final fun copy ([B)Lclickstream/connection/CSMessage$Bytes;
+	public static synthetic fun copy$default (Lclickstream/connection/CSMessage$Bytes;[BILjava/lang/Object;)Lclickstream/connection/CSMessage$Bytes;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()[B
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class clickstream/connection/CSMessage$Text : clickstream/connection/CSMessage {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lclickstream/connection/CSMessage$Text;
+	public static synthetic fun copy$default (Lclickstream/connection/CSMessage$Text;Ljava/lang/String;ILjava/lang/Object;)Lclickstream/connection/CSMessage$Text;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class clickstream/connection/CSMessageKt {
+	public static final fun mapTo (Lcom/tinder/scarlet/Message;)Lclickstream/connection/CSMessage;
+}
+
+public final class clickstream/connection/CSShutdownReason {
+	public static final field Companion Lclickstream/connection/CSShutdownReason$Companion;
+	public static final field GRACEFUL Lclickstream/connection/CSShutdownReason;
+	public fun <init> (ILjava/lang/String;)V
+	public final fun component1 ()I
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (ILjava/lang/String;)Lclickstream/connection/CSShutdownReason;
+	public static synthetic fun copy$default (Lclickstream/connection/CSShutdownReason;ILjava/lang/String;ILjava/lang/Object;)Lclickstream/connection/CSShutdownReason;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCode ()I
+	public final fun getReason ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class clickstream/connection/CSShutdownReason$Companion {
+}
+
+public final class clickstream/connection/CSShutdownReasonKt {
+	public static final fun mapTo (Lcom/tinder/scarlet/ShutdownReason;)Lclickstream/connection/CSShutdownReason;
+}
+
+public abstract interface class clickstream/connection/CSSocketConnectionListener {
+	public abstract fun onEventChanged (Lclickstream/connection/CSConnectionEvent;)V
+}
+
+public final class clickstream/connection/NoOpCSConnectionListener : clickstream/connection/CSSocketConnectionListener {
+	public fun <init> ()V
+	public fun onEventChanged (Lclickstream/connection/CSConnectionEvent;)V
+}
+
+public final class clickstream/extension/CSMessageExtKt {
+	public static final fun eventName (Lcom/google/protobuf/MessageLite;)Ljava/lang/String;
+	public static final fun getField (Lcom/google/protobuf/MessageLite;Ljava/lang/String;)Ljava/lang/reflect/Field;
+	public static final fun isHealthEvent (Lcom/gojek/clickstream/de/Event;)Z
+}
+
+public final class clickstream/internal/DefaultCSDeviceInfo : clickstream/config/CSDeviceInfo {
+	public fun <init> ()V
+	public fun getDeviceHeight ()Ljava/lang/String;
+	public fun getDeviceManufacturer ()Ljava/lang/String;
+	public fun getDeviceModel ()Ljava/lang/String;
+	public fun getDeviceWidth ()Ljava/lang/String;
+	public fun getOperatingSystem ()Ljava/lang/String;
+	public fun getSDKVersion ()Ljava/lang/String;
+}
+
+public final class clickstream/internal/DefaultClickStream : clickstream/ClickStream {
+	public static final field Companion Lclickstream/internal/DefaultClickStream$Companion;
+	public synthetic fun <init> (Lclickstream/internal/eventprocessor/CSEventProcessor;Lclickstream/internal/workmanager/CSWorkManager;Lkotlinx/coroutines/CoroutineDispatcher;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun trackEvent (Lclickstream/model/CSEvent;Z)V
+}
+
+public final class clickstream/internal/DefaultClickStream$Companion {
+	public final fun getInstance ()Lclickstream/ClickStream;
+	public final fun initialize (Lclickstream/config/CSConfiguration;)V
+	public final fun release ()V
+}
+
+public final class clickstream/internal/analytics/CSBucketTypes {
+	public static final field INSTANCE Lclickstream/internal/analytics/CSBucketTypes;
+	public static final field LT_10KB Ljava/lang/String;
+	public static final field LT_10sec Ljava/lang/String;
+	public static final field LT_1sec_2G Ljava/lang/String;
+	public static final field LT_1sec_3G Ljava/lang/String;
+	public static final field LT_1sec_4G Ljava/lang/String;
+	public static final field LT_1sec_WIFI Ljava/lang/String;
+	public static final field LT_5sec Ljava/lang/String;
+	public static final field MT_10KB Ljava/lang/String;
+	public static final field MT_10sec Ljava/lang/String;
+	public static final field MT_1sec_2G Ljava/lang/String;
+	public static final field MT_1sec_3G Ljava/lang/String;
+	public static final field MT_1sec_4G Ljava/lang/String;
+	public static final field MT_1sec_WIFI Ljava/lang/String;
+	public static final field MT_20KB Ljava/lang/String;
+	public static final field MT_20sec Ljava/lang/String;
+	public static final field MT_3sec_2G Ljava/lang/String;
+	public static final field MT_3sec_3G Ljava/lang/String;
+	public static final field MT_3sec_4G Ljava/lang/String;
+	public static final field MT_3sec_WIFI Ljava/lang/String;
+	public static final field MT_50KB Ljava/lang/String;
+}
+
+public final class clickstream/internal/analytics/CSErrorReasons {
+	public static final field INSTANCE Lclickstream/internal/analytics/CSErrorReasons;
+	public static final field LOW_BATTERY Ljava/lang/String;
+	public static final field MAX_CONNECTION_LIMIT_REACHED Ljava/lang/String;
+	public static final field MAX_USER_LIMIT_REACHED Ljava/lang/String;
+	public static final field NETWORK_UNAVAILABLE Ljava/lang/String;
+	public static final field PARSING_EXCEPTION Ljava/lang/String;
+	public static final field SOCKET_NOT_OPEN Ljava/lang/String;
+	public static final field SOCKET_TIMEOUT Ljava/lang/String;
+	public static final field UNKNOWN Ljava/lang/String;
+	public static final field USER_UNAUTHORIZED Ljava/lang/String;
+}
+
+public final class clickstream/internal/analytics/CSEventNames : java/lang/Enum {
+	public static final field ClickStreamBackgroundServiceCompleted Lclickstream/internal/analytics/CSEventNames;
+	public static final field ClickStreamBatchSent Lclickstream/internal/analytics/CSEventNames;
+	public static final field ClickStreamBatchSize Lclickstream/internal/analytics/CSEventNames;
+	public static final field ClickStreamBatchWriteFailed Lclickstream/internal/analytics/CSEventNames;
+	public static final field ClickStreamConnectionFailed Lclickstream/internal/analytics/CSEventNames;
+	public static final field ClickStreamEventBatchAck Lclickstream/internal/analytics/CSEventNames;
+	public static final field ClickStreamEventBatchCreated Lclickstream/internal/analytics/CSEventNames;
+	public static final field ClickStreamEventBatchErrorResponse Lclickstream/internal/analytics/CSEventNames;
+	public static final field ClickStreamEventBatchLatency Lclickstream/internal/analytics/CSEventNames;
+	public static final field ClickStreamEventBatchTimeout Lclickstream/internal/analytics/CSEventNames;
+	public static final field ClickStreamEventBatchTriggerFailed Lclickstream/internal/analytics/CSEventNames;
+	public static final field ClickStreamEventBatchWaitTime Lclickstream/internal/analytics/CSEventNames;
+	public static final field ClickStreamEventCached Lclickstream/internal/analytics/CSEventNames;
+	public static final field ClickStreamEventObjectCreated Lclickstream/internal/analytics/CSEventNames;
+	public static final field ClickStreamEventReceived Lclickstream/internal/analytics/CSEventNames;
+	public static final field ClickStreamEventWaitTime Lclickstream/internal/analytics/CSEventNames;
+	public static final field ClickStreamFailedInit Lclickstream/internal/analytics/CSEventNames;
+	public static final field ClickStreamFlushOnBackground Lclickstream/internal/analytics/CSEventNames;
+	public static final field ClickStreamInvalidMessage Lclickstream/internal/analytics/CSEventNames;
+	public final fun getValue ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lclickstream/internal/analytics/CSEventNames;
+	public static fun values ()[Lclickstream/internal/analytics/CSEventNames;
+}
+
+public final class clickstream/internal/analytics/EventTypes {
+	public static final field AGGREGATE Ljava/lang/String;
+	public static final field BUCKET Ljava/lang/String;
+	public static final field INSTANCE Lclickstream/internal/analytics/EventTypes;
+	public static final field INSTANT Ljava/lang/String;
+}
+
+public abstract interface class clickstream/internal/db/CSAppVersionSharedPref {
+	public abstract fun isAppVersionEqual (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public abstract class clickstream/internal/db/CSDatabase : androidx/room/RoomDatabase {
+	public static final field Companion Lclickstream/internal/db/CSDatabase$Companion;
+	public fun <init> ()V
+	public abstract fun eventDataDao ()Lclickstream/internal/eventscheduler/CSEventDataDao;
+}
+
+public final class clickstream/internal/db/CSDatabase$Companion {
+	public final fun getInstance (Landroid/content/Context;)Lclickstream/internal/db/CSDatabase;
+}
+
+public final class clickstream/internal/db/CSDatabase_Impl : clickstream/internal/db/CSDatabase {
+	public fun <init> ()V
+	public fun clearAllTables ()V
+	public fun eventDataDao ()Lclickstream/internal/eventscheduler/CSEventDataDao;
+	public fun getAutoMigrations (Ljava/util/Map;)Ljava/util/List;
+	public fun getRequiredAutoMigrationSpecs ()Ljava/util/Set;
+}
+
+public final class clickstream/internal/db/impl/DefaultCSAppVersionSharedPref : clickstream/internal/db/CSAppVersionSharedPref {
+	public fun <init> (Landroid/content/Context;)V
+	public fun isAppVersionEqual (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class clickstream/internal/db/impl/DefaultCSAppVersionSharedPrefKt {
+}
+
+public abstract interface class clickstream/internal/di/CSServiceLocator {
+	public static final field Companion Lclickstream/internal/di/CSServiceLocator$Companion;
+	public abstract fun getBackgroundScheduler ()Lclickstream/internal/eventscheduler/CSBackgroundScheduler;
+	public abstract fun getDispatcher ()Lkotlinx/coroutines/CoroutineDispatcher;
+	public abstract fun getEventProcessor ()Lclickstream/internal/eventprocessor/CSEventProcessor;
+	public abstract fun getEventScheduler ()Lclickstream/internal/eventscheduler/CSEventScheduler;
+	public abstract fun getEventSchedulerConfig ()Lclickstream/config/CSEventSchedulerConfig;
+	public abstract fun getLogLevel ()Lclickstream/logger/CSLogLevel;
+	public abstract fun getNetworkManager ()Lclickstream/internal/networklayer/CSNetworkManager;
+	public abstract fun getWorkManager ()Lclickstream/internal/workmanager/CSWorkManager;
+}
+
+public final class clickstream/internal/di/CSServiceLocator$Companion {
+	public final fun getInstance ()Lclickstream/internal/di/CSServiceLocator;
+	public final fun setServiceLocator (Lclickstream/internal/di/CSServiceLocator;)V
+}
+
+public final class clickstream/internal/di/impl/DefaultCServiceLocator : clickstream/internal/di/CSServiceLocator {
+	public fun <init> (Landroid/content/Context;Lclickstream/model/CSInfo;Lclickstream/config/CSConfig;Lclickstream/logger/CSLogLevel;Lkotlinx/coroutines/CoroutineDispatcher;Lclickstream/config/timestamp/CSEventGeneratedTimestampListener;Lclickstream/connection/CSSocketConnectionListener;)V
+	public fun getBackgroundScheduler ()Lclickstream/internal/eventscheduler/CSBackgroundScheduler;
+	public fun getDispatcher ()Lkotlinx/coroutines/CoroutineDispatcher;
+	public fun getEventProcessor ()Lclickstream/internal/eventprocessor/CSEventProcessor;
+	public fun getEventScheduler ()Lclickstream/internal/eventscheduler/CSEventScheduler;
+	public fun getEventSchedulerConfig ()Lclickstream/config/CSEventSchedulerConfig;
+	public fun getLogLevel ()Lclickstream/logger/CSLogLevel;
+	public fun getNetworkManager ()Lclickstream/internal/networklayer/CSNetworkManager;
+	public fun getWorkManager ()Lclickstream/internal/workmanager/CSWorkManager;
+}
+
+public final class clickstream/internal/eventprocessor/CSEventPriority : java/lang/Enum {
+	public static final field NON_REALTIME Lclickstream/internal/eventprocessor/CSEventPriority;
+	public static final field REALTIME Lclickstream/internal/eventprocessor/CSEventPriority;
+	public static fun valueOf (Ljava/lang/String;)Lclickstream/internal/eventprocessor/CSEventPriority;
+	public static fun values ()[Lclickstream/internal/eventprocessor/CSEventPriority;
+}
+
+public final class clickstream/internal/eventprocessor/CSEventProcessor {
+	public fun <init> (Lclickstream/config/CSEventClassification;Lclickstream/internal/eventscheduler/CSEventScheduler;Lkotlinx/coroutines/CoroutineDispatcher;Lclickstream/logger/CSLogger;)V
+	public final fun trackEvent (Lclickstream/model/CSEvent;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class clickstream/internal/eventprocessor/CSEventSpecificData {
+	public fun <init> (Ljava/lang/String;J)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()J
+	public final fun copy (Ljava/lang/String;J)Lclickstream/internal/eventprocessor/CSEventSpecificData;
+	public static synthetic fun copy$default (Lclickstream/internal/eventprocessor/CSEventSpecificData;Ljava/lang/String;JILjava/lang/Object;)Lclickstream/internal/eventprocessor/CSEventSpecificData;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getEventGUID ()Ljava/lang/String;
+	public final fun getTimeStamp ()J
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class clickstream/internal/eventprocessor/CSHealthEventFactory {
+	public abstract fun create (Lcom/gojek/clickstream/internal/Health;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public abstract interface class clickstream/internal/eventprocessor/CSMetaProvider {
+	public abstract fun getApp ()Lcom/gojek/clickstream/internal/HealthMeta$App;
+	public abstract fun getCustomer ()Lcom/gojek/clickstream/internal/HealthMeta$Customer;
+	public abstract fun getDevice ()Lcom/gojek/clickstream/internal/HealthMeta$Device;
+	public abstract fun getSession ()Lcom/gojek/clickstream/internal/HealthMeta$Session;
+	public abstract fun location (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class clickstream/internal/eventprocessor/impl/DefaultCSHealthEventFactory : clickstream/internal/eventprocessor/CSHealthEventFactory {
+	public fun <init> (Lclickstream/internal/utils/CSGuIdGenerator;Lclickstream/internal/utils/CSTimeStampGenerator;Lclickstream/internal/eventprocessor/CSMetaProvider;)V
+	public fun create (Lcom/gojek/clickstream/internal/Health;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class clickstream/internal/eventprocessor/impl/DefaultCSMetaProvider : clickstream/internal/eventprocessor/CSMetaProvider {
+	public fun <init> (Lclickstream/model/CSInfo;)V
+	public fun getApp ()Lcom/gojek/clickstream/internal/HealthMeta$App;
+	public fun getCustomer ()Lcom/gojek/clickstream/internal/HealthMeta$Customer;
+	public fun getDevice ()Lcom/gojek/clickstream/internal/HealthMeta$Device;
+	public fun getSession ()Lcom/gojek/clickstream/internal/HealthMeta$Session;
+	public fun location (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class clickstream/internal/eventscheduler/CSBackgroundScheduler : clickstream/internal/eventscheduler/CSEventScheduler {
+	public fun <init> (Lclickstream/internal/lifecycle/CSAppLifeCycle;Lclickstream/internal/networklayer/CSBackgroundNetworkManager;Lkotlinx/coroutines/CoroutineDispatcher;Lclickstream/config/CSEventSchedulerConfig;Lclickstream/internal/eventscheduler/CSEventRepository;Lclickstream/logger/CSLogger;Lclickstream/internal/utils/CSGuIdGenerator;Lclickstream/internal/utils/CSTimeStampGenerator;Lclickstream/internal/utils/CSBatteryStatusObserver;Lclickstream/internal/utils/CSNetworkStatusObserver;Lclickstream/internal/lifecycle/CSBackgroundLifecycleManager;)V
+	public fun onStart ()V
+	public fun onStop ()V
+	public final fun sendEvents (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun terminate ()V
+}
+
+public final class clickstream/internal/eventscheduler/CSBackgroundSchedulerKt {
+}
+
+public final class clickstream/internal/eventscheduler/CSEventData {
+	public static final field Companion Lclickstream/internal/eventscheduler/CSEventData$Companion;
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;JZ[BLjava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()J
+	public final fun component4 ()Z
+	public final fun component5 ()[B
+	public final fun component6 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;JZ[BLjava/lang/String;)Lclickstream/internal/eventscheduler/CSEventData;
+	public static synthetic fun copy$default (Lclickstream/internal/eventscheduler/CSEventData;Ljava/lang/String;Ljava/lang/String;JZ[BLjava/lang/String;ILjava/lang/Object;)Lclickstream/internal/eventscheduler/CSEventData;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun event ()Lcom/gojek/clickstream/de/Event;
+	public final fun getEventGuid ()Ljava/lang/String;
+	public final fun getEventRequestGuid ()Ljava/lang/String;
+	public final fun getEventTimeStamp ()J
+	public final fun getMessageAsBytes ()[B
+	public final fun getMessageName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public final fun isOnGoing ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class clickstream/internal/eventscheduler/CSEventData$Companion {
+	public final fun create (Lclickstream/model/CSEvent;)Lclickstream/internal/eventscheduler/CSEventData;
+}
+
+public abstract interface class clickstream/internal/eventscheduler/CSEventDataDao {
+	public abstract fun deleteByGuId (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun getAll (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun insert (Lclickstream/internal/eventscheduler/CSEventData;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun insertAll (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun loadAll ()Lkotlinx/coroutines/flow/Flow;
+	public abstract fun loadOnGoingEvents (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun setOnGoingEvent (Ljava/lang/String;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class clickstream/internal/eventscheduler/CSEventDataDao_Impl : clickstream/internal/eventscheduler/CSEventDataDao {
+	public fun <init> (Landroidx/room/RoomDatabase;)V
+	public fun deleteByGuId (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getAll (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun getRequiredConverters ()Ljava/util/List;
+	public fun insert (Lclickstream/internal/eventscheduler/CSEventData;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun insertAll (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun loadAll ()Lkotlinx/coroutines/flow/Flow;
+	public fun loadOnGoingEvents (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun setOnGoingEvent (Ljava/lang/String;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class clickstream/internal/eventscheduler/CSEventDataTypeConverters {
+	public fun <init> ()V
+	public final fun fromByteString (Lcom/google/protobuf/ByteString;)Ljava/lang/String;
+	public final fun toByteString (Ljava/lang/String;)Lcom/google/protobuf/ByteString;
+}
+
+public abstract interface class clickstream/internal/eventscheduler/CSEventRepository {
+	public abstract fun deleteEventDataByGuId (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun getAllEvents (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun getEventDataList (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun getOnGoingEvents (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun insertEventData (Lclickstream/internal/eventscheduler/CSEventData;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun insertEventDataList (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun resetOnGoingForGuid (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public class clickstream/internal/eventscheduler/CSEventScheduler : clickstream/internal/lifecycle/CSLifeCycleManager {
+	public fun <init> (Lclickstream/internal/lifecycle/CSAppLifeCycle;Lclickstream/internal/networklayer/CSNetworkManager;Lkotlinx/coroutines/CoroutineDispatcher;Lclickstream/config/CSEventSchedulerConfig;Lclickstream/internal/eventscheduler/CSEventRepository;Lclickstream/logger/CSLogger;Lclickstream/internal/utils/CSGuIdGenerator;Lclickstream/internal/utils/CSTimeStampGenerator;Lclickstream/internal/utils/CSBatteryStatusObserver;Lclickstream/internal/utils/CSNetworkStatusObserver;)V
+	protected final fun forwardEvents (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	protected final fun getConfig ()Lclickstream/config/CSEventSchedulerConfig;
+	protected final fun getCoroutineScope ()Lkotlinx/coroutines/CoroutineScope;
+	protected final fun getDispatcher ()Lkotlinx/coroutines/CoroutineDispatcher;
+	protected final fun getEventRepository ()Lclickstream/internal/eventscheduler/CSEventRepository;
+	protected final fun getJob ()Lkotlinx/coroutines/CompletableJob;
+	protected final fun getLogger ()Lclickstream/logger/CSLogger;
+	protected final fun getNetworkManager ()Lclickstream/internal/networklayer/CSNetworkManager;
+	public fun onStart ()V
+	public fun onStop ()V
+	public final fun scheduleEvent (Lclickstream/model/CSEvent;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun sendInstantEvent (Lclickstream/model/CSEvent;)V
+	protected final fun setCoroutineScope (Lkotlinx/coroutines/CoroutineScope;)V
+	protected final fun setJob (Lkotlinx/coroutines/CompletableJob;)V
+	protected final fun setupObservers ()V
+}
+
+public final class clickstream/internal/eventscheduler/impl/DefaultCSEventRepository : clickstream/internal/eventscheduler/CSEventRepository {
+	public fun <init> (Lclickstream/internal/eventscheduler/CSEventDataDao;)V
+	public fun deleteEventDataByGuId (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getAllEvents (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getEventDataList (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getOnGoingEvents (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun insertEventData (Lclickstream/internal/eventscheduler/CSEventData;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun insertEventDataList (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun resetOnGoingForGuid (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public class clickstream/internal/exception/CSException : java/lang/Exception {
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public final class clickstream/internal/exception/CSNullPointerException : clickstream/internal/exception/CSException {
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public abstract interface class clickstream/internal/lifecycle/CSAppLifeCycle {
+	public abstract fun addObserver (Lclickstream/internal/lifecycle/CSAppLifeCycleObserver;)V
+}
+
+public abstract interface class clickstream/internal/lifecycle/CSAppLifeCycleObserver {
+	public abstract fun onAppStart ()V
+	public abstract fun onAppStop ()V
+}
+
+public final class clickstream/internal/lifecycle/CSBackgroundLifecycleManager : com/tinder/scarlet/Lifecycle {
+	public fun <init> ()V
+	public fun <init> (Lcom/tinder/scarlet/lifecycle/LifecycleRegistry;)V
+	public fun combineWith ([Lcom/tinder/scarlet/Lifecycle;)Lcom/tinder/scarlet/Lifecycle;
+	public final fun onStart ()V
+	public final fun onStop ()V
+	public fun subscribe (Lorg/reactivestreams/Subscriber;)V
+}
+
+public final class clickstream/internal/lifecycle/CSBackgroundLifecycleManagerKt {
+}
+
+public abstract class clickstream/internal/lifecycle/CSLifeCycleManager : androidx/lifecycle/LifecycleObserver {
+	public fun <init> (Lclickstream/internal/lifecycle/CSAppLifeCycle;)V
+	public final fun addObserver ()V
+	public abstract fun onStart ()V
+	public abstract fun onStop ()V
+}
+
+public abstract interface class clickstream/internal/lifecycle/EmptyActivityLifecycleCallbacks : android/app/Application$ActivityLifecycleCallbacks {
+	public abstract fun onActivityCreated (Landroid/app/Activity;Landroid/os/Bundle;)V
+	public abstract fun onActivityDestroyed (Landroid/app/Activity;)V
+	public abstract fun onActivityPaused (Landroid/app/Activity;)V
+	public abstract fun onActivityResumed (Landroid/app/Activity;)V
+	public abstract fun onActivitySaveInstanceState (Landroid/app/Activity;Landroid/os/Bundle;)V
+	public abstract fun onActivityStarted (Landroid/app/Activity;)V
+	public abstract fun onActivityStopped (Landroid/app/Activity;)V
+}
+
+public final class clickstream/internal/lifecycle/EmptyActivityLifecycleCallbacks$DefaultImpls {
+	public static fun onActivityCreated (Lclickstream/internal/lifecycle/EmptyActivityLifecycleCallbacks;Landroid/app/Activity;Landroid/os/Bundle;)V
+	public static fun onActivityDestroyed (Lclickstream/internal/lifecycle/EmptyActivityLifecycleCallbacks;Landroid/app/Activity;)V
+	public static fun onActivityPaused (Lclickstream/internal/lifecycle/EmptyActivityLifecycleCallbacks;Landroid/app/Activity;)V
+	public static fun onActivityResumed (Lclickstream/internal/lifecycle/EmptyActivityLifecycleCallbacks;Landroid/app/Activity;)V
+	public static fun onActivitySaveInstanceState (Lclickstream/internal/lifecycle/EmptyActivityLifecycleCallbacks;Landroid/app/Activity;Landroid/os/Bundle;)V
+	public static fun onActivityStarted (Lclickstream/internal/lifecycle/EmptyActivityLifecycleCallbacks;Landroid/app/Activity;)V
+	public static fun onActivityStopped (Lclickstream/internal/lifecycle/EmptyActivityLifecycleCallbacks;Landroid/app/Activity;)V
+}
+
+public final class clickstream/internal/lifecycle/impl/DefaultCSAppLifeCycleObserver : clickstream/internal/lifecycle/CSAppLifeCycle {
+	public fun <init> (Landroid/content/Context;)V
+	public fun addObserver (Lclickstream/internal/lifecycle/CSAppLifeCycleObserver;)V
+}
+
+public final class clickstream/internal/networklayer/CSBackgroundNetworkManager : clickstream/internal/networklayer/CSNetworkManager {
+	public fun <init> (Lclickstream/internal/lifecycle/CSAppLifeCycle;Lclickstream/internal/networklayer/CSNetworkRepository;Lkotlinx/coroutines/CoroutineDispatcher;Lclickstream/logger/CSLogger;Lclickstream/connection/CSSocketConnectionListener;)V
+	public fun onStart ()V
+	public fun onStop ()V
+}
+
+public final class clickstream/internal/networklayer/CSEventGuidCallbackKt {
+}
+
+public abstract interface class clickstream/internal/networklayer/CSEventService {
+	public abstract fun observeResponse ()Lkotlinx/coroutines/flow/Flow;
+	public abstract fun observeSocketState ()Lkotlinx/coroutines/flow/Flow;
+	public abstract fun sendEvent (Lcom/gojek/clickstream/de/EventRequest;)Z
+}
+
+public class clickstream/internal/networklayer/CSNetworkManager : clickstream/internal/lifecycle/CSLifeCycleManager {
+	public fun <init> (Lclickstream/internal/lifecycle/CSAppLifeCycle;Lclickstream/internal/networklayer/CSNetworkRepository;Lkotlinx/coroutines/CoroutineDispatcher;Lclickstream/logger/CSLogger;Lclickstream/connection/CSSocketConnectionListener;)V
+	protected final fun getCoroutineScope ()Lkotlinx/coroutines/CoroutineScope;
+	protected final fun getDispatcher ()Lkotlinx/coroutines/CoroutineDispatcher;
+	public final fun getEventGuidFlow ()Lkotlinx/coroutines/flow/Flow;
+	protected final fun getJob ()Lkotlinx/coroutines/CompletableJob;
+	protected final fun getLogger ()Lclickstream/logger/CSLogger;
+	public final fun isAvailable ()Z
+	protected final fun observeSocketState ()Lkotlinx/coroutines/Job;
+	public fun onStart ()V
+	public fun onStop ()V
+	public final fun processEvent (Lcom/gojek/clickstream/de/EventRequest;)V
+	public final fun processInstantEvent (Lcom/gojek/clickstream/de/EventRequest;)V
+	protected final fun setCoroutineScope (Lkotlinx/coroutines/CoroutineScope;)V
+	protected final fun setJob (Lkotlinx/coroutines/CompletableJob;)V
+}
+
+public abstract interface class clickstream/internal/networklayer/CSNetworkRepository {
+	public abstract fun observeResponse ()Lkotlinx/coroutines/flow/Flow;
+	public abstract fun observeSocketState ()Lkotlinx/coroutines/flow/Flow;
+	public abstract fun sendEvents (Lcom/gojek/clickstream/de/EventRequest;Lclickstream/internal/utils/CSCallback;)V
+	public abstract fun sendInstantEvents (Lcom/gojek/clickstream/de/EventRequest;)V
+}
+
+public final class clickstream/internal/networklayer/CSNetworkRepositoryImpl : clickstream/internal/networklayer/CSNetworkRepository {
+	public fun <init> (Lclickstream/config/CSNetworkConfig;Lclickstream/internal/networklayer/CSEventService;Lkotlinx/coroutines/CoroutineDispatcher;Lclickstream/internal/utils/CSTimeStampGenerator;Lclickstream/logger/CSLogger;)V
+	public fun observeResponse ()Lkotlinx/coroutines/flow/Flow;
+	public fun observeSocketState ()Lkotlinx/coroutines/flow/Flow;
+	public fun sendEvents (Lcom/gojek/clickstream/de/EventRequest;Lclickstream/internal/utils/CSCallback;)V
+	public fun sendInstantEvents (Lcom/gojek/clickstream/de/EventRequest;)V
+}
+
+public abstract class clickstream/internal/networklayer/CSRetryableCallback {
+	public fun <init> (Lclickstream/config/CSNetworkConfig;Lclickstream/internal/networklayer/CSEventService;Lcom/gojek/clickstream/de/EventRequest;Lkotlinx/coroutines/CoroutineDispatcher;Lclickstream/internal/utils/CSTimeStampGenerator;Lclickstream/logger/CSLogger;Lkotlinx/coroutines/CoroutineScope;)V
+	public synthetic fun <init> (Lclickstream/config/CSNetworkConfig;Lclickstream/internal/networklayer/CSEventService;Lcom/gojek/clickstream/de/EventRequest;Lkotlinx/coroutines/CoroutineDispatcher;Lclickstream/internal/utils/CSTimeStampGenerator;Lclickstream/logger/CSLogger;Lkotlinx/coroutines/CoroutineScope;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public abstract fun onFailure (Ljava/lang/Throwable;Ljava/lang/String;)V
+	public abstract fun onSuccess (Ljava/lang/String;)V
+}
+
+public final class clickstream/internal/networklayer/CSRetryableCallbackKt {
+}
+
+public final class clickstream/internal/utils/CSBatteryLevel : java/lang/Enum {
+	public static final field ADEQUATE_POWER Lclickstream/internal/utils/CSBatteryLevel;
+	public static final field CHARGING Lclickstream/internal/utils/CSBatteryLevel;
+	public static final field LOW_BATTERY Lclickstream/internal/utils/CSBatteryLevel;
+	public static fun valueOf (Ljava/lang/String;)Lclickstream/internal/utils/CSBatteryLevel;
+	public static fun values ()[Lclickstream/internal/utils/CSBatteryLevel;
+}
+
+public final class clickstream/internal/utils/CSBatteryStatusObserver {
+	public fun <init> (Landroid/content/Context;I)V
+	public final fun getBatteryStatus$clickstream_release (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class clickstream/internal/utils/CSBatteryStatusObserverKt {
+}
+
+public abstract interface class clickstream/internal/utils/CSCallback {
+	public abstract fun onError (Ljava/lang/Throwable;Ljava/lang/String;)V
+	public abstract fun onSuccess (Ljava/lang/Object;)V
+}
+
+public final class clickstream/internal/utils/CSFlowStreamAdapter : com/tinder/scarlet/StreamAdapter {
+	public fun <init> ()V
+	public synthetic fun adapt (Lcom/tinder/scarlet/Stream;)Ljava/lang/Object;
+	public fun adapt (Lcom/tinder/scarlet/Stream;)Lkotlinx/coroutines/flow/Flow;
+}
+
+public final class clickstream/internal/utils/CSFlowStreamAdapterFactory : com/tinder/scarlet/StreamAdapter$Factory {
+	public fun <init> ()V
+	public fun create (Ljava/lang/reflect/Type;)Lcom/tinder/scarlet/StreamAdapter;
+}
+
+public abstract interface class clickstream/internal/utils/CSGuIdGenerator {
+	public abstract fun getId ()Ljava/lang/String;
+}
+
+public final class clickstream/internal/utils/CSGuIdGeneratorImpl : clickstream/internal/utils/CSGuIdGenerator {
+	public fun <init> ()V
+	public fun getId ()Ljava/lang/String;
+}
+
+public final class clickstream/internal/utils/CSNetworkStatusObserver {
+	public fun <init> (Landroid/content/Context;)V
+	public final fun isNetworkAvailable$clickstream_release (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public abstract class clickstream/internal/utils/CSResult {
+}
+
+public final class clickstream/internal/utils/CSResult$Failure : clickstream/internal/utils/CSResult {
+	public fun <init> (Ljava/lang/Throwable;Ljava/lang/Object;)V
+	public final fun component1 ()Ljava/lang/Throwable;
+	public final fun component2 ()Ljava/lang/Object;
+	public final fun copy (Ljava/lang/Throwable;Ljava/lang/Object;)Lclickstream/internal/utils/CSResult$Failure;
+	public static synthetic fun copy$default (Lclickstream/internal/utils/CSResult$Failure;Ljava/lang/Throwable;Ljava/lang/Object;ILjava/lang/Object;)Lclickstream/internal/utils/CSResult$Failure;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getException ()Ljava/lang/Throwable;
+	public final fun getValue ()Ljava/lang/Object;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class clickstream/internal/utils/CSResult$Success : clickstream/internal/utils/CSResult {
+	public fun <init> (Ljava/lang/Object;)V
+	public final fun component1 ()Ljava/lang/Object;
+	public final fun copy (Ljava/lang/Object;)Lclickstream/internal/utils/CSResult$Success;
+	public static synthetic fun copy$default (Lclickstream/internal/utils/CSResult$Success;Ljava/lang/Object;ILjava/lang/Object;)Lclickstream/internal/utils/CSResult$Success;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()Ljava/lang/Object;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class clickstream/internal/utils/CSTickerKt {
+	public static final fun flowableTicker (JJ)Lkotlinx/coroutines/flow/Flow;
+	public static synthetic fun flowableTicker$default (JJILjava/lang/Object;)Lkotlinx/coroutines/flow/Flow;
+}
+
+public abstract interface class clickstream/internal/utils/CSTimeStampGenerator {
+	public abstract fun getTimeStamp ()J
+}
+
+public final class clickstream/internal/utils/CSTimeStampMessageBuilder {
+	public static final field INSTANCE Lclickstream/internal/utils/CSTimeStampMessageBuilder;
+	public final fun build$clickstream_release (J)Lcom/google/protobuf/Timestamp;
+}
+
+public final class clickstream/internal/utils/CSTimeStampMessageBuilderKt {
+	public static final field MILLI_TO_NANO I
+	public static final field MILLI_TO_SECONDS I
+}
+
+public final class clickstream/internal/utils/DefaultCSTimeStampGenerator : clickstream/internal/utils/CSTimeStampGenerator {
+	public fun <init> (Lclickstream/config/timestamp/CSEventGeneratedTimestampListener;)V
+	public fun getTimeStamp ()J
+}
+
+public class clickstream/internal/workmanager/CSBaseEventFlushWorkManager : androidx/work/CoroutineWorker {
+	public static final field Companion Lclickstream/internal/workmanager/CSBaseEventFlushWorkManager$Companion;
+	public fun <init> (Landroid/content/Context;Landroidx/work/WorkerParameters;)V
+	public fun doWork (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class clickstream/internal/workmanager/CSBaseEventFlushWorkManager$Companion {
+	public final fun addObserveForWorkManagerStatus (Landroid/content/Context;Ljava/lang/String;)V
+}
+
+public final class clickstream/internal/workmanager/CSEventFlushOneTimeWorkManager : clickstream/internal/workmanager/CSBaseEventFlushWorkManager {
+	public static final field Companion Lclickstream/internal/workmanager/CSEventFlushOneTimeWorkManager$Companion;
+}
+
+public final class clickstream/internal/workmanager/CSEventFlushOneTimeWorkManager$Companion {
+	public final fun cancelWork (Landroid/content/Context;)V
+	public final fun enqueueWork (Landroid/content/Context;)V
+}
+
+public final class clickstream/internal/workmanager/CSEventFlushPeriodicWorkManager : clickstream/internal/workmanager/CSBaseEventFlushWorkManager {
+	public static final field Companion Lclickstream/internal/workmanager/CSEventFlushPeriodicWorkManager$Companion;
+}
+
+public final class clickstream/internal/workmanager/CSEventFlushPeriodicWorkManager$Companion {
+	public final fun cancelWork (Landroid/content/Context;)V
+	public final fun enqueueWork (Landroid/content/Context;)V
+}
+
+public final class clickstream/internal/workmanager/CSWorkManager : clickstream/internal/lifecycle/CSLifeCycleManager {
+	public fun <init> (Lclickstream/internal/lifecycle/CSAppLifeCycle;Landroid/content/Context;Lclickstream/config/CSEventSchedulerConfig;Lclickstream/logger/CSLogger;Lclickstream/internal/lifecycle/CSBackgroundLifecycleManager;)V
+	public final fun executeOneTimeWork$clickstream_release ()V
+	public fun onStart ()V
+	public fun onStop ()V
+}
+
+public final class clickstream/logger/CSLogConstant {
+	public static final field BATCH_ACK_FAILURE_TAG Ljava/lang/String;
+	public static final field BATCH_ACK_SUCCESS_TAG Ljava/lang/String;
+	public static final field BATCH_REQUEST_ACK_TIMEOUT_TAG Ljava/lang/String;
+	public static final field BATCH_SENT_TAG Ljava/lang/String;
+	public static final field CLICK_STREAM_LOG_TAG Ljava/lang/String;
+	public static final field EVENT_BATCH_GUID_KEY Ljava/lang/String;
+	public static final field EVENT_GUID_LIST_KEY Ljava/lang/String;
+	public static final field EVENT_RETRY_COUNT Ljava/lang/String;
+	public static final field FAILED_TO_INIT_TAG Ljava/lang/String;
+	public static final field INSTANCE Lclickstream/logger/CSLogConstant;
+}
+
+public final class clickstream/logger/CSLogLevel : java/lang/Enum {
+	public static final field DEBUG Lclickstream/logger/CSLogLevel;
+	public static final field INFO Lclickstream/logger/CSLogLevel;
+	public static final field OFF Lclickstream/logger/CSLogLevel;
+	public final fun getValue ()I
+	public static fun valueOf (Ljava/lang/String;)Lclickstream/logger/CSLogLevel;
+	public static fun values ()[Lclickstream/logger/CSLogLevel;
+}
+
+public final class clickstream/logger/CSLogger {
+	public fun <init> (Lclickstream/logger/CSLogLevel;)V
+	public final fun debug$clickstream_release (Lkotlin/jvm/functions/Function0;)V
+	public final fun debug$clickstream_release (Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;)V
+	public final fun debug$clickstream_release (Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;)V
+}
+
+public final class clickstream/model/CSAppInfo {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lclickstream/model/CSAppInfo;
+	public static synthetic fun copy$default (Lclickstream/model/CSAppInfo;Ljava/lang/String;ILjava/lang/Object;)Lclickstream/model/CSAppInfo;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAppVersion ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class clickstream/model/CSEvent {
+	public fun <init> (Ljava/lang/String;Lcom/google/protobuf/Timestamp;Lcom/google/protobuf/MessageLite;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lcom/google/protobuf/Timestamp;
+	public final fun component3 ()Lcom/google/protobuf/MessageLite;
+	public final fun copy (Ljava/lang/String;Lcom/google/protobuf/Timestamp;Lcom/google/protobuf/MessageLite;)Lclickstream/model/CSEvent;
+	public static synthetic fun copy$default (Lclickstream/model/CSEvent;Ljava/lang/String;Lcom/google/protobuf/Timestamp;Lcom/google/protobuf/MessageLite;ILjava/lang/Object;)Lclickstream/model/CSEvent;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getGuid ()Ljava/lang/String;
+	public final fun getMessage ()Lcom/google/protobuf/MessageLite;
+	public final fun getTimestamp ()Lcom/google/protobuf/Timestamp;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class clickstream/model/CSInfo {
+	public fun <init> (Lclickstream/model/CSAppInfo;Lclickstream/model/CSLocationInfo;Lclickstream/model/CSSessionInfo;Lclickstream/config/CSDeviceInfo;Lclickstream/model/CSUserInfo;)V
+	public final fun component1 ()Lclickstream/model/CSAppInfo;
+	public final fun component2 ()Lclickstream/model/CSLocationInfo;
+	public final fun component3 ()Lclickstream/model/CSSessionInfo;
+	public final fun component4 ()Lclickstream/config/CSDeviceInfo;
+	public final fun component5 ()Lclickstream/model/CSUserInfo;
+	public final fun copy (Lclickstream/model/CSAppInfo;Lclickstream/model/CSLocationInfo;Lclickstream/model/CSSessionInfo;Lclickstream/config/CSDeviceInfo;Lclickstream/model/CSUserInfo;)Lclickstream/model/CSInfo;
+	public static synthetic fun copy$default (Lclickstream/model/CSInfo;Lclickstream/model/CSAppInfo;Lclickstream/model/CSLocationInfo;Lclickstream/model/CSSessionInfo;Lclickstream/config/CSDeviceInfo;Lclickstream/model/CSUserInfo;ILjava/lang/Object;)Lclickstream/model/CSInfo;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAppInfo ()Lclickstream/model/CSAppInfo;
+	public final fun getCustomerInfo ()Lclickstream/model/CSUserInfo;
+	public final fun getDeviceInfo ()Lclickstream/config/CSDeviceInfo;
+	public final fun getLocationInfo ()Lclickstream/model/CSLocationInfo;
+	public final fun getSessionInfo ()Lclickstream/model/CSSessionInfo;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class clickstream/model/CSLocationInfo {
+	public fun <init> (DDLjava/util/Map;)V
+	public final fun component1 ()D
+	public final fun component2 ()D
+	public final fun component3 ()Ljava/util/Map;
+	public final fun copy (DDLjava/util/Map;)Lclickstream/model/CSLocationInfo;
+	public static synthetic fun copy$default (Lclickstream/model/CSLocationInfo;DDLjava/util/Map;ILjava/lang/Object;)Lclickstream/model/CSLocationInfo;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getLatitude ()D
+	public final fun getLongitude ()D
+	public final fun getS2Ids ()Ljava/util/Map;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class clickstream/model/CSLocationInfo$Location {
+	public fun <init> (DD)V
+	public final fun component1 ()D
+	public final fun component2 ()D
+	public final fun copy (DD)Lclickstream/model/CSLocationInfo$Location;
+	public static synthetic fun copy$default (Lclickstream/model/CSLocationInfo$Location;DDILjava/lang/Object;)Lclickstream/model/CSLocationInfo$Location;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getLatitude ()D
+	public final fun getLongitude ()D
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class clickstream/model/CSSessionInfo {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lclickstream/model/CSSessionInfo;
+	public static synthetic fun copy$default (Lclickstream/model/CSSessionInfo;Ljava/lang/String;ILjava/lang/Object;)Lclickstream/model/CSSessionInfo;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getSessionID ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class clickstream/model/CSUserInfo {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()I
+	public final fun component4 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;)Lclickstream/model/CSUserInfo;
+	public static synthetic fun copy$default (Lclickstream/model/CSUserInfo;Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;ILjava/lang/Object;)Lclickstream/model/CSUserInfo;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCurrentCountry ()Ljava/lang/String;
+	public final fun getEmail ()Ljava/lang/String;
+	public final fun getIdentity ()I
+	public final fun getSignedUpCountry ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/gojek/android/clickstream/BuildConfig {
+	public static final field BUILD_TYPE Ljava/lang/String;
+	public static final field DEBUG Z
+	public static final field LIBRARY_PACKAGE_NAME Ljava/lang/String;
+	public fun <init> ()V
+}
+
