@@ -1,5 +1,10 @@
+
 <p align="center">
-<img src="https://github.com/gojekfarm/clickstream-android/blob/main/docs/assets/clickstream_horizontal.png" width="500"/>
+<img src="https://github.com/gojek/clickstream-android/blob/main/docs/assets/clickstream-horizontal-black.svg#gh-light-mode-only" width="500"/>
+</p>
+
+<p align="center">
+<img src="https://github.com/gojek/clickstream-android/blob/main/docs/assets/clickstream-horizontal-white.svg#gh-dark-mode-only" width="500"/>
 </p>
 
 #### A Modern, Fast, and Lightweight Android Ingestion Library
