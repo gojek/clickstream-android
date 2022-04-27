@@ -953,7 +953,7 @@ public final class clickstream/model/CSUserInfo {
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class com/gojek/android/clickstream/BuildConfig {
+public final class com/gojek/clickstream/BuildConfig {
 	public static final field BUILD_TYPE Ljava/lang/String;
 	public static final field DEBUG Z
 	public static final field LIBRARY_PACKAGE_NAME Ljava/lang/String;

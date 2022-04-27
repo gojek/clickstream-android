@@ -1,13 +1,6 @@
 import plugin.AndroidLibraryConfigurationPlugin
 
 apply<AndroidLibraryConfigurationPlugin>()
-apply("$rootDir/gradle/script-git-version.gradle")
-
-ext {
-    set("name", "clickstream")
-    set("publish", true)
-    set("version", ext.get("gitVersionName"))
-}
 
 plugins {
     id("com.android.library")
@@ -56,3 +49,11 @@ dependencies {
     // Android Test
     deps.androidTest.list.forEach(::androidTestImplementation)
 }
+
+ext {
+    set("PUBLISH_GROUP_ID", "com.gojek.clickstream")
+    set("PUBLISH_VERSION", "0.0.1")
+    set("PUBLISH_ARTIFACT_ID", "clickstream")
+}
+
+apply(from = "$rootDir/scripts/publish-module.gradle")
