@@ -53,7 +53,7 @@ buildscript {
 ```kotlin
 dependencies {
     val version = "x.y.z"
-    implementation 'com.gojek.android:clickstream:[latest_version]'
+    implementation 'com.gojek.clickstream:clickstream-android:[latest_version]'
 }
 ```
 
