@@ -7,5 +7,9 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = 'clickstream'
-include ':clickstream'
 include ':app'
+include ':clickstream'
+include ':clickstream-health-metrics'
+include ':clickstream-health-metrics-api'
+include ':clickstream-health-metrics-noop'
+include ':clickstream-health-metrics-model'
