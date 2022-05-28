@@ -5,17 +5,12 @@ import android.os.Build.VERSION_CODES
 import androidx.test.core.app.ApplicationProvider
 import clickstream.config.CSConfig
 import clickstream.config.CSConfiguration
-import clickstream.config.CSEventClassification
+import clickstream.config.CSEventProcessorConfig
 import clickstream.config.CSEventSchedulerConfig
+import clickstream.config.CSHealthEventConfig
 import clickstream.config.CSNetworkConfig
-import clickstream.extension.eventName
-import clickstream.fake.fakeCustomerInfo
+import clickstream.fake.fakeUserInfo
 import clickstream.internal.DefaultCSDeviceInfo
-import clickstream.model.CSAppInfo
-import clickstream.model.CSEvent
-import clickstream.model.CSInfo
-import clickstream.model.CSLocationInfo
-import clickstream.model.CSSessionInfo
 import clickstream.utils.CoroutineTestRule
 import com.gojek.clickstream.common.App
 import com.gojek.clickstream.common.Customer
@@ -23,7 +18,6 @@ import com.gojek.clickstream.common.EventMeta
 import com.gojek.clickstream.common.Merchant
 import com.gojek.clickstream.common.MerchantUser
 import com.gojek.clickstream.common.MerchantUserRole
-import com.gojek.clickstream.common.MerchantUserRole.MERCHANT_USER_ROLE_ADMIN
 import com.gojek.clickstream.products.events.AdCardEvent
 import com.google.protobuf.Timestamp
 import java.util.concurrent.TimeUnit.MILLISECONDS
@@ -56,7 +50,8 @@ public class ClickStreamFunctionalTest {
     @Test
     public fun `Given EventMeta When Customer property is filled Then final generated EventMeta should have Customer metadata`() {
         // Given
-        val csInfo = createCSInfo().copy(customerInfo = fakeCustomerInfo)
+        val userInfo = fakeUserInfo()
+        val csInfo = createCSInfo().copy(userInfo = userInfo)
         ClickStream.initialize(
             CSConfiguration.Builder(
                 context = app,
@@ -72,11 +67,11 @@ public class ClickStreamFunctionalTest {
         sut.trackEvent(event, true)
 
         // Then
-        assertTrue(event.message.eventName() == "AdCardEvent")
-        assertTrue((event.message as AdCardEvent).meta.customer.email == fakeCustomerInfo.email)
-        assertTrue((event.message as AdCardEvent).meta.customer.currentCountry == fakeCustomerInfo.currentCountry)
-        assertTrue((event.message as AdCardEvent).meta.customer.signedUpCountry == fakeCustomerInfo.signedUpCountry)
-        assertTrue((event.message as AdCardEvent).meta.customer.identity == fakeCustomerInfo.identity)
+        assertTrue(event.message.protoName() == "AdCardEvent")
+        assertTrue((event.message as AdCardEvent).meta.customer.email == userInfo.email)
+        assertTrue((event.message as AdCardEvent).meta.customer.currentCountry == userInfo.currentCountry)
+        assertTrue((event.message as AdCardEvent).meta.customer.signedUpCountry == userInfo.signedUpCountry)
+        assertTrue((event.message as AdCardEvent).meta.customer.identity == userInfo.identity)
         assertTrue((event.message as AdCardEvent).meta.hasMerchant().not())
     }
 
@@ -98,7 +93,7 @@ public class ClickStreamFunctionalTest {
         sut.trackEvent(event, true)
 
         // Then
-        assertTrue(event.message.eventName() == "AdCardEvent")
+        assertTrue(event.message.protoName() == "AdCardEvent")
         assertTrue((event.message as AdCardEvent).meta.hasMerchant())
         assertTrue((event.message as AdCardEvent).meta.merchant.saudagarId == "1")
         assertTrue((event.message as AdCardEvent).meta.merchant.user.role == MerchantUserRole.MERCHANT_USER_ROLE_ADMIN)
@@ -122,7 +117,7 @@ public class ClickStreamFunctionalTest {
                                 .setSaudagarId("1")
                                 .setUser(
                                     MerchantUser.newBuilder()
-                                        .setRole(MERCHANT_USER_ROLE_ADMIN)
+                                        .setRole(MerchantUserRole.MERCHANT_USER_ROLE_ADMIN)
                                         .setSignedUpCountry("ID")
                                         .setPhone("085")
                                         .setIdentity(12)
@@ -138,6 +133,7 @@ public class ClickStreamFunctionalTest {
     }
 
     private fun generateCSCustomerEvent(guid: String): CSEvent {
+        val userInfo = fakeUserInfo()
         return CSEvent(
             guid = guid,
             timestamp = Timestamp.getDefaultInstance(),
@@ -147,10 +143,10 @@ public class ClickStreamFunctionalTest {
                         .setApp(App.newBuilder().setVersion("4.35.0"))
                         .setCustomer(
                             Customer.newBuilder()
-                                .setCurrentCountry(fakeCustomerInfo.currentCountry)
-                                .setEmail(fakeCustomerInfo.email)
-                                .setIdentity(fakeCustomerInfo.identity)
-                                .setSignedUpCountry(fakeCustomerInfo.signedUpCountry)
+                                .setCurrentCountry(userInfo.currentCountry)
+                                .setEmail(userInfo.email)
+                                .setIdentity(userInfo.identity)
+                                .setSignedUpCountry(userInfo.signedUpCountry)
                                 .build()
                         )
                         .build()
@@ -167,20 +163,21 @@ public class ClickStreamFunctionalTest {
                 longitude = 106.8249641,
                 s2Ids = emptyMap()
             ), sessionInfo = CSSessionInfo(sessionID = "1234"),
-            deviceInfo = DefaultCSDeviceInfo(), fakeCustomerInfo
+            deviceInfo = DefaultCSDeviceInfo(), fakeUserInfo()
         )
     }
 
     private fun createCSConfig(): CSConfig {
         return CSConfig(
-            eventProcessorConfiguration = CSEventClassification(
+            eventProcessorConfiguration = CSEventProcessorConfig(
                 realtimeEvents = emptyList(),
                 instantEvent = listOf("AdCardEvent")
             ),
             eventSchedulerConfig = CSEventSchedulerConfig.default(),
             networkConfig = CSNetworkConfig.default(
                 createOkHttpClient()
-            ).copy(endPoint = "")
+            ).copy(endPoint = ""),
+            healthEventConfig = CSHealthEventConfig.default()
         )
     }
 

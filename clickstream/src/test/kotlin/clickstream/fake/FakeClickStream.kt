@@ -1,6 +1,6 @@
 package clickstream.fake
 
-import clickstream.model.CSEvent
+import clickstream.CSEvent
 import clickstream.ClickStream
 
 public class FakeClickStream(

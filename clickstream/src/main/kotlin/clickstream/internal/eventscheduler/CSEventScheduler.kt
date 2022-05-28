@@ -1,8 +1,15 @@
-@file:Suppress("LongParameterList")
-
 package clickstream.internal.eventscheduler
 
+import clickstream.CSEvent
+import clickstream.CSInfo
 import clickstream.config.CSEventSchedulerConfig
+import clickstream.internal.analytics.CSErrorReasons
+import clickstream.internal.analytics.CSEventNames
+import clickstream.internal.analytics.CSEventNames.ClickStreamEventBatchTriggerFailed
+import clickstream.internal.analytics.CSHealthEvent
+import clickstream.internal.analytics.CSHealthEventRepository
+import clickstream.internal.analytics.EventTypes
+import clickstream.analytics.event.CSEventHealthListener
 import clickstream.internal.lifecycle.CSAppLifeCycle
 import clickstream.internal.lifecycle.CSLifeCycleManager
 import clickstream.internal.networklayer.CSNetworkManager
@@ -14,10 +21,11 @@ import clickstream.internal.utils.CSResult
 import clickstream.internal.utils.CSTimeStampGenerator
 import clickstream.internal.utils.CSTimeStampMessageBuilder
 import clickstream.internal.utils.flowableTicker
+import clickstream.isValidMessage
 import clickstream.logger.CSLogger
-import clickstream.model.CSEvent
 import com.gojek.clickstream.de.EventRequest
 import com.gojek.clickstream.internal.Health
+import com.google.protobuf.MessageLite
 import java.util.concurrent.CopyOnWriteArrayList
 import kotlinx.coroutines.CompletableJob
 import kotlinx.coroutines.CoroutineDispatcher
@@ -37,14 +45,15 @@ import kotlinx.coroutines.launch
  * It caches the events delivered to it. Based on the provided configuration, it processes
  * the events into batch at regular intervals
  *
- * @param eventRepository to cache the data
- * @param networkManager to send the analytic data to server
- * @param config configuration of how the scheduler should process the events
- * @param dispatcher CoroutineDispatcher on which the events are observed
- * @param logger to create logs
- * @param guIdGenerator used for generating a random ID
- * @param timeStampGenerator used for generating current time stamp
- * @param batteryStatusObserver obbserves the battery status
+ * @param eventRepository - To cache the data
+ * @param networkManager - to send the analytic data to server
+ * @param config - config how the scheduler should process the events
+ * @param dispatcher - CoroutineDispatcher on which the events are observed
+ * @param logger - To create logs
+ * @param healthEventRepository - Used for logging health events
+ * @param guIdGenerator - Used for generating a random ID
+ * @param timeStampGenerator - Used for generating current time stamp
+ * @param batteryStatusObserver - observes the battery status
  */
 @ExperimentalCoroutinesApi
 internal open class CSEventScheduler(
@@ -53,11 +62,14 @@ internal open class CSEventScheduler(
     protected val dispatcher: CoroutineDispatcher,
     protected val config: CSEventSchedulerConfig,
     protected val eventRepository: CSEventRepository,
+    protected val healthEventRepository: CSHealthEventRepository,
     protected val logger: CSLogger,
     private val guIdGenerator: CSGuIdGenerator,
     private val timeStampGenerator: CSTimeStampGenerator,
     private val batteryStatusObserver: CSBatteryStatusObserver,
-    private val networkStatusObserver: CSNetworkStatusObserver
+    private val networkStatusObserver: CSNetworkStatusObserver,
+    private val info: CSInfo,
+    private val eventHealthListener: CSEventHealthListener
 ) : CSLifeCycleManager(appLifeCycleObserver) {
 
     protected var job: CompletableJob = SupervisorJob()
@@ -93,9 +105,23 @@ internal open class CSEventScheduler(
      */
     public suspend fun scheduleEvent(event: CSEvent) {
         logger.debug { "CSEventScheduler#scheduleEvent" }
+        if (validateMessage(event.message).not()) {
+            logger.debug { "CSEventScheduler#scheduleEvent - message not valid" }
+            return
+        }
 
-        val eventData = CSEventData.create(event)
+        val (eventData, eventHealthData) = CSEventData.create(event)
+        eventHealthListener.onEventCreated(eventHealthData)
         eventRepository.insertEventData(eventData)
+
+        logHealthEvent(
+            CSHealthEvent(
+                eventName = CSEventNames.ClickStreamEventCached.value,
+                eventType = EventTypes.AGGREGATE,
+                eventId = eventData.eventGuid,
+                appVersion = info.appInfo.appVersion
+            )
+        )
     }
 
     /**
@@ -109,8 +135,13 @@ internal open class CSEventScheduler(
 
         coroutineScope.launch(handler) {
             ensureActive()
+            if (validateMessage(event.message).not()) {
+                logger.debug { "CSEventScheduler#sendInstantEvent - message not valid" }
+                return@launch
+            }
 
-            val eventData = CSEventData.create(event)
+            val (eventData, eventHealthData) = CSEventData.create(event)
+            eventHealthListener.onEventCreated(eventHealthData)
             val eventRequest =
                 transformToEventRequest(eventData = listOf(eventData))
             networkManager.processInstantEvent(eventRequest)
@@ -210,6 +241,15 @@ internal open class CSEventScheduler(
                 "CSEventScheduler#forwardEvents#batch - " +
                 "messageName : ${batch[0].messageName}"
             }
+            logHealthEvent(
+                CSHealthEvent(
+                    eventName = CSEventNames.ClickStreamEventBatchCreated.value,
+                    eventType = EventTypes.AGGREGATE,
+                    eventBatchId = eventRequest.reqGuid,
+                    eventId = batch.joinToString { it.eventGuid },
+                    appVersion = info.appInfo.appVersion
+                )
+            )
         }
 
         networkManager.processEvent(eventRequest = eventRequest)
@@ -242,6 +282,12 @@ internal open class CSEventScheduler(
         eventRepository.insertEventDataList(updatedList)
     }
 
+    private suspend fun logHealthEvent(event: CSHealthEvent) {
+        logger.debug { "CSEventScheduler#logHealthEvent" }
+
+        healthEventRepository.insertHealthEvent(event)
+    }
+
     private fun resetOnGoingData() {
         logger.debug { "CSEventScheduler#resetOnGoingData" }
 
@@ -253,15 +299,56 @@ internal open class CSEventScheduler(
         }
     }
 
-    private fun isSocketConnected(): String? {
+    private suspend fun validateMessage(message: MessageLite): Boolean {
+        logger.debug { "CSEventScheduler#validateMessage" }
+
+        val isValid = config.utf8ValidatorEnabled && message.isValidMessage()
+        if (isValid.not()) {
+            logHealthEvent(
+                CSHealthEvent(
+                    eventName = CSEventNames.ClickStreamInvalidMessage.value,
+                    eventType = EventTypes.AGGREGATE,
+                    error = message.toByteString().toString(),
+                    appVersion = info.appInfo.appVersion
+                )
+            )
+        }
+        return isValid
+    }
+
+    private suspend fun isSocketConnected(): String? {
+        logHealthEvent(
+            CSHealthEvent(
+                eventName = ClickStreamEventBatchTriggerFailed.value,
+                eventType = EventTypes.AGGREGATE,
+                error = CSErrorReasons.SOCKET_NOT_OPEN,
+                appVersion = info.appInfo.appVersion
+            )
+        )
         return null
     }
 
-    private fun isNetworkAvailable(): String? {
+    private suspend fun isNetworkAvailable(): String? {
+        logHealthEvent(
+            CSHealthEvent(
+                eventName = ClickStreamEventBatchTriggerFailed.value,
+                eventType = EventTypes.AGGREGATE,
+                error = CSErrorReasons.NETWORK_UNAVAILABLE,
+                appVersion = info.appInfo.appVersion
+            )
+        )
         return null
     }
 
-    private fun isBatteryLow(): String? {
+    private suspend fun isBatteryLow(): String? {
+        logHealthEvent(
+            CSHealthEvent(
+                eventName = ClickStreamEventBatchTriggerFailed.value,
+                eventType = EventTypes.AGGREGATE,
+                error = CSErrorReasons.LOW_BATTERY,
+                appVersion = info.appInfo.appVersion
+            )
+        )
         return null
     }
 }

@@ -9,13 +9,15 @@ import androidx.room.TypeConverters
 import clickstream.internal.eventscheduler.CSEventData
 import clickstream.internal.eventscheduler.CSEventDataDao
 import clickstream.internal.eventscheduler.CSEventDataTypeConverters
+import clickstream.internal.analytics.CSHealthEvent
+import clickstream.internal.analytics.CSHealthEventDao
 
 /**
  * The Database to store the events sent from the client.
  *
  * The Events are cached, processed and then cleared.
  */
-@Database(entities = [CSEventData::class], version = 7)
+@Database(entities = [CSEventData::class, CSHealthEvent::class], version = 7)
 @TypeConverters(CSEventDataTypeConverters::class)
 internal abstract class CSDatabase : RoomDatabase() {
 
@@ -23,6 +25,11 @@ internal abstract class CSDatabase : RoomDatabase() {
      * The EventBatchDao holds the communication with the DB
      */
     abstract fun eventDataDao(): CSEventDataDao
+
+    /**
+     * The HealthDao holds the communication with the DB
+     */
+    abstract fun healthEventDao(): CSHealthEventDao
 
     companion object {
 

@@ -2,12 +2,16 @@ package clickstream.internal.di
 
 import androidx.annotation.GuardedBy
 import clickstream.config.CSEventSchedulerConfig
+import clickstream.internal.analytics.CSHealthEventProcessor
+import clickstream.internal.analytics.CSHealthEventRepository
+import clickstream.analytics.event.CSEventHealthListener
 import clickstream.internal.eventprocessor.CSEventProcessor
 import clickstream.internal.eventscheduler.CSBackgroundScheduler
 import clickstream.internal.eventscheduler.CSEventScheduler
 import clickstream.internal.networklayer.CSNetworkManager
 import clickstream.internal.workmanager.CSWorkManager
 import clickstream.logger.CSLogLevel
+import clickstream.logger.CSLogger
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
@@ -36,7 +40,7 @@ internal interface CSServiceLocator {
                     if (sInstance == null) {
                         requireNotNull(sInstance) {
                             "Service Locator should be created and set by using " +
-                            "[setServiceLocator] function."
+                                    "[setServiceLocator] function."
                         }
                     }
                 }
@@ -58,6 +62,11 @@ internal interface CSServiceLocator {
     val dispatcher: CoroutineDispatcher
 
     /**
+     * The HealthEventRepository that communicates with the health event table
+     */
+    val healthEventRepository: CSHealthEventRepository
+
+    /**
      * Network Manage which communicates with the backend
      */
     val networkManager: CSNetworkManager
@@ -71,6 +80,11 @@ internal interface CSServiceLocator {
      * EventProcessor which processes and dispatches to scheduler
      */
     val eventProcessor: CSEventProcessor
+
+    /**
+     * Processes the health events and sends to BE
+     */
+    val healthEventProcessor: CSHealthEventProcessor
 
     /**
      * The background work manager which flushes the event
@@ -91,4 +105,11 @@ internal interface CSServiceLocator {
      * Types for LogLevel config during development or production.
      */
     val logLevel: CSLogLevel
+
+    /**
+     * Internal Logger
+     */
+    val logger: CSLogger
+
+    val eventHealthListener: CSEventHealthListener
 }

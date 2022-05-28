@@ -1,6 +1,8 @@
 package clickstream.internal.networklayer
 
+import clickstream.CSInfo
 import clickstream.config.CSNetworkConfig
+import clickstream.internal.analytics.CSHealthEventRepository
 import clickstream.internal.utils.CSCallback
 import clickstream.internal.utils.CSTimeStampGenerator
 import clickstream.logger.CSLogger
@@ -55,7 +57,9 @@ internal class CSNetworkRepositoryImpl(
     private val eventService: CSEventService,
     private val dispatcher: CoroutineDispatcher,
     private val timeStampGenerator: CSTimeStampGenerator,
-    private val logger: CSLogger
+    private val logger: CSLogger,
+    private val healthEventRepository: CSHealthEventRepository,
+    private val info: CSInfo
 ) : CSNetworkRepository {
 
     override fun observeResponse(): Flow<EventResponse> {
@@ -82,7 +86,9 @@ internal class CSNetworkRepositoryImpl(
             eventRequest = eventRequest,
             dispatcher = dispatcher,
             timeStampGenerator = timeStampGenerator,
-            logger = logger
+            logger = logger,
+            healthEventRepository = healthEventRepository,
+            info = info
         ) {
             override fun onSuccess(guid: String) {
                 logger.debug { "CSNetworkRepositoryImpl#sendEvents#onSuccess - $guid" }

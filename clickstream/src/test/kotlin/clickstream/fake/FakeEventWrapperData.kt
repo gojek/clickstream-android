@@ -1,6 +1,6 @@
 package clickstream.fake
 
-import clickstream.model.CSEvent
+import clickstream.CSEvent
 import clickstream.internal.utils.CSTimeStampMessageBuilder
 import com.gojek.clickstream.common.Customer
 import com.gojek.clickstream.common.Device

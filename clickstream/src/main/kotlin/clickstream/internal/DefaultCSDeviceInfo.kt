@@ -2,7 +2,7 @@ package clickstream.internal
 
 import android.content.res.Resources
 import android.os.Build
-import clickstream.config.CSDeviceInfo
+import clickstream.CSDeviceInfo
 
 /**
  * Implementation of [CSDeviceInfo]

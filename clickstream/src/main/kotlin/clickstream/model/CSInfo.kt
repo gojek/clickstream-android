@@ -1,7 +1,5 @@
 package clickstream.model
 
-import clickstream.config.CSDeviceInfo
-
 /**
  * A common data class which wraps [CSAppInfo], [CSLocationInfo],
  * [CSUserInfo], [CSSessionInfo], [CSDeviceInfo]
@@ -11,7 +9,7 @@ public data class CSInfo(
     val locationInfo: CSLocationInfo,
     val sessionInfo: CSSessionInfo,
     val deviceInfo: CSDeviceInfo,
-    val customerInfo: CSUserInfo
+    val userInfo: CSUserInfo
 )
 
 /**
@@ -47,7 +45,7 @@ public data class CSLocationInfo(
  *
  * @param currentCountry
  * @param signedUpCountry
- * @param identity a user id
+ * @param identity
  * @param email
  */
 public data class CSUserInfo(

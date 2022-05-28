@@ -1,6 +1,8 @@
 package clickstream.internal.networklayer
 
+import clickstream.CSInfo
 import clickstream.connection.CSSocketConnectionListener
+import clickstream.internal.analytics.CSHealthEventRepository
 import clickstream.internal.lifecycle.CSAppLifeCycle
 import clickstream.logger.CSLogger
 import kotlinx.coroutines.CoroutineDispatcher
@@ -24,12 +26,16 @@ internal class CSBackgroundNetworkManager(
     networkRepository: CSNetworkRepository,
     dispatcher: CoroutineDispatcher,
     logger: CSLogger,
+    healthEventRepository: CSHealthEventRepository,
+    info: CSInfo,
     connectionListener: CSSocketConnectionListener
 ) : CSNetworkManager(
     appLifeCycleObserver,
     networkRepository,
     dispatcher,
     logger,
+    healthEventRepository,
+    info,
     connectionListener
 ) {
 

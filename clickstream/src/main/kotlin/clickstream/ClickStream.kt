@@ -5,7 +5,6 @@ import clickstream.ClickStream.Companion.initialize
 import clickstream.config.CSConfiguration
 import clickstream.internal.DefaultClickStream
 import clickstream.internal.DefaultClickStream.Companion.initialize
-import clickstream.model.CSEvent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 /**
@@ -17,7 +16,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
  * by multiple-thread. Internal [ClickStream] utilize lazy initialization where it would
  * contribute less amount of time on the [Application#onCreate], however if in certain cases that
  * [ClickStream] take some amount of time during app launch, we
- * do suggest to run [initialize] in the background thread.
+ * do suggest to run [initialize] and [getInstance] in the background thread.
  *
  * **Example:**
  * ```kotlin
@@ -48,7 +47,6 @@ public interface ClickStream {
          * @return The singleton instance of [ClickStream].
          * @throws IllegalStateException if the instance is null.
          */
-        @Throws(IllegalStateException::class)
         public fun getInstance(): ClickStream {
             val clickStream = DefaultClickStream.getInstance()
             if (clickStream == null) {

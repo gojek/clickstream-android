@@ -2,14 +2,25 @@ package clickstream.internal.di.impl
 
 import android.app.Application
 import android.content.Context
+import clickstream.CSInfo
 import clickstream.config.CSConfig
 import clickstream.config.CSEventSchedulerConfig
+import clickstream.config.CSRemoteConfig
 import clickstream.config.timestamp.CSEventGeneratedTimestampListener
 import clickstream.connection.CSSocketConnectionListener
+import clickstream.internal.analytics.CSHealthEventLogger
+import clickstream.internal.analytics.CSHealthEventProcessor
+import clickstream.internal.analytics.CSHealthEventRepository
+import clickstream.analytics.event.CSEventHealthListener
+import clickstream.internal.analytics.impl.DefaultCSHealthEventRepository
+import clickstream.internal.db.CSAppVersionSharedPref
 import clickstream.internal.db.CSDatabase
+import clickstream.internal.db.impl.DefaultCSAppVersionSharedPref
 import clickstream.internal.di.CSServiceLocator
 import clickstream.internal.eventprocessor.CSEventProcessor
+import clickstream.internal.eventprocessor.CSHealthEventFactory
 import clickstream.internal.eventprocessor.CSMetaProvider
+import clickstream.internal.eventprocessor.impl.DefaultCSHealthEventFactory
 import clickstream.internal.eventprocessor.impl.DefaultCSMetaProvider
 import clickstream.internal.eventscheduler.CSBackgroundScheduler
 import clickstream.internal.eventscheduler.CSEventRepository
@@ -33,7 +44,6 @@ import clickstream.internal.utils.DefaultCSTimeStampGenerator
 import clickstream.internal.workmanager.CSWorkManager
 import clickstream.logger.CSLogLevel
 import clickstream.logger.CSLogger
-import clickstream.model.CSInfo
 import com.tinder.scarlet.Lifecycle
 import com.tinder.scarlet.Scarlet
 import com.tinder.scarlet.lifecycle.android.AndroidLifecycle
@@ -53,9 +63,12 @@ internal class DefaultCServiceLocator(
     private val info: CSInfo,
     private val config: CSConfig,
     override val logLevel: CSLogLevel,
+    healthEventLogger: CSHealthEventLogger,
     override val dispatcher: CoroutineDispatcher,
     private val eventGeneratedTimestampListener: CSEventGeneratedTimestampListener,
-    private val socketConnectionListener: CSSocketConnectionListener
+    private val socketConnectionListener: CSSocketConnectionListener,
+    private val remoteConfig: CSRemoteConfig,
+    override val eventHealthListener: CSEventHealthListener
 ) : CSServiceLocator {
 
     private val guidGenerator: CSGuIdGenerator by lazy {
@@ -64,14 +77,6 @@ internal class DefaultCServiceLocator(
 
     private val timeStampGenerator: CSTimeStampGenerator by lazy {
         DefaultCSTimeStampGenerator(eventGeneratedTimestampListener)
-    }
-
-    /**
-     * If client not declare log level, Clickstream sdk will use
-     * [CSLogLevel.OFF] as Default Logger
-     */
-    private val logger: CSLogger by lazy {
-        CSLogger(logLevel)
     }
 
     private val batteryStatusObserver: CSBatteryStatusObserver by lazy {
@@ -87,6 +92,13 @@ internal class DefaultCServiceLocator(
      */
     private val db: CSDatabase by lazy {
         CSDatabase.getInstance(context)
+    }
+
+    /**
+     * The preference which will store the app version
+     */
+    private val appVersionPreference: CSAppVersionSharedPref by lazy {
+        DefaultCSAppVersionSharedPref(context)
     }
 
     private val lifecycle: Lifecycle by lazy {
@@ -111,7 +123,9 @@ internal class DefaultCServiceLocator(
             eventService = eventService,
             dispatcher = dispatcher,
             timeStampGenerator = timeStampGenerator,
-            logger = logger
+            logger = logger,
+            healthEventRepository = healthEventRepository,
+            info = info
         )
     }
 
@@ -125,6 +139,14 @@ internal class DefaultCServiceLocator(
         DefaultCSMetaProvider(info = info)
     }
 
+    private val healthEventFactory: CSHealthEventFactory by lazy {
+        DefaultCSHealthEventFactory(
+            guIdGenerator = guidGenerator,
+            timeStampGenerator = timeStampGenerator,
+            metaProvider = metaProvider,
+        )
+    }
+
     private val backgroundNetworkManager: CSBackgroundNetworkManager by lazy {
         CSBackgroundNetworkManager(
             appLifeCycleObserver = appLifeCycleObserver,
@@ -133,10 +155,14 @@ internal class DefaultCServiceLocator(
                 eventService = backgroundEventService,
                 dispatcher = dispatcher,
                 timeStampGenerator = timeStampGenerator,
-                logger = logger
+                logger = logger,
+                healthEventRepository = healthEventRepository,
+                info = info
             ),
             dispatcher = dispatcher,
             logger = logger,
+            healthEventRepository = healthEventRepository,
+            info = info,
             connectionListener = socketConnectionListener
         )
     }
@@ -145,12 +171,28 @@ internal class DefaultCServiceLocator(
         DefaultCSAppLifeCycleObserver(context)
     }
 
+    override val logger: CSLogger by lazy {
+        CSLogger(logLevel)
+    }
+
+    override val healthEventRepository: CSHealthEventRepository by lazy {
+        DefaultCSHealthEventRepository(
+            sessionId = info.sessionInfo.sessionID,
+            healthEventDao = db.healthEventDao(),
+            info = info,
+            remoteConfig = remoteConfig,
+            logger = logger
+        )
+    }
+
     override val networkManager: CSNetworkManager by lazy {
         CSNetworkManager(
             appLifeCycleObserver = appLifeCycleObserver,
             networkRepository = networkRepository,
             dispatcher = dispatcher,
             logger = logger,
+            healthEventRepository = healthEventRepository,
+            info = info,
             connectionListener = socketConnectionListener
         )
     }
@@ -162,11 +204,14 @@ internal class DefaultCServiceLocator(
             config = config.eventSchedulerConfig,
             logger = logger,
             eventRepository = eventRepository,
+            healthEventRepository = healthEventRepository,
             dispatcher = dispatcher,
             guIdGenerator = guidGenerator,
             timeStampGenerator = timeStampGenerator,
             batteryStatusObserver = batteryStatusObserver,
-            networkStatusObserver = networkStatusObserver
+            networkStatusObserver = networkStatusObserver,
+            info = info,
+            eventHealthListener = eventHealthListener
         )
     }
 
@@ -175,7 +220,25 @@ internal class DefaultCServiceLocator(
             config = config.eventProcessorConfiguration,
             eventScheduler = eventScheduler,
             dispatcher = dispatcher,
-            logger = logger
+            healthEventRepository = healthEventRepository,
+            logger = logger,
+            info = info
+        )
+    }
+
+    override val healthEventProcessor: CSHealthEventProcessor by lazy {
+        CSHealthEventProcessor(
+            appLifeCycleObserver = appLifeCycleObserver,
+            healthEventFactory = healthEventFactory,
+            healthEventRepository = healthEventRepository,
+            dispatcher = dispatcher,
+            healthEventConfig = config.healthEventConfig,
+            info = info,
+            logger = logger,
+            healthEventLogger = healthEventLogger,
+            appVersion = info.appInfo.appVersion,
+            appVersionPreference = appVersionPreference,
+            remoteConfig = remoteConfig
         )
     }
 
@@ -185,7 +248,8 @@ internal class DefaultCServiceLocator(
             context = context,
             eventSchedulerConfig = config.eventSchedulerConfig,
             logger = logger,
-            backgroundLifecycleManager = backgroundLifecycleManager
+            backgroundLifecycleManager = backgroundLifecycleManager,
+            remoteConfig = remoteConfig
         )
     }
 
@@ -196,12 +260,15 @@ internal class DefaultCServiceLocator(
             config = config.eventSchedulerConfig,
             logger = logger,
             eventRepository = eventRepository,
+            healthEventRepository = healthEventRepository,
             dispatcher = dispatcher,
             guIdGenerator = guidGenerator,
             timeStampGenerator = timeStampGenerator,
             backgroundLifecycleManager = backgroundLifecycleManager,
             batteryStatusObserver = batteryStatusObserver,
-            networkStatusObserver = networkStatusObserver
+            networkStatusObserver = networkStatusObserver,
+            info = info,
+            eventHealthListener = eventHealthListener
         )
     }
 

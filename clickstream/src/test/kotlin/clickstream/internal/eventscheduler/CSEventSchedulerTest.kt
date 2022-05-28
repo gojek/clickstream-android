@@ -3,6 +3,8 @@ package clickstream.internal.eventscheduler
 import clickstream.config.CSEventSchedulerConfig
 import clickstream.fake.FakeEventBatchDao
 import clickstream.fake.defaultEventWrapperData
+import clickstream.fake.fakeInfo
+import clickstream.internal.analytics.CSHealthEventRepository
 import clickstream.internal.eventscheduler.impl.DefaultCSEventRepository
 import clickstream.internal.lifecycle.CSAppLifeCycle
 import clickstream.internal.networklayer.CSNetworkManager
@@ -41,12 +43,14 @@ public class CSEventSchedulerTest {
         flushOnBackground = false,
         connectionTerminationTimerWaitTimeInMillis = 5,
         backgroundTaskEnabled = false,
-        workRequestDelayInHr = 1
+        workRequestDelayInHr = 1,
+        utf8ValidatorEnabled = true
     )
 
     private val networkManager = mock<CSNetworkManager>()
     private val batteryStatusObserver = mock<CSBatteryStatusObserver>()
     private val networkStatusObserver = mock<CSNetworkStatusObserver>()
+    private val healthEventRepository = mock<CSHealthEventRepository>()
     private val logger = mock<CSLogger>()
     private val guIdGenerator = mock<CSGuIdGenerator>()
     private val timeStampGenerator = mock<CSTimeStampGenerator>()
@@ -63,10 +67,13 @@ public class CSEventSchedulerTest {
             timeStampGenerator = timeStampGenerator,
             guIdGenerator = guIdGenerator,
             logger = logger,
+            healthEventRepository = healthEventRepository,
             dispatcher = dispatcher,
             batteryStatusObserver = batteryStatusObserver,
             networkStatusObserver = networkStatusObserver,
-            config = config
+            config = config,
+            info = fakeInfo(),
+            eventHealthListener = mock()
         )
         scheduler.onStart()
     }

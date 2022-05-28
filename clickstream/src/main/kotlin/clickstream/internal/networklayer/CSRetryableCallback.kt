@@ -1,8 +1,15 @@
 package clickstream.internal.networklayer
 
+import clickstream.CSInfo
 import clickstream.config.CSNetworkConfig
+import clickstream.internal.analytics.CSErrorReasons
+import clickstream.internal.analytics.CSEventNames
+import clickstream.internal.analytics.CSHealthEvent
+import clickstream.internal.analytics.CSHealthEventRepository
+import clickstream.internal.analytics.EventTypes
 import clickstream.internal.utils.CSTimeStampGenerator
 import clickstream.internal.utils.CSTimeStampMessageBuilder
+import clickstream.isHealthEvent
 import clickstream.logger.CSLogger
 import com.gojek.clickstream.de.EventRequest
 import com.gojek.clickstream.de.common.Code
@@ -36,6 +43,8 @@ internal abstract class CSRetryableCallback(
     private val dispatcher: CoroutineDispatcher,
     private val timeStampGenerator: CSTimeStampGenerator,
     private val logger: CSLogger,
+    private val healthEventRepository: CSHealthEventRepository,
+    private val info: CSInfo,
     private val coroutineScope: CoroutineScope = CoroutineScope(SupervisorJob() + dispatcher)
 ) {
 
@@ -134,6 +143,12 @@ internal abstract class CSRetryableCallback(
             logger.debug {
                 "CSRetryableCallback#sendEvent - Request sent to the server failed: ${eventRequest.reqGuid}"
             }
+            recordHealthEvent(
+                eventName = CSEventNames.ClickStreamBatchWriteFailed.value,
+                eventType = EventTypes.AGGREGATE,
+                eventBatchId = eventRequest.reqGuid,
+                error = "Batch write failed"
+            )
         }
 
         observeTimeout()
@@ -159,6 +174,12 @@ internal abstract class CSRetryableCallback(
                 "CSRetryableCallback#observeTimeout - Acknowledgment Timeout.  Triggering the request again"
             }
 
+            recordHealthEvent(
+                eventName = CSEventNames.ClickStreamEventBatchTimeout.value,
+                eventType = EventTypes.AGGREGATE,
+                eventBatchId = eventRequest.reqGuid,
+                error = "SocketTimeout"
+            )
             if (shouldRetry()) {
                 retry()
             } else {
@@ -202,16 +223,31 @@ internal abstract class CSRetryableCallback(
         logger.debug {
             "CSRetryableCallback#logBatchSentEvent"
         }
+
+        coroutineScope.launch(dispatcher) {
+            recordHealthEvent(
+                eventName = CSEventNames.ClickStreamBatchSent.value,
+                eventType = EventTypes.AGGREGATE,
+                eventBatchId = eventRequest.reqGuid,
+                error = ""
+            )
+        }
     }
 
     /**
      * Send the Ack event and then invokes complete
      */
-    private fun sendAckAndComplete() {
+    private suspend fun sendAckAndComplete() {
         logger.debug {
             "CSRetryableCallback#sendAckAndComplete"
         }
 
+        recordHealthEvent(
+            eventName = CSEventNames.ClickStreamEventBatchAck.value,
+            eventType = EventTypes.AGGREGATE,
+            eventBatchId = eventRequest.reqGuid,
+            error = ""
+        )
         onComplete()
     }
 
@@ -227,7 +263,7 @@ internal abstract class CSRetryableCallback(
         timeOutJob.cancel()
     }
 
-    private fun trackEventResponse(eventResponse: EventResponse, eventRequestGuid: String) {
+    private suspend fun trackEventResponse(eventResponse: EventResponse, eventRequestGuid: String) {
         logger.debug {
             "CSRetryableCallback#trackEventResponse - eventResponse $eventResponse"
         }
@@ -237,22 +273,83 @@ internal abstract class CSRetryableCallback(
                 logger.debug {
                     "CSRetryableCallback#trackEventResponse - eventResponse MAX_CONNECTION_LIMIT_REACHED"
                 }
+
+                recordHealthEvent(
+                    eventName = CSEventNames.ClickStreamConnectionFailed.value,
+                    eventType = EventTypes.AGGREGATE,
+                    error = CSErrorReasons.MAX_CONNECTION_LIMIT_REACHED,
+                    eventBatchId = eventRequestGuid
+                )
             }
             Code.MAX_USER_LIMIT_REACHED.ordinal -> {
                 logger.debug {
                     "CSRetryableCallback#trackEventResponse - eventResponse MAX_USER_LIMIT_REACHED"
                 }
+
+                recordHealthEvent(
+                    eventName = CSEventNames.ClickStreamConnectionFailed.value,
+                    eventType = EventTypes.AGGREGATE,
+                    error = CSErrorReasons.MAX_USER_LIMIT_REACHED,
+                    eventBatchId = eventRequestGuid
+                )
             }
             Code.BAD_REQUEST.ordinal -> {
                 logger.debug {
                     "CSRetryableCallback#trackEventResponse - eventResponse BAD_REQUEST"
                 }
+
+                recordHealthEvent(
+                    eventName = CSEventNames.ClickStreamEventBatchErrorResponse.value,
+                    eventType = EventTypes.AGGREGATE,
+                    error = CSErrorReasons.PARSING_EXCEPTION,
+                    eventBatchId = eventRequestGuid
+                )
             }
             else -> {
                 logger.debug {
                     "CSRetryableCallback#trackEventResponse - eventResponse ClickStreamEventBatchErrorResponse"
                 }
+
+                recordHealthEvent(
+                    eventName = CSEventNames.ClickStreamEventBatchErrorResponse.value,
+                    eventType = EventTypes.AGGREGATE,
+                    error = CSErrorReasons.UNKNOWN,
+                    eventBatchId = eventRequestGuid
+                )
             }
+        }
+    }
+
+    private suspend fun recordHealthEvent(
+        eventName: String,
+        eventType: String,
+        error: String,
+        eventBatchId: String,
+    ) {
+        logger.debug {
+            StringBuilder()
+                .append("CSRetryableCallback#recordHealthEvent - events : ${eventRequest.eventsList}")
+                .apply {
+                    if (eventRequest.eventsCount > 0) {
+                        append("isHealthEvent : ${eventRequest.getEvents(0).isHealthEvent()}")
+                    }
+                }.toString()
+        }
+
+        if (eventRequest.eventsCount > 0 && eventRequest.getEvents(0).isHealthEvent().not()) {
+            logger.debug {
+                "CSRetryableCallback#recordHealthEvent - insertHealthEvent"
+            }
+
+            healthEventRepository.insertHealthEvent(
+                CSHealthEvent(
+                    eventName = eventName,
+                    eventType = eventType,
+                    eventBatchId = eventBatchId,
+                    error = error,
+                    appVersion = info.appInfo.appVersion
+                )
+            )
         }
     }
 }

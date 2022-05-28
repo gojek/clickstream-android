@@ -18,12 +18,14 @@ private const val MAX_REQUEST_ACK_TIMEOUT = 10L
  * Data class which will be used to configure timeouts for network channel.
  *
  * @param endPoint Endpoint for web socket server
- * @param connectTimeout Connect timeout to be used by okhttp (in seconds)
+ * @param connectTimeout Connect timeout to be used by okhtp (in seconds)
  * @param readTimeout Read timeout to be used by okhttp (in seconds)
  * @param writeTimeout Write timeout to be used by okhttp (in seconds)
  * @param pingInterval Interval between pings initiated by client (in seconds)
- * @param initialRetryDurationInMs Initial retry duration to be used for retry backoff strategy (in milliseconds)
- * @param maxConnectionRetryDurationInMs Maximum retry duration for retry backoff strategy (in milliseconds)
+ * @param initialRetryDurationInMs
+ *        Initial retry duration to be used for retry backoff strategy (in milliseconds)
+ * @param maxConnectionRetryDurationInMs
+ *        Maximum retry duration for retry backoff strategy (in milliseconds)
  * @param maxRetriesPerBatch Maximum retries per batch request
  * @param maxRequestAckTimeout Maximum timeout for a request to receive Ack (in milliseconds)
  * @param okHttpClient OkHttpClient instance that passed from client

@@ -1,4 +1,4 @@
-package clickstream.config
+package clickstream.model
 
 /**
  * Fetches and returns device details.

@@ -5,7 +5,7 @@
 # This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
 # For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-gradle
 
-name: Java CI with Gradle
+name: Build
 
 on:
   push:
@@ -26,10 +26,8 @@ jobs:
           cache: gradle
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
-      - name: Run Unit Test
-        run: ./gradlew :clickstream:testDebugUnitTest
       - name: Run Static Analysis
-        run: ./gradlew :clickstream:check
+        run: ./gradlew :clickstream:testReleaseUnitTest
 
   build:
     runs-on: ubuntu-latest
@@ -45,8 +43,3 @@ jobs:
       run: chmod +x gradlew
     - name: Build with Gradle
       run: ./gradlew :clickstream:assembleRelease
-    - name: Archive aar
-      uses: actions/upload-artifact@v2
-      with:
-        name: clickstream
-        path: clickstream/build/outputs/aar/**.aar

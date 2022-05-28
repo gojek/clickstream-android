@@ -1,5 +1,6 @@
 package clickstream.internal.networklayer
 
+import clickstream.CSInfo
 import clickstream.connection.CSConnectionEvent.OnConnectionClosed
 import clickstream.connection.CSConnectionEvent.OnConnectionClosing
 import clickstream.connection.CSConnectionEvent.OnConnectionConnected
@@ -8,12 +9,18 @@ import clickstream.connection.CSConnectionEvent.OnConnectionFailed
 import clickstream.connection.CSConnectionEvent.OnMessageReceived
 import clickstream.connection.CSSocketConnectionListener
 import clickstream.connection.mapTo
+import clickstream.internal.analytics.CSErrorReasons
+import clickstream.internal.analytics.CSEventNames
+import clickstream.internal.analytics.CSHealthEvent
+import clickstream.internal.analytics.CSHealthEventRepository
+import clickstream.internal.analytics.EventTypes
 import clickstream.internal.lifecycle.CSAppLifeCycle
 import clickstream.internal.lifecycle.CSLifeCycleManager
 import clickstream.internal.utils.CSResult
 import clickstream.logger.CSLogger
 import com.gojek.clickstream.de.EventRequest
 import com.tinder.scarlet.WebSocket
+import java.net.SocketTimeoutException
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlinx.coroutines.CompletableJob
 import kotlinx.coroutines.CoroutineDispatcher
@@ -46,6 +53,8 @@ internal open class CSNetworkManager(
     private val networkRepository: CSNetworkRepository,
     protected val dispatcher: CoroutineDispatcher,
     protected val logger: CSLogger,
+    private val healthEventRepository: CSHealthEventRepository,
+    private val info: CSInfo,
     private val connectionListener: CSSocketConnectionListener
 ) : CSLifeCycleManager(appLifeCycleObserver) {
 
@@ -85,14 +94,14 @@ internal open class CSNetworkManager(
             override fun onSuccess(data: String) {
                 logger.debug { "CSNetworkManager#eventGuidFlow#onSuccess - $data" }
 
-                trySend(CSResult.Success(data))
+                offer(CSResult.Success(data))
             }
 
             override fun onError(error: Throwable, guid: String) {
                 error.printStackTrace()
                 logger.debug { "CSNetworkManager#eventGuidFlow#onError - $guid errorMessage : ${error.message}" }
 
-                trySend(CSResult.Failure(error, guid))
+                offer(CSResult.Failure(error, guid))
             }
         }
         awaitClose()
@@ -191,7 +200,44 @@ internal open class CSNetworkManager(
         }
     }
 
-    private fun trackConnectionFailure(failureResponse: WebSocket.Event.OnConnectionFailed) {
+    private suspend fun trackConnectionFailure(failureResponse: WebSocket.Event.OnConnectionFailed) {
         logger.debug { "CSNetworkManager#trackConnectionFailure $failureResponse" }
+
+        val healthEvent = when {
+            failureResponse.throwable.message?.contains(CSErrorReasons.USER_UNAUTHORIZED, true)
+                ?: false -> {
+                CSHealthEvent(
+                    eventName = CSEventNames.ClickStreamConnectionFailed.value,
+                    eventType = EventTypes.AGGREGATE,
+                    error = CSErrorReasons.USER_UNAUTHORIZED,
+                    appVersion = info.appInfo.appVersion
+                )
+            }
+            failureResponse.throwable is SocketTimeoutException -> {
+                CSHealthEvent(
+                    eventName = CSEventNames.ClickStreamConnectionFailed.value,
+                    eventType = EventTypes.AGGREGATE,
+                    error = CSErrorReasons.SOCKET_TIMEOUT,
+                    appVersion = info.appInfo.appVersion
+                )
+            }
+            failureResponse.throwable.message?.isNotEmpty() ?: false -> {
+                CSHealthEvent(
+                    eventName = CSEventNames.ClickStreamConnectionFailed.value,
+                    eventType = EventTypes.AGGREGATE,
+                    error = failureResponse.throwable.toString(),
+                    appVersion = info.appInfo.appVersion
+                )
+            }
+            else -> {
+                CSHealthEvent(
+                    eventName = CSEventNames.ClickStreamConnectionFailed.value,
+                    eventType = EventTypes.AGGREGATE,
+                    error = CSErrorReasons.UNKNOWN,
+                    appVersion = info.appInfo.appVersion
+                )
+            }
+        }
+        healthEventRepository.insertHealthEvent(healthEvent = healthEvent)
     }
 }

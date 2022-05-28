@@ -1,11 +1,5 @@
 package com.clickstream.app.config
 
-import clickstream.model.CSAppInfo
-import clickstream.model.CSInfo
-import clickstream.model.CSLocationInfo
-import clickstream.model.CSSessionInfo
-import clickstream.model.CSUserInfo
-
 fun CSInfo() = CSInfo(
     appInfo = CSAppInfo(appVersion = "1.1.0"),
     locationInfo = CSLocationInfo(

@@ -2,6 +2,7 @@ package clickstream.internal.workmanager
 
 import android.content.Context
 import clickstream.config.CSEventSchedulerConfig
+import clickstream.config.CSRemoteConfig
 import clickstream.internal.lifecycle.CSAppLifeCycle
 import clickstream.internal.lifecycle.CSBackgroundLifecycleManager
 import clickstream.internal.lifecycle.CSLifeCycleManager
@@ -17,7 +18,8 @@ internal class CSWorkManager(
     private val context: Context,
     private val eventSchedulerConfig: CSEventSchedulerConfig,
     private val logger: CSLogger,
-    private val backgroundLifecycleManager: CSBackgroundLifecycleManager
+    private val backgroundLifecycleManager: CSBackgroundLifecycleManager,
+    private val remoteConfig: CSRemoteConfig
 ) : CSLifeCycleManager(appLifeCycleObserver) {
 
     init {
@@ -26,10 +28,14 @@ internal class CSWorkManager(
     }
 
     override fun onStart() {
-        logger.debug { "CSWorkManager#onStart - backgroundTaskEnabled ${eventSchedulerConfig.backgroundTaskEnabled}" }
+        logger.debug {
+            "CSWorkManager#onStart -" +
+            "backgroundTaskEnabled ${eventSchedulerConfig.backgroundTaskEnabled}, " +
+            "isForegroundEventFlushEnabled ${remoteConfig.isForegroundEventFlushEnabled}"
+        }
 
         backgroundLifecycleManager.onStop()
-        if (eventSchedulerConfig.backgroundTaskEnabled) {
+        if (remoteConfig.isForegroundEventFlushEnabled && eventSchedulerConfig.backgroundTaskEnabled) {
             setupFutureWork()
         }
     }

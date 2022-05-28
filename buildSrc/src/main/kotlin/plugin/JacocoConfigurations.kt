@@ -1,5 +1,6 @@
 package plugin
 
+import java.io.File
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.named
@@ -7,7 +8,7 @@ import org.gradle.kotlin.dsl.register
 import org.gradle.testing.jacoco.plugins.JacocoPlugin
 import org.gradle.testing.jacoco.plugins.JacocoPluginExtension
 import org.gradle.testing.jacoco.tasks.JacocoReport
-import java.io.File
+import versions
 
 fun Project.configureJacocoMultiplatform() {
     configureJacoco {
@@ -43,7 +44,12 @@ fun Project.configureJacocoAndroid() {
             classDirectories.setFrom(files(debugTree))
 
             executionData.setFrom(fileTree(buildDir).apply {
-                setIncludes(setOf("jacoco/testDebugUnitTest.exec", "outputs/code-coverage/connected/*coverage.ec"))
+                setIncludes(
+                    setOf(
+                        "jacoco/testDebugUnitTest.exec",
+                        "outputs/code-coverage/connected/*coverage.ec"
+                    )
+                )
             })
         }
     }

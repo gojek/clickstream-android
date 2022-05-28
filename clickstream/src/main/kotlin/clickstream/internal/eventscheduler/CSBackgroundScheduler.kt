@@ -1,8 +1,14 @@
-@file:Suppress("LongParameterList")
-
 package clickstream.internal.eventscheduler
 
+import clickstream.CSEvent
+import clickstream.CSInfo
 import clickstream.config.CSEventSchedulerConfig
+import clickstream.internal.analytics.CSEventNames
+import clickstream.internal.analytics.CSHealthEvent
+import clickstream.internal.analytics.CSHealthEventRepository
+import clickstream.internal.analytics.EventTypes
+import clickstream.analytics.event.CSEventHealthListener
+import clickstream.internal.di.CSServiceLocator
 import clickstream.internal.lifecycle.CSAppLifeCycle
 import clickstream.internal.lifecycle.CSBackgroundLifecycleManager
 import clickstream.internal.networklayer.CSBackgroundNetworkManager
@@ -33,23 +39,29 @@ internal class CSBackgroundScheduler(
     dispatcher: CoroutineDispatcher,
     config: CSEventSchedulerConfig,
     eventRepository: CSEventRepository,
+    healthEventRepository: CSHealthEventRepository,
     logger: CSLogger,
     guIdGenerator: CSGuIdGenerator,
     timeStampGenerator: CSTimeStampGenerator,
     batteryStatusObserver: CSBatteryStatusObserver,
     networkStatusObserver: CSNetworkStatusObserver,
-    private val backgroundLifecycleManager: CSBackgroundLifecycleManager
+    private val backgroundLifecycleManager: CSBackgroundLifecycleManager,
+    private val info: CSInfo,
+    eventHealthListener: CSEventHealthListener
 ) : CSEventScheduler(
     appLifeCycleObserver,
     networkManager,
     dispatcher,
     config,
     eventRepository,
+    healthEventRepository,
     logger,
     guIdGenerator,
     timeStampGenerator,
     batteryStatusObserver,
-    networkStatusObserver
+    networkStatusObserver,
+    info,
+    eventHealthListener
 ) {
 
     override fun onStart() {
@@ -77,6 +89,8 @@ internal class CSBackgroundScheduler(
         waitForNetwork()
         flushAllEvents()
         waitForAck()
+        flushHealthEvents()
+        waitForAck()
         return eventRepository.getAllEvents().isEmpty()
     }
 
@@ -95,8 +109,38 @@ internal class CSBackgroundScheduler(
 
         val events = eventRepository.getAllEvents()
         if (events.isEmpty()) return
+        val reqId = forwardEvents(batch = events)
+        reqId?.let {
+            CSHealthEvent(
+                eventName = CSEventNames.ClickStreamFlushOnBackground.value,
+                eventType = EventTypes.AGGREGATE,
+                eventBatchId = it,
+                eventId = events.joinToString { event -> event.eventGuid },
+                appVersion = info.appInfo.appVersion
+            )
+        }?.let { healthEventRepository.insertHealthEvent(it) }
+    }
 
-        forwardEvents(batch = events)
+    private suspend fun flushHealthEvents() {
+        logger.debug { "CSBackgroundScheduler#flushHealthEvents" }
+
+        val healthEvents =
+            CSServiceLocator.getInstance().healthEventProcessor.getAggregateEventsBasedOnEventName()
+                .map { health ->
+                    CSEvent(
+                        guid = health.healthMeta.eventGuid,
+                        timestamp = health.eventTimestamp,
+                        message = health
+                    )
+                }
+                .map { CSEventData.create(it).first }
+
+        logger.debug { "CSBackgroundScheduler#flushHealthEvents - healthEvents size ${healthEvents.size}" }
+        logger.debug { "CSBackgroundScheduler#flushHealthEvents - healthEventsGuid ${healthEvents.map { it.eventGuid }}" }
+
+        if (healthEvents.isNotEmpty()) {
+            forwardEvents(healthEvents)
+        }
     }
 
     private suspend fun waitForAck() {
