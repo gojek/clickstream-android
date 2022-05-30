@@ -8,9 +8,12 @@ import clickstream.connection.CSSocketConnectionListener
 import clickstream.connection.NoOpCSConnectionListener
 import clickstream.health.CSEventGeneratedTimestampListener
 import clickstream.health.CSEventHealthListener
+import clickstream.health.CSHealthEventFactory
 import clickstream.health.CSHealthEventLogger
+import clickstream.health.CSHealthEventProcessor
+import clickstream.health.CSHealthEventRepository
+import clickstream.health.CSHealthGateway
 import clickstream.health.CSInfo
-import clickstream.health.DefaultCSHealthEventProcessor
 import clickstream.internal.analytics.impl.NoOpCSHealthEventLogger
 import clickstream.internal.di.CSServiceLocator
 import clickstream.logger.CSLogLevel
@@ -29,7 +32,6 @@ import kotlinx.coroutines.Dispatchers
  * @param dispatcher A [CoroutineDispatcher] object for threading related work.
  * @param info An object that wraps [CSAppInfo], [CSLocationInfo], [CSUserInfo], [CSSessionInfo], [CSDeviceInfo]
  * @param config An object which holds the configuration for processor, scheduler & network manager
- * @param healthLogger An object which hold the configuration for Health Metrics.
  * @param logLevel ClickStream Loglevel for debugging purposes.
  * @param eventGeneratedTimeStamp An object which provide a plugin for exposes a timestamp where call side able to use
  *        for provides NTP timestamp
@@ -42,15 +44,14 @@ public class CSConfiguration private constructor(
     internal val dispatcher: CoroutineDispatcher,
     internal val info: CSInfo,
     internal val config: CSConfig,
-    internal val healthLogger: CSHealthEventLogger,
     internal val logLevel: CSLogLevel,
     internal val eventGeneratedTimeStamp: CSEventGeneratedTimestampListener,
     internal val socketConnectionListener: CSSocketConnectionListener,
     internal val remoteConfig: CSRemoteConfig,
     internal val eventHealthListener: CSEventHealthListener,
-    internal val healthEventRepository: clickstream.health.CSHealthEventRepository,
-    internal val healthEventProcessor: DefaultCSHealthEventProcessor,
-    internal val healthEventFactory: clickstream.health.CSHealthEventFactory
+    internal val healthEventRepository: CSHealthEventRepository,
+    internal val healthEventProcessor: CSHealthEventProcessor,
+    internal val healthEventFactory: CSHealthEventFactory
 ) {
     /**
      * A Builder for [CSConfiguration]'s.
@@ -84,11 +85,7 @@ public class CSConfiguration private constructor(
          */
         private val config: CSConfig,
 
-        private val healthEventRepository: clickstream.health.CSHealthEventRepository,
-
-        private val healthEventProcessor: DefaultCSHealthEventProcessor,
-
-        private val healthEventFactory: clickstream.health.CSHealthEventFactory
+        private val healthGateway: CSHealthGateway
     ) {
         private lateinit var dispatcher: CoroutineDispatcher
         private lateinit var eventGeneratedListener: CSEventGeneratedTimestampListener
@@ -202,14 +199,14 @@ public class CSConfiguration private constructor(
             return CSConfiguration(
                 context, dispatcher,
                 info, config,
-                healthListener, logLevel,
+                logLevel,
                 eventGeneratedListener,
                 socketConnectionListener,
                 remoteConfig,
-                eventHealthListener,
-                healthEventRepository,
-                healthEventProcessor,
-                healthEventFactory
+                healthGateway.eventHealthListener,
+                healthGateway.healthEventRepository,
+                healthGateway.healthEventProcessor,
+                healthGateway.healthEventFactory
             )
         }
     }
