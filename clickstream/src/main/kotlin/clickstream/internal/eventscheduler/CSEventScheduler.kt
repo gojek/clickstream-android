@@ -6,8 +6,6 @@ import clickstream.config.CSEventSchedulerConfig
 import clickstream.internal.analytics.CSErrorReasons
 import clickstream.internal.analytics.CSEventNames
 import clickstream.internal.analytics.CSEventNames.ClickStreamEventBatchTriggerFailed
-import clickstream.internal.analytics.CSHealthEvent
-import clickstream.internal.analytics.CSHealthEventRepository
 import clickstream.internal.analytics.EventTypes
 import clickstream.analytics.event.CSEventHealthListener
 import clickstream.internal.lifecycle.CSAppLifeCycle

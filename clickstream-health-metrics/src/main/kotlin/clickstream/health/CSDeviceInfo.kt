@@ -1,4 +1,4 @@
-package clickstream.model
+package clickstream.health
 
 /**
  * Fetches and returns device details.

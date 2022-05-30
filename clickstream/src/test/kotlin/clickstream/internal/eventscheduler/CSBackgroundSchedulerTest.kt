@@ -5,7 +5,6 @@ import clickstream.fake.FakeEventBatchDao
 import clickstream.fake.defaultEventWrapperData
 import clickstream.fake.fakeInfo
 import clickstream.internal.analytics.CSHealthEventProcessor
-import clickstream.internal.analytics.CSHealthEventRepository
 import clickstream.internal.di.CSServiceLocator
 import clickstream.internal.eventscheduler.impl.DefaultCSEventRepository
 import clickstream.internal.lifecycle.CSAppLifeCycle

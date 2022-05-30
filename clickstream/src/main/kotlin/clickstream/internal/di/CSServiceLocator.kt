@@ -3,7 +3,6 @@ package clickstream.internal.di
 import androidx.annotation.GuardedBy
 import clickstream.config.CSEventSchedulerConfig
 import clickstream.internal.analytics.CSHealthEventProcessor
-import clickstream.internal.analytics.CSHealthEventRepository
 import clickstream.analytics.event.CSEventHealthListener
 import clickstream.internal.eventprocessor.CSEventProcessor
 import clickstream.internal.eventscheduler.CSBackgroundScheduler

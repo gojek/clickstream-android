@@ -1,19 +1,16 @@
 package clickstream.config
 
 import android.content.Context
-import clickstream.CSAppInfo
 import clickstream.CSDeviceInfo
-import clickstream.CSInfo
-import clickstream.CSLocationInfo
-import clickstream.CSSessionInfo
-import clickstream.CSUserInfo
+import clickstream.analytics.event.CSEventHealthListener
+import clickstream.analytics.event.impl.NoOpCSEventHealthListener
 import clickstream.config.timestamp.CSEventGeneratedTimestampListener
 import clickstream.config.timestamp.DefaultCSEventGeneratedTimestampListener
 import clickstream.connection.CSSocketConnectionListener
 import clickstream.connection.NoOpCSConnectionListener
+import clickstream.health.CSHealthEventRepository
+import clickstream.health.CSInfo
 import clickstream.internal.analytics.CSHealthEventLogger
-import clickstream.analytics.event.CSEventHealthListener
-import clickstream.analytics.event.impl.NoOpCSEventHealthListener
 import clickstream.internal.analytics.impl.NoOpCSHealthEventLogger
 import clickstream.internal.di.CSServiceLocator
 import clickstream.logger.CSLogLevel
@@ -50,7 +47,8 @@ public class CSConfiguration private constructor(
     internal val eventGeneratedTimeStamp: CSEventGeneratedTimestampListener,
     internal val socketConnectionListener: CSSocketConnectionListener,
     internal val remoteConfig: CSRemoteConfig,
-    internal val eventHealthListener: CSEventHealthListener
+    internal val eventHealthListener: CSEventHealthListener,
+    internal val healthEventRepository: CSHealthEventRepository
 ) {
     /**
      * A Builder for [CSConfiguration]'s.
@@ -82,7 +80,9 @@ public class CSConfiguration private constructor(
          *  - NetworkConfig, to define endpoint and timout related things.
          *  - HealthConfig, to define verbosity and health related things.
          */
-        private val config: CSConfig
+        private val config: CSConfig,
+
+        private val healthEventRepository: CSHealthEventRepository
     ) {
         private lateinit var dispatcher: CoroutineDispatcher
         private lateinit var eventGeneratedListener: CSEventGeneratedTimestampListener
@@ -200,7 +200,8 @@ public class CSConfiguration private constructor(
                 eventGeneratedListener,
                 socketConnectionListener,
                 remoteConfig,
-                eventHealthListener
+                eventHealthListener,
+                healthEventRepository
             )
         }
     }

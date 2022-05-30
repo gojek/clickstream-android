@@ -1,4 +1,4 @@
-package clickstream.model
+package clickstream.health
 
 /**
  * A common data class which wraps [CSAppInfo], [CSLocationInfo],

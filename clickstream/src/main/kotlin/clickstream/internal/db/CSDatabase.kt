@@ -6,11 +6,11 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import clickstream.health.CSHealthEvent
+import clickstream.health.CSHealthEventDao
 import clickstream.internal.eventscheduler.CSEventData
 import clickstream.internal.eventscheduler.CSEventDataDao
 import clickstream.internal.eventscheduler.CSEventDataTypeConverters
-import clickstream.internal.analytics.CSHealthEvent
-import clickstream.internal.analytics.CSHealthEventDao
 
 /**
  * The Database to store the events sent from the client.

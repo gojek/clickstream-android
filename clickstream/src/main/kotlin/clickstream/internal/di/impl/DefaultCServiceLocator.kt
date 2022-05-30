@@ -2,17 +2,16 @@ package clickstream.internal.di.impl
 
 import android.app.Application
 import android.content.Context
-import clickstream.CSInfo
 import clickstream.analytics.event.CSEventHealthListener
 import clickstream.config.CSConfig
 import clickstream.config.CSEventSchedulerConfig
 import clickstream.config.CSRemoteConfig
 import clickstream.config.timestamp.CSEventGeneratedTimestampListener
 import clickstream.connection.CSSocketConnectionListener
+import clickstream.health.CSHealthEventRepository
+import clickstream.health.CSInfo
 import clickstream.internal.analytics.CSHealthEventLogger
 import clickstream.internal.analytics.CSHealthEventProcessor
-import clickstream.internal.analytics.CSHealthEventRepository
-import clickstream.internal.analytics.impl.DefaultCSHealthEventRepository
 import clickstream.internal.db.CSAppVersionSharedPref
 import clickstream.internal.db.CSDatabase
 import clickstream.internal.db.impl.DefaultCSAppVersionSharedPref
@@ -68,7 +67,8 @@ internal class DefaultCServiceLocator(
     private val eventGeneratedTimestampListener: CSEventGeneratedTimestampListener,
     private val socketConnectionListener: CSSocketConnectionListener,
     private val remoteConfig: CSRemoteConfig,
-    override val eventHealthListener: CSEventHealthListener
+    override val eventHealthListener: CSEventHealthListener,
+    override val healthEventRepository: CSHealthEventRepository
 ) : CSServiceLocator {
 
     private val guidGenerator: CSGuIdGenerator by lazy {
@@ -173,14 +173,6 @@ internal class DefaultCServiceLocator(
 
     override val logger: CSLogger by lazy {
         CSLogger(logLevel)
-    }
-
-    override val healthEventRepository: CSHealthEventRepository by lazy {
-        DefaultCSHealthEventRepository(
-            sessionId = info.sessionInfo.sessionID,
-            healthEventDao = db.healthEventDao(),
-            info = info
-        )
     }
 
     override val networkManager: CSNetworkManager by lazy {

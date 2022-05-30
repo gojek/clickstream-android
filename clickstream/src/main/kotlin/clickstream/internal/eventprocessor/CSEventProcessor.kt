@@ -5,8 +5,6 @@ import clickstream.CSInfo
 import clickstream.config.CSEventProcessorConfig
 import clickstream.protoName
 import clickstream.internal.analytics.CSEventNames
-import clickstream.internal.analytics.CSHealthEvent
-import clickstream.internal.analytics.CSHealthEventRepository
 import clickstream.internal.analytics.EventTypes
 import clickstream.internal.eventscheduler.CSEventScheduler
 import clickstream.logger.CSLogger

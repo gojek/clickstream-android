@@ -1,8 +1,8 @@
 package clickstream.internal.networklayer
 
-import clickstream.CSInfo
 import clickstream.config.CSNetworkConfig
-import clickstream.internal.analytics.CSHealthEventRepository
+import clickstream.health.CSHealthEventRepository
+import clickstream.health.CSInfo
 import clickstream.internal.utils.CSCallback
 import clickstream.internal.utils.CSTimeStampGenerator
 import clickstream.logger.CSLogger

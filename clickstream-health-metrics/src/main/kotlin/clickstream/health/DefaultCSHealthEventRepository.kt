@@ -1,19 +1,11 @@
-package clickstream.internal.analytics.impl
-
-import clickstream.CSInfo
-import clickstream.internal.analytics.AGGREGATE_EVENT_TYPE
-import clickstream.internal.analytics.BUCKET_EVENT_TYPE
-import clickstream.internal.analytics.CSHealthEvent
-import clickstream.internal.analytics.CSHealthEventDao
-import clickstream.internal.analytics.CSHealthEventRepository
-import clickstream.internal.analytics.INSTANT_EVENT_TYPE
+package clickstream.health
 
 /**
  * The HealthRepositoryImpl is the implementation detail of the [CSHealthEventRepository].
  *
  * @param healthEventDao - The Dao object to communicate to the DB
  */
-internal class DefaultCSHealthEventRepository(
+public class DefaultCSHealthEventRepository(
     private val sessionId: String,
     private val healthEventDao: CSHealthEventDao,
     private val info: CSInfo

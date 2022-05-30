@@ -4,8 +4,6 @@ import clickstream.CSEvent
 import clickstream.CSInfo
 import clickstream.config.CSEventSchedulerConfig
 import clickstream.internal.analytics.CSEventNames
-import clickstream.internal.analytics.CSHealthEvent
-import clickstream.internal.analytics.CSHealthEventRepository
 import clickstream.internal.analytics.EventTypes
 import clickstream.analytics.event.CSEventHealthListener
 import clickstream.internal.di.CSServiceLocator

@@ -1,12 +1,12 @@
 package clickstream.internal.networklayer
 
-import clickstream.CSInfo
 import clickstream.config.CSNetworkConfig
+import clickstream.health.CSEventNames
+import clickstream.health.CSHealthEvent
+import clickstream.health.CSHealthEventRepository
+import clickstream.health.CSInfo
+import clickstream.health.EventTypes
 import clickstream.internal.analytics.CSErrorReasons
-import clickstream.internal.analytics.CSEventNames
-import clickstream.internal.analytics.CSHealthEvent
-import clickstream.internal.analytics.CSHealthEventRepository
-import clickstream.internal.analytics.EventTypes
 import clickstream.internal.utils.CSTimeStampGenerator
 import clickstream.internal.utils.CSTimeStampMessageBuilder
 import clickstream.isHealthEvent

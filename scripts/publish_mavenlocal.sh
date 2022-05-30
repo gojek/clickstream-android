@@ -1,3 +1,4 @@
 #!/usr/bin/env bash
 
-./gradlew :clickstream:assembleRelease -PisHealthEnabled=true && ./gradlew :clickstream:publishToMavenLocal
+./gradlew :clickstream:assembleRelease && ./gradlew :clickstream:publishToMavenLocal
+./gradlew :clickstream-health-metrics:assembleRelease && ./gradlew :clickstream-health-metrics:publishToMavenLocal

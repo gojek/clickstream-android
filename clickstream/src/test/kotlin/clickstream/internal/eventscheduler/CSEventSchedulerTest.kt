@@ -4,7 +4,6 @@ import clickstream.config.CSEventSchedulerConfig
 import clickstream.fake.FakeEventBatchDao
 import clickstream.fake.defaultEventWrapperData
 import clickstream.fake.fakeInfo
-import clickstream.internal.analytics.CSHealthEventRepository
 import clickstream.internal.eventscheduler.impl.DefaultCSEventRepository
 import clickstream.internal.lifecycle.CSAppLifeCycle
 import clickstream.internal.networklayer.CSNetworkManager

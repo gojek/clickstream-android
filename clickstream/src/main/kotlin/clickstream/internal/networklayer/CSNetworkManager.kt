@@ -11,8 +11,6 @@ import clickstream.connection.CSSocketConnectionListener
 import clickstream.connection.mapTo
 import clickstream.internal.analytics.CSErrorReasons
 import clickstream.internal.analytics.CSEventNames
-import clickstream.internal.analytics.CSHealthEvent
-import clickstream.internal.analytics.CSHealthEventRepository
 import clickstream.internal.analytics.EventTypes
 import clickstream.internal.lifecycle.CSAppLifeCycle
 import clickstream.internal.lifecycle.CSLifeCycleManager

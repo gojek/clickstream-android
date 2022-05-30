@@ -106,7 +106,8 @@ internal class DefaultClickStream private constructor(
                         eventGeneratedTimestampListener = configuration.eventGeneratedTimeStamp,
                         socketConnectionListener = configuration.socketConnectionListener,
                         remoteConfig = configuration.remoteConfig,
-                        eventHealthListener = configuration.eventHealthListener
+                        eventHealthListener = configuration.eventHealthListener,
+                        healthEventRepository = configuration.healthEventRepository
                     )
 
                     CSServiceLocator.setServiceLocator(serviceLocator)

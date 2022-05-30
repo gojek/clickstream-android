@@ -1,4 +1,4 @@
-package clickstream.internal.analytics
+package clickstream.health
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -23,7 +23,7 @@ import androidx.room.PrimaryKey
  * @param appVersion - Host application version that internally we used for measure drop rates.
  */
 @Entity(tableName = "HealthStats")
-internal data class CSHealthEvent(
+public data class CSHealthEvent(
     @PrimaryKey(autoGenerate = true)
     val healthEventID: Int = 0,
     val eventName: String,
