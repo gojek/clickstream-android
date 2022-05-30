@@ -1,9 +1,9 @@
-package clickstream.health
+package clickstream.health.intermediate
 
 /**
  * ClickStreamTracker can be implemented by host app to provide observer for ClickStream events
  */
-public interface CSHealthEventLogger {
+public interface CSHealthEventLoggerListener {
 
     /**
      * Method called to notify observer about ClickStream events

@@ -2,7 +2,6 @@ package clickstream.internal
 
 import androidx.annotation.GuardedBy
 import androidx.annotation.RestrictTo
-import clickstream.CSEvent
 import clickstream.ClickStream
 import clickstream.config.CSConfiguration
 import clickstream.internal.di.CSServiceLocator
@@ -10,6 +9,7 @@ import clickstream.internal.di.impl.DefaultCServiceLocator
 import clickstream.internal.eventprocessor.CSEventProcessor
 import clickstream.internal.workmanager.CSWorkManager
 import clickstream.logger.CSLogger
+import clickstream.model.CSEvent
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope

@@ -9,7 +9,7 @@ import clickstream.connection.CSConnectionEvent.OnConnectionFailed
 import clickstream.connection.CSConnectionEvent.OnMessageReceived
 import clickstream.connection.CSSocketConnectionListener
 import clickstream.connection.mapTo
-import clickstream.health.CSHealthEventRepository
+import clickstream.health.intermediate.CSHealthEventRepository
 import clickstream.health.constant.CSEventNamesConstant.ClickStreamConnectionFailed
 import clickstream.health.constant.CSEventTypesConstant
 import clickstream.health.model.CSHealthEventDTO

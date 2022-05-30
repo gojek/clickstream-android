@@ -2,10 +2,10 @@ package clickstream.internal.di
 
 import androidx.annotation.GuardedBy
 import clickstream.config.CSEventSchedulerConfig
-import clickstream.health.CSEventHealthListener
-import clickstream.health.CSHealthEventFactory
-import clickstream.health.CSHealthEventProcessor
-import clickstream.health.CSHealthEventRepository
+import clickstream.health.intermediate.CSEventHealthListener
+import clickstream.health.intermediate.CSHealthEventFactory
+import clickstream.health.intermediate.CSHealthEventProcessor
+import clickstream.health.intermediate.CSHealthEventRepository
 import clickstream.internal.eventprocessor.CSEventProcessor
 import clickstream.internal.eventscheduler.CSBackgroundScheduler
 import clickstream.internal.eventscheduler.CSEventScheduler

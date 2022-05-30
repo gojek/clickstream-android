@@ -5,8 +5,8 @@ import clickstream.fake.fakeCSHealthEventConfig
 import clickstream.fake.fakeCSInfo
 import clickstream.fake.fakeUserInfo
 import clickstream.health.internal.CSHealthEvent
-import clickstream.health.CSHealthEventFactory
-import clickstream.health.CSHealthEventRepository
+import clickstream.health.intermediate.CSHealthEventFactory
+import clickstream.health.intermediate.CSHealthEventRepository
 import clickstream.health.CSInfo
 import clickstream.health.CT_DESTINATION
 import clickstream.health.internal.DefaultCSHealthEventProcessor

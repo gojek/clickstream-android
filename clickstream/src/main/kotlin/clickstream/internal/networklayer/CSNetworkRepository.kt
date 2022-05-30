@@ -2,7 +2,7 @@ package clickstream.internal.networklayer
 
 import clickstream.CSInfo
 import clickstream.config.CSNetworkConfig
-import clickstream.health.CSHealthEventRepository
+import clickstream.health.intermediate.CSHealthEventRepository
 import clickstream.health.CSTimeStampGenerator
 import clickstream.internal.utils.CSCallback
 import clickstream.logger.CSLogger

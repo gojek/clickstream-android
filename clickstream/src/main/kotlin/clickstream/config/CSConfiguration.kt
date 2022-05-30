@@ -6,11 +6,11 @@ import clickstream.CSInfo
 import clickstream.config.timestamp.DefaultCSEventGeneratedTimestampListener
 import clickstream.connection.CSSocketConnectionListener
 import clickstream.connection.NoOpCSConnectionListener
-import clickstream.health.CSEventHealthListener
-import clickstream.health.CSHealthEventFactory
-import clickstream.health.CSHealthEventLogger
-import clickstream.health.CSHealthEventProcessor
-import clickstream.health.CSHealthEventRepository
+import clickstream.health.intermediate.CSEventHealthListener
+import clickstream.health.intermediate.CSHealthEventFactory
+import clickstream.health.intermediate.CSHealthEventLoggerListener
+import clickstream.health.intermediate.CSHealthEventProcessor
+import clickstream.health.intermediate.CSHealthEventRepository
 import clickstream.health.CSHealthGateway
 import clickstream.health.time.CSEventGeneratedTimestampListener
 import clickstream.internal.NoOpCSEventHealthListener
@@ -93,7 +93,7 @@ public class CSConfiguration private constructor(
         private lateinit var eventGeneratedListener: CSEventGeneratedTimestampListener
         private lateinit var socketConnectionListener: CSSocketConnectionListener
         private lateinit var eventHealthListener: CSEventHealthListener
-        private lateinit var healthListener: CSHealthEventLogger
+        private lateinit var healthListener: CSHealthEventLoggerListener
         private lateinit var remoteConfig: CSRemoteConfig
         private var logLevel: CSLogLevel = CSLogLevel.OFF
 
@@ -108,12 +108,12 @@ public class CSConfiguration private constructor(
         }
 
         /**
-         * Specifies a custom [CSHealthEventLogger] for [ClickStream].
+         * Specifies a custom [CSHealthEventLoggerListener] for [ClickStream].
          *
-         * @param health A [CSHealthEventLogger] for creating custom health tracker's.
+         * @param health A [CSHealthEventLoggerListener] for creating custom health tracker's.
          * @return This [Builder] instance
          */
-        public fun setHealthListener(health: CSHealthEventLogger): Builder = apply {
+        public fun setHealthListener(health: CSHealthEventLoggerListener): Builder = apply {
             this.healthListener = health
         }
 

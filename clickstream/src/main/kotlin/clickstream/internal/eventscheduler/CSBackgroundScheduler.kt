@@ -1,13 +1,13 @@
 package clickstream.internal.eventscheduler
 
-import clickstream.CSEvent
 import clickstream.CSInfo
 import clickstream.config.CSEventSchedulerConfig
-import clickstream.health.CSEventHealthListener
 import clickstream.health.CSGuIdGenerator
 import clickstream.health.CSTimeStampGenerator
 import clickstream.health.constant.CSEventNamesConstant.ClickStreamFlushOnBackground
 import clickstream.health.constant.CSEventTypesConstant
+import clickstream.health.intermediate.CSEventHealthListener
+import clickstream.health.intermediate.CSHealthEventRepository
 import clickstream.health.model.CSHealthEventDTO
 import clickstream.internal.di.CSServiceLocator
 import clickstream.internal.networklayer.CSBackgroundNetworkManager
@@ -16,6 +16,7 @@ import clickstream.internal.utils.CSNetworkStatusObserver
 import clickstream.lifecycle.CSAppLifeCycle
 import clickstream.lifecycle.CSBackgroundLifecycleManager
 import clickstream.logger.CSLogger
+import clickstream.model.CSEvent
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -38,7 +39,7 @@ internal class CSBackgroundScheduler(
     dispatcher: CoroutineDispatcher,
     config: CSEventSchedulerConfig,
     eventRepository: CSEventRepository,
-    healthEventRepository: clickstream.health.CSHealthEventRepository,
+    healthEventRepository: CSHealthEventRepository,
     logger: CSLogger,
     guIdGenerator: CSGuIdGenerator,
     timeStampGenerator: CSTimeStampGenerator,

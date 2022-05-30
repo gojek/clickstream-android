@@ -1,15 +1,15 @@
 package clickstream.internal.eventprocessor
 
-import clickstream.CSEvent
 import clickstream.CSInfo
 import clickstream.config.CSEventProcessorConfig
-import clickstream.health.CSHealthEventRepository
+import clickstream.extension.protoName
 import clickstream.health.constant.CSEventNamesConstant
 import clickstream.health.constant.CSEventTypesConstant
+import clickstream.health.intermediate.CSHealthEventRepository
 import clickstream.health.model.CSHealthEventDTO
 import clickstream.internal.eventscheduler.CSEventScheduler
 import clickstream.logger.CSLogger
-import clickstream.protoName
+import clickstream.model.CSEvent
 import java.util.Locale
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi

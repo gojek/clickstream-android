@@ -2,14 +2,14 @@ package clickstream.internal.networklayer
 
 import clickstream.CSInfo
 import clickstream.config.CSNetworkConfig
-import clickstream.health.CSHealthEventRepository
+import clickstream.extension.isHealthEvent
 import clickstream.health.CSTimeStampGenerator
 import clickstream.health.constant.CSEventNamesConstant
 import clickstream.health.constant.CSEventTypesConstant
+import clickstream.health.intermediate.CSHealthEventRepository
 import clickstream.health.model.CSHealthEventDTO
 import clickstream.internal.analytics.CSErrorReasons
 import clickstream.internal.utils.CSTimeStampMessageBuilder
-import clickstream.isHealthEvent
 import clickstream.logger.CSLogger
 import com.gojek.clickstream.de.EventRequest
 import com.gojek.clickstream.de.common.Code

@@ -1,9 +1,8 @@
 package clickstream.internal.eventscheduler
 
-import clickstream.CSEvent
 import clickstream.CSInfo
 import clickstream.config.CSEventSchedulerConfig
-import clickstream.health.CSEventHealthListener
+import clickstream.extension.isValidMessage
 import clickstream.health.CSGuIdGenerator
 import clickstream.health.CSTimeStampGenerator
 import clickstream.health.constant.CSEventNamesConstant.ClickStreamEventBatchCreated
@@ -11,6 +10,8 @@ import clickstream.health.constant.CSEventNamesConstant.ClickStreamEventBatchTri
 import clickstream.health.constant.CSEventNamesConstant.ClickStreamEventCached
 import clickstream.health.constant.CSEventNamesConstant.ClickStreamInvalidMessage
 import clickstream.health.constant.CSEventTypesConstant
+import clickstream.health.intermediate.CSEventHealthListener
+import clickstream.health.intermediate.CSHealthEventRepository
 import clickstream.health.model.CSHealthEventDTO
 import clickstream.internal.analytics.CSErrorReasons
 import clickstream.internal.networklayer.CSNetworkManager
@@ -20,10 +21,10 @@ import clickstream.internal.utils.CSNetworkStatusObserver
 import clickstream.internal.utils.CSResult
 import clickstream.internal.utils.CSTimeStampMessageBuilder
 import clickstream.internal.utils.flowableTicker
-import clickstream.isValidMessage
 import clickstream.lifecycle.CSAppLifeCycle
 import clickstream.lifecycle.CSLifeCycleManager
 import clickstream.logger.CSLogger
+import clickstream.model.CSEvent
 import com.gojek.clickstream.de.EventRequest
 import com.gojek.clickstream.internal.Health
 import com.google.protobuf.MessageLite
@@ -63,7 +64,7 @@ internal open class CSEventScheduler(
     protected val dispatcher: CoroutineDispatcher,
     protected val config: CSEventSchedulerConfig,
     protected val eventRepository: CSEventRepository,
-    protected val healthEventRepository: clickstream.health.CSHealthEventRepository,
+    protected val healthEventRepository: CSHealthEventRepository,
     protected val logger: CSLogger,
     private val guIdGenerator: CSGuIdGenerator,
     private val timeStampGenerator: CSTimeStampGenerator,
@@ -170,14 +171,14 @@ internal open class CSEventScheduler(
                         eventRepository.deleteEventDataByGuId(it.value)
                         logger.debug {
                             "CSEventScheduler#setupObservers - " +
-                                    "Event Request sent successfully and deleted from DB: ${it.value}"
+                            "Event Request sent successfully and deleted from DB: ${it.value}"
                         }
                     }
                     is CSResult.Failure -> {
                         eventRepository.resetOnGoingForGuid(it.value)
                         logger.debug {
                             "CSEventScheduler#setupObservers - " +
-                                    "Event Request failed due to: ${it.exception.message}"
+                            "Event Request failed due to: ${it.exception.message}"
                         }
                     }
                 }
@@ -235,12 +236,12 @@ internal open class CSEventScheduler(
         if (batch.isNotEmpty() && batch[0].messageName != Health::class.qualifiedName.orEmpty()) {
             logger.debug {
                 "CSEventScheduler#forwardEvents#batch - " +
-                        "eventBatchId : ${eventRequest.reqGuid}, " +
-                        "eventId : ${batch.joinToString { it.eventGuid }}"
+                "eventBatchId : ${eventRequest.reqGuid}, " +
+                "eventId : ${batch.joinToString { it.eventGuid }}"
             }
             logger.debug {
                 "CSEventScheduler#forwardEvents#batch - " +
-                        "messageName : ${batch[0].messageName}"
+                "messageName : ${batch[0].messageName}"
             }
             logHealthEvent(
                 CSHealthEventDTO(

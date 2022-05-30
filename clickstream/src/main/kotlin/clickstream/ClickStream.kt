@@ -5,6 +5,7 @@ import clickstream.ClickStream.Companion.initialize
 import clickstream.config.CSConfiguration
 import clickstream.internal.DefaultClickStream
 import clickstream.internal.DefaultClickStream.Companion.initialize
+import clickstream.model.CSEvent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 /**

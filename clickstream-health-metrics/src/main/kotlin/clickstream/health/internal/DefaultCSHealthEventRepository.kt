@@ -1,7 +1,7 @@
 package clickstream.health.internal
 
 import clickstream.CSInfo
-import clickstream.health.CSHealthEventRepository
+import clickstream.health.intermediate.CSHealthEventRepository
 import clickstream.health.internal.CSHealthEvent.Companion.dtoMapTo
 import clickstream.health.internal.CSHealthEvent.Companion.dtosMapTo
 import clickstream.health.internal.CSHealthEvent.Companion.mapToDtos

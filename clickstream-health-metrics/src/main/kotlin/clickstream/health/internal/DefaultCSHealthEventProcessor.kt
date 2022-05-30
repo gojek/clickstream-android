@@ -1,10 +1,10 @@
 package clickstream.health.internal
 
 import clickstream.CSInfo
-import clickstream.health.CSHealthEventFactory
-import clickstream.health.CSHealthEventLogger
-import clickstream.health.CSHealthEventProcessor
-import clickstream.health.CSHealthEventRepository
+import clickstream.health.intermediate.CSHealthEventFactory
+import clickstream.health.intermediate.CSHealthEventLoggerListener
+import clickstream.health.intermediate.CSHealthEventProcessor
+import clickstream.health.intermediate.CSHealthEventRepository
 import clickstream.health.constant.CSEventDestinationConstant
 import clickstream.health.constant.CSEventNamesConstant.ClickStreamBatchSize
 import clickstream.health.constant.CSEventNamesConstant.ClickStreamEventBatchLatency
@@ -67,7 +67,7 @@ internal class DefaultCSHealthEventProcessor(
     private val healthEventConfig: CSHealthEventConfig,
     private val info: CSInfo,
     private val logger: CSLogger,
-    private val healthEventLogger: CSHealthEventLogger,
+    private val healthEventLogger: CSHealthEventLoggerListener,
     private val healthEventFactory: CSHealthEventFactory,
     private val appVersion: String,
     private val appVersionPreference: CSAppVersionSharedPref

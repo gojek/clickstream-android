@@ -1,4 +1,4 @@
-package clickstream
+package clickstream.extension
 
 import com.gojek.clickstream.de.Event
 import com.gojek.clickstream.internal.Health
@@ -10,8 +10,9 @@ import java.util.Locale
 /**
  * Gets the field for the given field name
  */
-public fun MessageLite.getField(fieldName: String): Field =
-    this.javaClass.getDeclaredField(fieldName)
+public fun MessageLite.getField(fieldName: String): Field {
+    return this.javaClass.getDeclaredField(fieldName)
+}
 
 /**
  * Checks whether the given message contains valid UTF8 characters.
@@ -20,8 +21,7 @@ public fun MessageLite.getField(fieldName: String): Field =
  */
 public fun MessageLite.isValidMessage(): Boolean {
     fun isNestedType(field: Field): Boolean {
-        return field.type.name.contains("com.gojek.clickstream") &&
-                (field.name == "DEFAULT_INSTANCE").not()
+        return field.type.name.contains("com.gojek.clickstream") && (field.name == "DEFAULT_INSTANCE").not()
     }
 
     fun isStringType(field: Field): Boolean = field.type == String::class.java
@@ -32,11 +32,7 @@ public fun MessageLite.isValidMessage(): Boolean {
             isNestedType(field) -> {
                 field.isAccessible = true
                 val messageLite = field.get(this) as? MessageLite
-                isValidMessage = if (messageLite != null) {
-                    isValidMessage && messageLite.isValidMessage()
-                } else {
-                    isValidMessage
-                }
+                isValidMessage = if (messageLite != null) isValidMessage && messageLite.isValidMessage() else isValidMessage
             }
             isStringType(field) -> {
                 field.isAccessible = true

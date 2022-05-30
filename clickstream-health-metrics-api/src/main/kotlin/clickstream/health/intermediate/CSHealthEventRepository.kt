@@ -1,4 +1,4 @@
-package clickstream.health
+package clickstream.health.intermediate
 
 import clickstream.health.model.CSHealthEventDTO
 
