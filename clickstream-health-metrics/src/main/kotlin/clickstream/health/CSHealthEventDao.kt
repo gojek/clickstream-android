@@ -26,7 +26,7 @@ public interface CSHealthEventDao {
      * @param healthEvent - Event Data to be stored
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public suspend fun insert(healthEvent: CSHealthEvent)
+    public suspend fun insert(healthEvent: clickstream.health.CSHealthEvent)
 
     /**
      * A function [insertAll] that accommodate an action to save a [List] of [CSHealthEvent] object.
@@ -37,7 +37,7 @@ public interface CSHealthEventDao {
      * @param healthEventList - List of Event Data to be stored
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public suspend fun insertAll(healthEventList: List<CSHealthEvent>)
+    public suspend fun insertAll(healthEventList: List<clickstream.health.CSHealthEvent>)
 
     /**
      * A function [getEventByType] that retrieves all events based on the event type.
@@ -47,7 +47,7 @@ public interface CSHealthEventDao {
      *
      */
     @Query("SELECT * FROM HealthStats WHERE eventType = :eventType")
-    public suspend fun getEventByType(eventType: String): List<CSHealthEvent>
+    public suspend fun getEventByType(eventType: String): List<clickstream.health.CSHealthEvent>
 
     /**
      * A function [getBucketEventByEventBatchId] that accommodate an action to get list of [CSHealthEvent] objects
@@ -57,7 +57,7 @@ public interface CSHealthEventDao {
     public suspend fun getBucketEventByEventBatchId(
         eventName: String,
         eventBatchId: String
-    ): List<CSHealthEvent>
+    ): List<clickstream.health.CSHealthEvent>
 
     /**
      * A function [getBucketEventsByEventIdList] that accommodate an action to get list of [CSHealthEvent] objects
@@ -67,7 +67,7 @@ public interface CSHealthEventDao {
     public suspend fun getBucketEventsByEventIdList(
         eventName: String,
         eventId: List<String>
-    ): List<CSHealthEvent>
+    ): List<clickstream.health.CSHealthEvent>
 
     /**
      * A function [deleteBySessionId] that accommodate an action to delete of [CSHealthEvent] objects
@@ -88,5 +88,5 @@ public interface CSHealthEventDao {
      * Thread switching must be handled by the caller side
      */
     @Delete
-    public suspend fun deleteHealthEvent(events: List<CSHealthEvent>)
+    public suspend fun deleteHealthEvent(events: List<clickstream.health.CSHealthEvent>)
 }

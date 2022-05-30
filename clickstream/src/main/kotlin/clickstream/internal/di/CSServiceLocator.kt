@@ -1,11 +1,11 @@
 package clickstream.internal.di
 
 import androidx.annotation.GuardedBy
-import clickstream.analytics.event.CSEventHealthListener
 import clickstream.config.CSEventSchedulerConfig
+import clickstream.health.CSEventHealthListener
 import clickstream.health.CSHealthEventFactory
-import clickstream.health.CSHealthEventProcessor
 import clickstream.health.CSHealthEventRepository
+import clickstream.health.DefaultCSHealthEventProcessor
 import clickstream.internal.eventprocessor.CSEventProcessor
 import clickstream.internal.eventscheduler.CSBackgroundScheduler
 import clickstream.internal.eventscheduler.CSEventScheduler
@@ -104,6 +104,6 @@ internal interface CSServiceLocator {
 
     val eventHealthListener: CSEventHealthListener
     val healthEventRepository: CSHealthEventRepository
-    val healthEventProcessor: CSHealthEventProcessor
+    val healthEventProcessor: DefaultCSHealthEventProcessor
     val healthEventFactory: CSHealthEventFactory
 }

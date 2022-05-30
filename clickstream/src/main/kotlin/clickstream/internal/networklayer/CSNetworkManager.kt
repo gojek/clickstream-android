@@ -8,7 +8,7 @@ import clickstream.connection.CSConnectionEvent.OnConnectionFailed
 import clickstream.connection.CSConnectionEvent.OnMessageReceived
 import clickstream.connection.CSSocketConnectionListener
 import clickstream.connection.mapTo
-import clickstream.health.CSEventNames
+import clickstream.health.CSEventNames.ClickStreamConnectionFailed
 import clickstream.health.CSHealthEvent
 import clickstream.health.CSHealthEventRepository
 import clickstream.health.CSInfo
@@ -53,7 +53,7 @@ internal open class CSNetworkManager(
     private val networkRepository: CSNetworkRepository,
     protected val dispatcher: CoroutineDispatcher,
     protected val logger: CSLogger,
-    private val healthEventRepository: CSHealthEventRepository,
+    private val healthEventRepository: clickstream.health.CSHealthEventRepository,
     private val info: CSInfo,
     private val connectionListener: CSSocketConnectionListener
 ) : CSLifeCycleManager(appLifeCycleObserver) {
@@ -206,33 +206,33 @@ internal open class CSNetworkManager(
         val healthEvent = when {
             failureResponse.throwable.message?.contains(CSErrorReasons.USER_UNAUTHORIZED, true)
                 ?: false -> {
-                CSHealthEvent(
-                    eventName = CSEventNames.ClickStreamConnectionFailed.value,
-                    eventType = EventTypes.AGGREGATE,
+                clickstream.health.CSHealthEvent(
+                    eventName = ClickStreamConnectionFailed.value,
+                    eventType = clickstream.health.EventTypes.AGGREGATE,
                     error = CSErrorReasons.USER_UNAUTHORIZED,
                     appVersion = info.appInfo.appVersion
                 )
             }
             failureResponse.throwable is SocketTimeoutException -> {
-                CSHealthEvent(
-                    eventName = CSEventNames.ClickStreamConnectionFailed.value,
-                    eventType = EventTypes.AGGREGATE,
+                clickstream.health.CSHealthEvent(
+                    eventName = ClickStreamConnectionFailed.value,
+                    eventType = clickstream.health.EventTypes.AGGREGATE,
                     error = CSErrorReasons.SOCKET_TIMEOUT,
                     appVersion = info.appInfo.appVersion
                 )
             }
             failureResponse.throwable.message?.isNotEmpty() ?: false -> {
-                CSHealthEvent(
-                    eventName = CSEventNames.ClickStreamConnectionFailed.value,
-                    eventType = EventTypes.AGGREGATE,
+                clickstream.health.CSHealthEvent(
+                    eventName = ClickStreamConnectionFailed.value,
+                    eventType = clickstream.health.EventTypes.AGGREGATE,
                     error = failureResponse.throwable.toString(),
                     appVersion = info.appInfo.appVersion
                 )
             }
             else -> {
-                CSHealthEvent(
-                    eventName = CSEventNames.ClickStreamConnectionFailed.value,
-                    eventType = EventTypes.AGGREGATE,
+                clickstream.health.CSHealthEvent(
+                    eventName = ClickStreamConnectionFailed.value,
+                    eventType = clickstream.health.EventTypes.AGGREGATE,
                     error = CSErrorReasons.UNKNOWN,
                     appVersion = info.appInfo.appVersion
                 )

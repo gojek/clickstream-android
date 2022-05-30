@@ -1,13 +1,10 @@
 package clickstream.internal.eventscheduler
 
 import clickstream.CSEvent
-import clickstream.analytics.event.CSEventHealthListener
 import clickstream.config.CSEventSchedulerConfig
-import clickstream.health.CSEventNames
-import clickstream.health.CSHealthEvent
-import clickstream.health.CSHealthEventRepository
+import clickstream.health.CSEventHealthListener
+import clickstream.health.CSEventNames.ClickStreamFlushOnBackground
 import clickstream.health.CSInfo
-import clickstream.health.EventTypes
 import clickstream.internal.di.CSServiceLocator
 import clickstream.internal.lifecycle.CSAppLifeCycle
 import clickstream.internal.lifecycle.CSBackgroundLifecycleManager
@@ -39,7 +36,7 @@ internal class CSBackgroundScheduler(
     dispatcher: CoroutineDispatcher,
     config: CSEventSchedulerConfig,
     eventRepository: CSEventRepository,
-    healthEventRepository: CSHealthEventRepository,
+    healthEventRepository: clickstream.health.CSHealthEventRepository,
     logger: CSLogger,
     guIdGenerator: CSGuIdGenerator,
     timeStampGenerator: CSTimeStampGenerator,
@@ -111,9 +108,9 @@ internal class CSBackgroundScheduler(
         if (events.isEmpty()) return
         val reqId = forwardEvents(batch = events)
         reqId?.let {
-            CSHealthEvent(
-                eventName = CSEventNames.ClickStreamFlushOnBackground.value,
-                eventType = EventTypes.AGGREGATE,
+            clickstream.health.CSHealthEvent(
+                eventName = ClickStreamFlushOnBackground.value,
+                eventType = clickstream.health.EventTypes.AGGREGATE,
                 eventBatchId = it,
                 eventId = events.joinToString { event -> event.eventGuid },
                 appVersion = info.appInfo.appVersion

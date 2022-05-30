@@ -39,7 +39,7 @@ internal enum class CSNetworkType {
 /**
  * The HealthEventProcessor is responsible for aggregating, sending and clearing health events for the sdk
  */
-public open class CSHealthEventProcessor(
+public open class DefaultCSHealthEventProcessor(
     appLifeCycleObserver: CSAppLifeCycle,
     private val healthEventRepository: CSHealthEventRepository,
     private val dispatcher: CoroutineDispatcher,
@@ -50,7 +50,7 @@ public open class CSHealthEventProcessor(
     private val healthEventFactory: CSHealthEventFactory,
     private val appVersion: String,
     private val appVersionPreference: CSAppVersionSharedPref
-) : CSLifeCycleManager(appLifeCycleObserver) {
+) : CSLifeCycleManager(appLifeCycleObserver), CSHealthEventProcessor {
 
     private var job: Job = SupervisorJob()
     private var coroutineScope: CoroutineScope = CoroutineScope(job + dispatcher)
@@ -89,7 +89,7 @@ public open class CSHealthEventProcessor(
     /**
      * Returns list of health protos after aggregation
      */
-    public suspend fun getAggregateEventsBasedOnEventName(): List<Health> {
+    override suspend fun getAggregateEventsBasedOnEventName(): List<Health> {
         logger.debug { "CSHealthEventProcessor#getAggregateEventsBasedOnEventName" }
 
         if (!healthEventConfig.destination.contains(CS_DESTINATION) || (isHealthEventEnabled().not())) {
@@ -168,7 +168,7 @@ public open class CSHealthEventProcessor(
             }
     }
 
-    private suspend fun sendAggregateEventsBasedOnEventName(events: List<CSHealthEvent>) {
+    private suspend fun sendAggregateEventsBasedOnEventName(events: List<clickstream.health.CSHealthEvent>) {
         logger.debug { "CSHealthEventProcessor#sendAggregateEventsBasedOnEventName" }
 
         val batchSize = if (events.joinToString("") { it.eventId }.isNotBlank() ||
@@ -189,7 +189,7 @@ public open class CSHealthEventProcessor(
             }
     }
 
-    private suspend fun sendAggregateEventsBasedOnError(events: Map<String, List<CSHealthEvent>>) {
+    private suspend fun sendAggregateEventsBasedOnError(events: Map<String, List<clickstream.health.CSHealthEvent>>) {
         logger.debug { "CSHealthEventProcessor#sendAggregateEventsBasedOnError" }
 
         events.forEach { entry ->
@@ -289,7 +289,7 @@ public open class CSHealthEventProcessor(
         }
     }
 
-    private suspend fun aggregateBuckets(bucketEvents: List<CSHealthEvent>) {
+    private suspend fun aggregateBuckets(bucketEvents: List<clickstream.health.CSHealthEvent>) {
         logger.debug { "CSHealthEventProcessor#aggregateBuckets" }
 
         val groupByEventNames = bucketEvents.groupBy { it.eventName }
@@ -313,7 +313,7 @@ public open class CSHealthEventProcessor(
         }
     }
 
-    private suspend fun pushEvents(events: List<CSHealthEvent>) {
+    private suspend fun pushEvents(events: List<clickstream.health.CSHealthEvent>) {
         logger.debug { "CSHealthEventProcessor#pushEvents" }
 
         events.forEach {
@@ -324,7 +324,10 @@ public open class CSHealthEventProcessor(
         }
     }
 
-    private fun createHealthProto(eventName: String, events: List<CSHealthEvent>): Health {
+    private fun createHealthProto(
+        eventName: String,
+        events: List<clickstream.health.CSHealthEvent>
+    ): Health {
         logger.debug { "CSHealthEventProcessor#createHealthProto" }
 
         val eventGuids = mutableListOf<String>()

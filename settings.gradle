@@ -2,5 +2,6 @@ rootProject.name = 'clickstream-android'
 include ':app'
 include ':clickstream'
 include ':clickstream-health-metrics'
+include ':clickstream-health-metrics-api'
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")

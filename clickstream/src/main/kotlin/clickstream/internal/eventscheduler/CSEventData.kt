@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import clickstream.CSEvent
 import clickstream.eventName
-import clickstream.analytics.event.CSEventHealth
+import clickstream.health.CSEventHealth
 import com.gojek.clickstream.de.Event
 import com.google.protobuf.ByteString
 import com.google.protobuf.MessageLite
@@ -76,7 +76,7 @@ public data class CSEventData(
         /**
          * Creates a new instance of EventData with the given [CSEvent]
          */
-        public fun create(event: CSEvent): Pair<CSEventData, CSEventHealth> {
+        public fun create(event: CSEvent): Pair<CSEventData, clickstream.health.CSEventHealth> {
             val eventGuid: String = event.guid
             val eventTimeStamp: Long = event.timestamp.seconds
             val message: MessageLite = event.message
@@ -92,7 +92,7 @@ public data class CSEventData(
                 messageAsBytes = messageAsBytes,
                 messageName = messageName,
                 isOnGoing = false
-            ) to CSEventHealth(
+            ) to clickstream.health.CSEventHealth(
                 eventGuid = eventGuid,
                 eventTimeStamp = eventTimeStamp,
                 messageSerializedSizeInBytes = messageSerializedSizeInBytes,

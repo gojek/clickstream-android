@@ -26,7 +26,7 @@ internal class CSBackgroundNetworkManager(
     networkRepository: CSNetworkRepository,
     dispatcher: CoroutineDispatcher,
     logger: CSLogger,
-    healthEventRepository: CSHealthEventRepository,
+    healthEventRepository: clickstream.health.CSHealthEventRepository,
     info: CSInfo,
     connectionListener: CSSocketConnectionListener
 ) : CSNetworkManager(

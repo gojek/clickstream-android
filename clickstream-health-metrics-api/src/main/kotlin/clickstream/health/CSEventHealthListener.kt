@@ -1,4 +1,4 @@
-package clickstream.analytics.event
+package clickstream.health
 
 /**
  * A listener class which provide a callback for eventCreated.

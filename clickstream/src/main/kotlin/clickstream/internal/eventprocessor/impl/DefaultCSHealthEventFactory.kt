@@ -19,7 +19,7 @@ internal class DefaultCSHealthEventFactory(
     private val guIdGenerator: CSGuIdGenerator,
     private val timeStampGenerator: CSTimeStampGenerator,
     private val metaProvider: CSMetaProvider
-) : CSHealthEventFactory {
+) : clickstream.health.CSHealthEventFactory {
 
     override suspend fun create(message: Health): Health {
         val builder = message.toBuilder()

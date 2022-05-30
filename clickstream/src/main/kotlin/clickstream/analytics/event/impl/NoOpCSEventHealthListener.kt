@@ -1,7 +1,7 @@
 package clickstream.analytics.event.impl
 
-import clickstream.analytics.event.CSEventHealth
-import clickstream.analytics.event.CSEventHealthListener
+import clickstream.health.CSEventHealth
+import clickstream.health.CSEventHealthListener
 
 internal class NoOpCSEventHealthListener : CSEventHealthListener {
     override fun onEventCreated(healthEvent: CSEventHealth) {

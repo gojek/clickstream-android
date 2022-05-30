@@ -2,17 +2,15 @@ package clickstream.config
 
 import android.content.Context
 import clickstream.CSDeviceInfo
-import clickstream.analytics.event.CSEventHealthListener
 import clickstream.analytics.event.impl.NoOpCSEventHealthListener
 import clickstream.config.timestamp.CSEventGeneratedTimestampListener
 import clickstream.config.timestamp.DefaultCSEventGeneratedTimestampListener
 import clickstream.connection.CSSocketConnectionListener
 import clickstream.connection.NoOpCSConnectionListener
-import clickstream.health.CSHealthEventFactory
+import clickstream.health.CSEventHealthListener
 import clickstream.health.CSHealthEventLogger
-import clickstream.health.CSHealthEventProcessor
-import clickstream.health.CSHealthEventRepository
 import clickstream.health.CSInfo
+import clickstream.health.DefaultCSHealthEventProcessor
 import clickstream.internal.analytics.impl.NoOpCSHealthEventLogger
 import clickstream.internal.di.CSServiceLocator
 import clickstream.logger.CSLogLevel
@@ -50,9 +48,9 @@ public class CSConfiguration private constructor(
     internal val socketConnectionListener: CSSocketConnectionListener,
     internal val remoteConfig: CSRemoteConfig,
     internal val eventHealthListener: CSEventHealthListener,
-    internal val healthEventRepository: CSHealthEventRepository,
-    internal val healthEventProcessor: CSHealthEventProcessor,
-    internal val healthEventFactory: CSHealthEventFactory
+    internal val healthEventRepository: clickstream.health.CSHealthEventRepository,
+    internal val healthEventProcessor: DefaultCSHealthEventProcessor,
+    internal val healthEventFactory: clickstream.health.CSHealthEventFactory
 ) {
     /**
      * A Builder for [CSConfiguration]'s.
@@ -86,11 +84,11 @@ public class CSConfiguration private constructor(
          */
         private val config: CSConfig,
 
-        private val healthEventRepository: CSHealthEventRepository,
+        private val healthEventRepository: clickstream.health.CSHealthEventRepository,
 
-        private val healthEventProcessor: CSHealthEventProcessor,
+        private val healthEventProcessor: DefaultCSHealthEventProcessor,
 
-        private val healthEventFactory: CSHealthEventFactory
+        private val healthEventFactory: clickstream.health.CSHealthEventFactory
     ) {
         private lateinit var dispatcher: CoroutineDispatcher
         private lateinit var eventGeneratedListener: CSEventGeneratedTimestampListener

@@ -29,7 +29,7 @@ internal class CSEventProcessor(
     private val eventScheduler: CSEventScheduler,
     private val dispatcher: CoroutineDispatcher,
     private val logger: CSLogger,
-    private val healthEventRepository: CSHealthEventRepository,
+    private val healthEventRepository: clickstream.health.CSHealthEventRepository,
     private val info: CSInfo
 ) {
 
@@ -41,12 +41,12 @@ internal class CSEventProcessor(
     suspend fun trackEvent(event: CSEvent) {
         logger.debug { "CSEventProcessor#trackEvent" }
         logHealthEvent(
-            eventName = CSEventNames.ClickStreamEventReceived.value,
+            eventName = clickstream.health.CSEventNames.ClickStreamEventReceived.value,
             eventId = event.guid.plus("_")
                 .plus(event.message::class.simpleName.orEmpty().toLowerCase(Locale.getDefault()))
         )
         logHealthEvent(
-            eventName = CSEventNames.ClickStreamEventObjectCreated.value,
+            eventName = clickstream.health.CSEventNames.ClickStreamEventObjectCreated.value,
             eventId = event.guid
         )
         val eventName = event.message.protoName()
@@ -65,9 +65,9 @@ internal class CSEventProcessor(
 
     private suspend fun logHealthEvent(eventName: String, eventId: String) {
         healthEventRepository.insertHealthEvent(
-            CSHealthEvent(
+            clickstream.health.CSHealthEvent(
                 eventName = eventName,
-                eventType = EventTypes.AGGREGATE,
+                eventType = clickstream.health.EventTypes.AGGREGATE,
                 eventId = eventId,
                 appVersion = info.appInfo.appVersion
             )

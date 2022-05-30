@@ -1,12 +1,16 @@
 package clickstream.internal.analytics
 
-import clickstream.CSInfo
-import clickstream.config.CSRemoteConfig
-import clickstream.config.CT_DESTINATION
 import clickstream.fake.fakeAppInfo
 import clickstream.fake.fakeCSHealthEventConfig
 import clickstream.fake.fakeCSInfo
 import clickstream.fake.fakeUserInfo
+import clickstream.health.CSAppVersionSharedPref
+import clickstream.health.CSHealthEvent
+import clickstream.health.CSHealthEventFactory
+import clickstream.health.CSHealthEventRepository
+import clickstream.health.CSInfo
+import clickstream.health.CT_DESTINATION
+import clickstream.health.DefaultCSHealthEventProcessor
 import clickstream.internal.analytics.impl.NoOpCSHealthEventLogger
 import clickstream.internal.lifecycle.CSAppLifeCycle
 import clickstream.logger.CSLogLevel.OFF
@@ -38,7 +42,7 @@ public class CSHealthEventProcessorTest {
     private val csAppVersionSharedPref = mock(CSAppVersionSharedPref::class.java)
     private val appLifeCycle = mock<CSAppLifeCycle>()
 
-    private lateinit var sut: CSHealthEventProcessor
+    private lateinit var sut: DefaultCSHealthEventProcessor
 
     @Test
     public fun `Given CSCustomerInfo and CSMerchantInfo When sendEvents Then verify events are successfully compute`() {
@@ -89,7 +93,7 @@ public class CSHealthEventProcessorTest {
         }
     }
 
-    private fun getEventProcessor(csInfo: CSInfo) = CSHealthEventProcessor(
+    private fun getEventProcessor(csInfo: CSInfo) = DefaultCSHealthEventProcessor(
         appLifeCycleObserver = appLifeCycle,
         healthEventRepository = csHealthEventRepository,
         dispatcher = coroutineRule.testDispatcher,
@@ -99,13 +103,7 @@ public class CSHealthEventProcessorTest {
         healthEventLogger = NoOpCSHealthEventLogger(),
         healthEventFactory = csHealthEventFactory,
         appVersion = "4.37.0",
-        appVersionPreference = csAppVersionSharedPref,
-        remoteConfig = object : CSRemoteConfig {
-            override val isForegroundEventFlushEnabled: Boolean
-                get() = true
-            override val isHealthMetricsEnabled: Boolean
-                get() = true
-        }
+        appVersionPreference = csAppVersionSharedPref
     )
 
     private fun fakeCSHealthEvent(): List<CSHealthEvent> {

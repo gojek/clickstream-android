@@ -17,7 +17,7 @@ import clickstream.internal.eventscheduler.CSEventDataTypeConverters
  *
  * The Events are cached, processed and then cleared.
  */
-@Database(entities = [CSEventData::class, CSHealthEvent::class], version = 7)
+@Database(entities = [CSEventData::class, clickstream.health.CSHealthEvent::class], version = 7)
 @TypeConverters(CSEventDataTypeConverters::class)
 internal abstract class CSDatabase : RoomDatabase() {
 

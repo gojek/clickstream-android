@@ -1,4 +1,4 @@
-package clickstream.analytics.event
+package clickstream.health
 
 /**
  * A data class which expose event meta.

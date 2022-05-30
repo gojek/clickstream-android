@@ -58,7 +58,7 @@ internal class CSNetworkRepositoryImpl(
     private val dispatcher: CoroutineDispatcher,
     private val timeStampGenerator: CSTimeStampGenerator,
     private val logger: CSLogger,
-    private val healthEventRepository: CSHealthEventRepository,
+    private val healthEventRepository: clickstream.health.CSHealthEventRepository,
     private val info: CSInfo
 ) : CSNetworkRepository {
 

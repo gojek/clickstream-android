@@ -1,7 +1,7 @@
 package clickstream.fake
 
-import clickstream.config.CSHealthEventConfig
-import clickstream.config.MAX_VERBOSITY_LEVEL
+import clickstream.health.CSHealthEventConfig
+import clickstream.health.MAX_VERBOSITY_LEVEL
 
 internal val fakeCSHealthEventConfig = CSHealthEventConfig(
     minTrackedVersion = "4.37.0",
