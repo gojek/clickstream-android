@@ -6,7 +6,6 @@ import clickstream.fake.fakeCSInfo
 import clickstream.fake.fakeCSSessionInfo
 import clickstream.fake.fakeLocationInfo
 import clickstream.fake.fakeUserInfo
-import clickstream.internal.eventprocessor.CSMetaProvider
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals

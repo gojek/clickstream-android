@@ -1,10 +1,5 @@
-package clickstream.internal.eventprocessor.impl
+package clickstream.health
 
-import clickstream.health.CSHealthEventFactory
-import clickstream.internal.eventprocessor.CSMetaProvider
-import clickstream.internal.utils.CSGuIdGenerator
-import clickstream.internal.utils.CSTimeStampGenerator
-import clickstream.internal.utils.CSTimeStampMessageBuilder
 import com.gojek.clickstream.internal.Health
 import com.gojek.clickstream.internal.HealthMeta
 
@@ -15,11 +10,11 @@ import com.gojek.clickstream.internal.HealthMeta
  * @param timeStampGenerator used for generating a time stamp
  * @param metaProvider used for getting meta data
  */
-internal class DefaultCSHealthEventFactory(
+public class DefaultCSHealthEventFactory(
     private val guIdGenerator: CSGuIdGenerator,
     private val timeStampGenerator: CSTimeStampGenerator,
     private val metaProvider: CSMetaProvider
-) : clickstream.health.CSHealthEventFactory {
+) : CSHealthEventFactory {
 
     override suspend fun create(message: Health): Health {
         val builder = message.toBuilder()

@@ -3,8 +3,8 @@ package clickstream.internal.networklayer
 import clickstream.config.CSNetworkConfig
 import clickstream.health.CSHealthEventRepository
 import clickstream.health.CSInfo
+import clickstream.health.CSTimeStampGenerator
 import clickstream.internal.utils.CSCallback
-import clickstream.internal.utils.CSTimeStampGenerator
 import clickstream.logger.CSLogger
 import com.gojek.clickstream.de.EventRequest
 import com.gojek.clickstream.de.common.EventResponse
@@ -58,7 +58,7 @@ internal class CSNetworkRepositoryImpl(
     private val dispatcher: CoroutineDispatcher,
     private val timeStampGenerator: CSTimeStampGenerator,
     private val logger: CSLogger,
-    private val healthEventRepository: clickstream.health.CSHealthEventRepository,
+    private val healthEventRepository: CSHealthEventRepository,
     private val info: CSInfo
 ) : CSNetworkRepository {
 

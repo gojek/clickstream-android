@@ -1,30 +1,18 @@
-package clickstream.internal.db
+package clickstream.health
 
 import android.content.Context
 import androidx.annotation.GuardedBy
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
-import clickstream.health.CSHealthEvent
-import clickstream.health.CSHealthEventDao
-import clickstream.internal.eventscheduler.CSEventData
-import clickstream.internal.eventscheduler.CSEventDataDao
-import clickstream.internal.eventscheduler.CSEventDataTypeConverters
 
 /**
  * The Database to store the events sent from the client.
  *
  * The Events are cached, processed and then cleared.
  */
-@Database(entities = [CSEventData::class, CSHealthEvent::class], version = 7)
-@TypeConverters(CSEventDataTypeConverters::class)
-internal abstract class CSDatabase : RoomDatabase() {
-
-    /**
-     * The EventBatchDao holds the communication with the DB
-     */
-    abstract fun eventDataDao(): CSEventDataDao
+@Database(entities = [CSHealthEvent::class], version = 8)
+internal abstract class CSHealthDatabase : RoomDatabase() {
 
     /**
      * The HealthDao holds the communication with the DB
@@ -35,7 +23,7 @@ internal abstract class CSDatabase : RoomDatabase() {
 
         @Volatile
         @GuardedBy("lock")
-        private var sInstance: CSDatabase? = null
+        private var sInstance: CSHealthDatabase? = null
         private val lock = Any()
 
         /**
@@ -45,7 +33,7 @@ internal abstract class CSDatabase : RoomDatabase() {
          *
          * @return INSTANCE - EventBatchDatabase instance
          */
-        fun getInstance(context: Context): CSDatabase {
+        fun getInstance(context: Context): CSHealthDatabase {
             return sInstance ?: synchronized(lock) {
                 sInstance ?: buildDatabase(context).also { sInstance = it }
             }
@@ -54,8 +42,8 @@ internal abstract class CSDatabase : RoomDatabase() {
         private fun buildDatabase(context: Context) =
             Room.databaseBuilder(
                 context.applicationContext,
-                CSDatabase::class.java,
-                "cs-database.db"
+                CSHealthDatabase::class.java,
+                "cs-health-database.db"
             ).fallbackToDestructiveMigration()
                 .build()
     }

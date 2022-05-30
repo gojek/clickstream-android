@@ -1,13 +1,10 @@
 package clickstream.internal.networklayer
 
 import clickstream.config.CSNetworkConfig
-import clickstream.health.CSEventNames
-import clickstream.health.CSHealthEvent
 import clickstream.health.CSHealthEventRepository
 import clickstream.health.CSInfo
-import clickstream.health.EventTypes
+import clickstream.health.CSTimeStampGenerator
 import clickstream.internal.analytics.CSErrorReasons
-import clickstream.internal.utils.CSTimeStampGenerator
 import clickstream.internal.utils.CSTimeStampMessageBuilder
 import clickstream.isHealthEvent
 import clickstream.logger.CSLogger
@@ -43,7 +40,7 @@ internal abstract class CSRetryableCallback(
     private val dispatcher: CoroutineDispatcher,
     private val timeStampGenerator: CSTimeStampGenerator,
     private val logger: CSLogger,
-    private val healthEventRepository: clickstream.health.CSHealthEventRepository,
+    private val healthEventRepository: CSHealthEventRepository,
     private val info: CSInfo,
     private val coroutineScope: CoroutineScope = CoroutineScope(SupervisorJob() + dispatcher)
 ) {

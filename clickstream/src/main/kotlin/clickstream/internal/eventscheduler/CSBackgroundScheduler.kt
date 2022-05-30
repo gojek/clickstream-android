@@ -4,15 +4,15 @@ import clickstream.CSEvent
 import clickstream.config.CSEventSchedulerConfig
 import clickstream.health.CSEventHealthListener
 import clickstream.health.CSEventNames.ClickStreamFlushOnBackground
+import clickstream.health.CSGuIdGenerator
 import clickstream.health.CSInfo
+import clickstream.health.CSTimeStampGenerator
 import clickstream.internal.di.CSServiceLocator
 import clickstream.internal.lifecycle.CSAppLifeCycle
 import clickstream.internal.lifecycle.CSBackgroundLifecycleManager
 import clickstream.internal.networklayer.CSBackgroundNetworkManager
 import clickstream.internal.utils.CSBatteryStatusObserver
-import clickstream.internal.utils.CSGuIdGenerator
 import clickstream.internal.utils.CSNetworkStatusObserver
-import clickstream.internal.utils.CSTimeStampGenerator
 import clickstream.logger.CSLogger
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope

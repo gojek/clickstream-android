@@ -3,10 +3,10 @@ package clickstream.config
 import android.content.Context
 import clickstream.CSDeviceInfo
 import clickstream.analytics.event.impl.NoOpCSEventHealthListener
-import clickstream.config.timestamp.CSEventGeneratedTimestampListener
 import clickstream.config.timestamp.DefaultCSEventGeneratedTimestampListener
 import clickstream.connection.CSSocketConnectionListener
 import clickstream.connection.NoOpCSConnectionListener
+import clickstream.health.CSEventGeneratedTimestampListener
 import clickstream.health.CSEventHealthListener
 import clickstream.health.CSHealthEventLogger
 import clickstream.health.CSInfo

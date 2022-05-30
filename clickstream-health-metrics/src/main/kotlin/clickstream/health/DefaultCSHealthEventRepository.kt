@@ -9,9 +9,9 @@ public class DefaultCSHealthEventRepository(
     private val sessionId: String,
     private val healthEventDao: CSHealthEventDao,
     private val info: CSInfo
-) : clickstream.health.CSHealthEventRepository {
+) : CSHealthEventRepository {
 
-    override suspend fun insertHealthEvent(healthEvent: clickstream.health.CSHealthEvent) {
+    override suspend fun insertHealthEvent(healthEvent: CSHealthEvent) {
         val event = healthEvent.copy(
             sessionId = sessionId,
             timestamp = System.currentTimeMillis().toString(),
@@ -20,7 +20,7 @@ public class DefaultCSHealthEventRepository(
         healthEventDao.insert(healthEvent = event)
     }
 
-    override suspend fun insertHealthEventList(healthEventList: List<clickstream.health.CSHealthEvent>) {
+    override suspend fun insertHealthEventList(healthEventList: List<CSHealthEvent>) {
         val eventList = healthEventList.map {
             it.copy(
                 sessionId = sessionId,
@@ -30,15 +30,15 @@ public class DefaultCSHealthEventRepository(
         healthEventDao.insertAll(healthEventList = eventList)
     }
 
-    override suspend fun getInstantEvents(): List<clickstream.health.CSHealthEvent> {
+    override suspend fun getInstantEvents(): List<CSHealthEvent> {
         return healthEventDao.getEventByType(INSTANT_EVENT_TYPE)
     }
 
-    override suspend fun getBucketEvents(): List<clickstream.health.CSHealthEvent> {
+    override suspend fun getBucketEvents(): List<CSHealthEvent> {
         return healthEventDao.getEventByType(BUCKET_EVENT_TYPE)
     }
 
-    override suspend fun getAggregateEvents(): List<clickstream.health.CSHealthEvent> {
+    override suspend fun getAggregateEvents(): List<CSHealthEvent> {
         return healthEventDao.getEventByType(AGGREGATE_EVENT_TYPE)
     }
 
@@ -46,7 +46,7 @@ public class DefaultCSHealthEventRepository(
         healthEventDao.deleteBySessionId(sessionId = sessionId)
     }
 
-    override suspend fun deleteHealthEvents(events: List<clickstream.health.CSHealthEvent>) {
+    override suspend fun deleteHealthEvents(events: List<CSHealthEvent>) {
         healthEventDao.deleteHealthEvent(events)
     }
 }

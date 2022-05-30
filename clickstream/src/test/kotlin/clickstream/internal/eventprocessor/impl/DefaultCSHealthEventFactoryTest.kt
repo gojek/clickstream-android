@@ -1,7 +1,6 @@
 package clickstream.internal.eventprocessor.impl
 
 import clickstream.protoName
-import clickstream.internal.eventprocessor.CSMetaProvider
 import clickstream.internal.utils.CSGuIdGenerator
 import clickstream.internal.utils.CSTimeStampGenerator
 import com.gojek.clickstream.internal.Health
