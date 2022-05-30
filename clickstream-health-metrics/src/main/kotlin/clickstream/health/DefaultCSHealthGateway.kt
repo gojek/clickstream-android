@@ -1,8 +1,10 @@
 package clickstream.health
 
 import android.content.Context
-import clickstream.internal.lifecycle.CSAppLifeCycle
+import clickstream.lifecycle.CSAppLifeCycle
 import clickstream.logger.CSLogger
+import clickstream.util.CSAppVersionSharedPref
+import clickstream.util.impl.DefaultCSAppVersionSharedPref
 import java.util.UUID
 import kotlinx.coroutines.CoroutineDispatcher
 
@@ -11,14 +13,14 @@ public object DefaultCSHealthGateway {
     public fun factory(
         context: Context,
         csInfo: CSInfo,
-        appLifeCycleObserver: CSAppLifeCycle,
+        appLifeCycle: CSAppLifeCycle,
         dispatcher: CoroutineDispatcher,
         healthEventConfig: CSHealthEventConfig,
         info: CSInfo,
         logger: CSLogger,
         healthEventLogger: CSHealthEventLogger,
         appVersion: String,
-        appVersionPreference: CSAppVersionSharedPref,
+        appVersionPreference: CSAppVersionSharedPref = DefaultCSAppVersionSharedPref(context),
         guIdGenerator: CSGuIdGenerator,
         timeStampGenerator: CSTimeStampGenerator,
         metaProvider: CSMetaProvider,
@@ -26,6 +28,7 @@ public object DefaultCSHealthGateway {
     ): CSHealthGateway {
 
         return object : CSHealthGateway {
+            override val appLifeCycle: CSAppLifeCycle = appLifeCycle
             override val eventHealthListener: CSEventHealthListener = eventHealthListener
             override val healthEventRepository: CSHealthEventRepository by lazy {
                 DefaultCSHealthEventRepository(
@@ -36,7 +39,7 @@ public object DefaultCSHealthGateway {
             }
             override val healthEventProcessor: CSHealthEventProcessor by lazy {
                 DefaultCSHealthEventProcessor(
-                    appLifeCycleObserver = appLifeCycleObserver,
+                    appLifeCycleObserver = appLifeCycle,
                     healthEventRepository = healthEventRepository,
                     dispatcher = dispatcher,
                     healthEventConfig = healthEventConfig,

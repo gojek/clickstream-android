@@ -15,7 +15,6 @@ import clickstream.health.CSHealthEventProcessor
 import clickstream.health.CSHealthEventRepository
 import clickstream.health.CSInfo
 import clickstream.health.CSTimeStampGenerator
-import clickstream.health.DefaultCSHealthEventProcessor
 import clickstream.health.DefaultCSTimeStampGenerator
 import clickstream.internal.db.CSDatabase
 import clickstream.internal.di.CSServiceLocator
@@ -24,9 +23,6 @@ import clickstream.internal.eventscheduler.CSBackgroundScheduler
 import clickstream.internal.eventscheduler.CSEventRepository
 import clickstream.internal.eventscheduler.CSEventScheduler
 import clickstream.internal.eventscheduler.impl.DefaultCSEventRepository
-import clickstream.internal.lifecycle.CSAppLifeCycle
-import clickstream.internal.lifecycle.CSBackgroundLifecycleManager
-import clickstream.internal.lifecycle.impl.DefaultCSAppLifeCycleObserver
 import clickstream.internal.networklayer.CSBackgroundNetworkManager
 import clickstream.internal.networklayer.CSEventService
 import clickstream.internal.networklayer.CSNetworkManager
@@ -36,6 +32,8 @@ import clickstream.internal.utils.CSBatteryStatusObserver
 import clickstream.internal.utils.CSFlowStreamAdapterFactory
 import clickstream.internal.utils.CSNetworkStatusObserver
 import clickstream.internal.workmanager.CSWorkManager
+import clickstream.lifecycle.CSAppLifeCycle
+import clickstream.lifecycle.CSBackgroundLifecycleManager
 import clickstream.logger.CSLogLevel
 import clickstream.logger.CSLogger
 import com.tinder.scarlet.Lifecycle
@@ -64,7 +62,8 @@ internal class DefaultCServiceLocator(
     override val eventHealthListener: CSEventHealthListener,
     override val healthEventRepository: CSHealthEventRepository,
     override val healthEventProcessor: CSHealthEventProcessor,
-    override val healthEventFactory: CSHealthEventFactory
+    override val healthEventFactory: CSHealthEventFactory,
+    override val appLifeCycle: CSAppLifeCycle
 ) : CSServiceLocator {
 
     private val guidGenerator: CSGuIdGenerator by lazy {
@@ -123,7 +122,7 @@ internal class DefaultCServiceLocator(
 
     private val backgroundNetworkManager: CSBackgroundNetworkManager by lazy {
         CSBackgroundNetworkManager(
-            appLifeCycleObserver = appLifeCycleObserver,
+            appLifeCycle = appLifeCycle,
             networkRepository = CSNetworkRepositoryImpl(
                 networkConfig = config.networkConfig,
                 eventService = backgroundEventService,
@@ -141,17 +140,13 @@ internal class DefaultCServiceLocator(
         )
     }
 
-    private val appLifeCycleObserver: CSAppLifeCycle by lazy {
-        DefaultCSAppLifeCycleObserver(context)
-    }
-
     override val logger: CSLogger by lazy {
         CSLogger(logLevel)
     }
 
     override val networkManager: CSNetworkManager by lazy {
         CSNetworkManager(
-            appLifeCycleObserver = appLifeCycleObserver,
+            appLifeCycle = appLifeCycle,
             networkRepository = networkRepository,
             dispatcher = dispatcher,
             logger = logger,
@@ -163,7 +158,7 @@ internal class DefaultCServiceLocator(
 
     override val eventScheduler: CSEventScheduler by lazy {
         CSEventScheduler(
-            appLifeCycleObserver = appLifeCycleObserver,
+            appLifeCycle = appLifeCycle,
             networkManager = networkManager,
             config = config.eventSchedulerConfig,
             logger = logger,
@@ -192,7 +187,7 @@ internal class DefaultCServiceLocator(
 
     override val workManager: CSWorkManager by lazy {
         CSWorkManager(
-            appLifeCycleObserver = appLifeCycleObserver,
+            appLifeCycle = appLifeCycle,
             context = context,
             eventSchedulerConfig = config.eventSchedulerConfig,
             logger = logger,
@@ -203,7 +198,7 @@ internal class DefaultCServiceLocator(
 
     override val backgroundScheduler: CSBackgroundScheduler by lazy {
         CSBackgroundScheduler(
-            appLifeCycleObserver = appLifeCycleObserver,
+            appLifeCycle = appLifeCycle,
             networkManager = backgroundNetworkManager,
             config = config.eventSchedulerConfig,
             logger = logger,

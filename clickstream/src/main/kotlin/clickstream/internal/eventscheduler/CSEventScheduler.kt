@@ -11,8 +11,6 @@ import clickstream.health.CSGuIdGenerator
 import clickstream.health.CSInfo
 import clickstream.health.CSTimeStampGenerator
 import clickstream.internal.analytics.CSErrorReasons
-import clickstream.internal.lifecycle.CSAppLifeCycle
-import clickstream.internal.lifecycle.CSLifeCycleManager
 import clickstream.internal.networklayer.CSNetworkManager
 import clickstream.internal.utils.CSBatteryLevel
 import clickstream.internal.utils.CSBatteryStatusObserver
@@ -21,6 +19,8 @@ import clickstream.internal.utils.CSResult
 import clickstream.internal.utils.CSTimeStampMessageBuilder
 import clickstream.internal.utils.flowableTicker
 import clickstream.isValidMessage
+import clickstream.lifecycle.CSAppLifeCycle
+import clickstream.lifecycle.CSLifeCycleManager
 import clickstream.logger.CSLogger
 import com.gojek.clickstream.de.EventRequest
 import com.gojek.clickstream.internal.Health
@@ -56,7 +56,7 @@ import kotlinx.coroutines.launch
  */
 @ExperimentalCoroutinesApi
 internal open class CSEventScheduler(
-    appLifeCycleObserver: CSAppLifeCycle,
+    appLifeCycle: CSAppLifeCycle,
     protected val networkManager: CSNetworkManager,
     protected val dispatcher: CoroutineDispatcher,
     protected val config: CSEventSchedulerConfig,
@@ -69,7 +69,7 @@ internal open class CSEventScheduler(
     private val networkStatusObserver: CSNetworkStatusObserver,
     private val info: CSInfo,
     private val eventHealthListener: CSEventHealthListener
-) : CSLifeCycleManager(appLifeCycleObserver) {
+) : CSLifeCycleManager(appLifeCycle) {
 
     protected var job: CompletableJob = SupervisorJob()
     protected var coroutineScope: CoroutineScope = CoroutineScope(job + dispatcher)

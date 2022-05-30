@@ -86,11 +86,11 @@ internal class DefaultClickStream private constructor(
                 if (sInstance != null) {
                     throw IllegalStateException(
                         "ClickStream is already initialized. " +
-                        "If you want to re-initialize ClickStream with new CSConfiguration, " +
-                        "please call ClickStream#release first. " +
-                        "See ClickStream#initialize(Context, CSConfiguration) or " +
-                        "the class level. " +
-                        "KotlinDoc for more information."
+                                "If you want to re-initialize ClickStream with new CSConfiguration, " +
+                                "please call ClickStream#release first. " +
+                                "See ClickStream#initialize(Context, CSConfiguration) or " +
+                                "the class level. " +
+                                "KotlinDoc for more information."
                     )
                 }
 
@@ -108,7 +108,8 @@ internal class DefaultClickStream private constructor(
                         eventHealthListener = configuration.eventHealthListener,
                         healthEventRepository = configuration.healthEventRepository,
                         healthEventProcessor = configuration.healthEventProcessor,
-                        healthEventFactory = configuration.healthEventFactory
+                        healthEventFactory = configuration.healthEventFactory,
+                        appLifeCycle = configuration.appLifeCycle
                     )
 
                     CSServiceLocator.setServiceLocator(serviceLocator)

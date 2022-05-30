@@ -1,4 +1,4 @@
-package clickstream.internal.lifecycle
+package clickstream.lifecycle
 
 import com.tinder.scarlet.Lifecycle
 import com.tinder.scarlet.Lifecycle.State.Started

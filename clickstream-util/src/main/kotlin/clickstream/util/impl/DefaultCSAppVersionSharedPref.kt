@@ -1,7 +1,7 @@
-package clickstream.internal.db.impl
+package clickstream.util.impl
 
 import android.content.Context
-import clickstream.health.CSAppVersionSharedPref
+import clickstream.util.CSAppVersionSharedPref
 import kotlinx.coroutines.coroutineScope
 
 private const val CLICKSTREAM_PREF = "Clickstream_Version_Pref"
@@ -10,7 +10,7 @@ private const val APP_VERSION_KEY = "app_version"
 /**
  * This class maintains app version state in Shared Preference
  */
-internal class DefaultCSAppVersionSharedPref(
+public class DefaultCSAppVersionSharedPref(
     private val context: Context
 ) : CSAppVersionSharedPref {
 

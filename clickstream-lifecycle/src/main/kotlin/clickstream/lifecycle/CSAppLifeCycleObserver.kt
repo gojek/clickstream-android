@@ -1,4 +1,4 @@
-package clickstream.internal.lifecycle
+package clickstream.lifecycle
 
 public interface CSAppLifeCycleObserver {
     public fun onAppStart()

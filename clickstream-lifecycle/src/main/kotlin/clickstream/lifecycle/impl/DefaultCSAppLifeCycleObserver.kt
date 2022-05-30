@@ -1,11 +1,11 @@
-package clickstream.internal.lifecycle.impl
+package clickstream.lifecycle.impl
 
 import android.app.Activity
 import android.app.Application
 import android.content.Context
-import clickstream.internal.lifecycle.CSAppLifeCycle
-import clickstream.internal.lifecycle.CSAppLifeCycleObserver
-import clickstream.internal.lifecycle.EmptyActivityLifecycleCallbacks
+import clickstream.lifecycle.CSAppLifeCycle
+import clickstream.lifecycle.CSAppLifeCycleObserver
+import clickstream.lifecycle.CSEmptyActivityLifecycleCallbacks
 import java.util.concurrent.CopyOnWriteArrayList
 
 public class DefaultCSAppLifeCycleObserver(
@@ -16,7 +16,7 @@ public class DefaultCSAppLifeCycleObserver(
 
     init {
         (context.applicationContext as Application)
-            .registerActivityLifecycleCallbacks(object : EmptyActivityLifecycleCallbacks {
+            .registerActivityLifecycleCallbacks(object : CSEmptyActivityLifecycleCallbacks {
                 override fun onActivityStarted(activity: Activity) {
                     super.onActivityStarted(activity)
                     observers.forEach { observer ->

@@ -9,14 +9,12 @@ import clickstream.connection.CSConnectionEvent.OnMessageReceived
 import clickstream.connection.CSSocketConnectionListener
 import clickstream.connection.mapTo
 import clickstream.health.CSEventNames.ClickStreamConnectionFailed
-import clickstream.health.CSHealthEvent
 import clickstream.health.CSHealthEventRepository
 import clickstream.health.CSInfo
-import clickstream.health.EventTypes
 import clickstream.internal.analytics.CSErrorReasons
-import clickstream.internal.lifecycle.CSAppLifeCycle
-import clickstream.internal.lifecycle.CSLifeCycleManager
 import clickstream.internal.utils.CSResult
+import clickstream.lifecycle.CSAppLifeCycle
+import clickstream.lifecycle.CSLifeCycleManager
 import clickstream.logger.CSLogger
 import com.gojek.clickstream.de.EventRequest
 import com.tinder.scarlet.WebSocket
@@ -49,14 +47,14 @@ import kotlinx.coroutines.launch
  */
 @ExperimentalCoroutinesApi
 internal open class CSNetworkManager(
-    appLifeCycleObserver: CSAppLifeCycle,
+    appLifeCycle: CSAppLifeCycle,
     private val networkRepository: CSNetworkRepository,
     protected val dispatcher: CoroutineDispatcher,
     protected val logger: CSLogger,
-    private val healthEventRepository: clickstream.health.CSHealthEventRepository,
+    private val healthEventRepository: CSHealthEventRepository,
     private val info: CSInfo,
     private val connectionListener: CSSocketConnectionListener
-) : CSLifeCycleManager(appLifeCycleObserver) {
+) : CSLifeCycleManager(appLifeCycle) {
 
     private val isConnected: AtomicBoolean = AtomicBoolean(false)
 

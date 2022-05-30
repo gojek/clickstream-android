@@ -4,7 +4,6 @@ import clickstream.fake.fakeAppInfo
 import clickstream.fake.fakeCSHealthEventConfig
 import clickstream.fake.fakeCSInfo
 import clickstream.fake.fakeUserInfo
-import clickstream.health.CSAppVersionSharedPref
 import clickstream.health.CSHealthEvent
 import clickstream.health.CSHealthEventFactory
 import clickstream.health.CSHealthEventRepository

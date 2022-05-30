@@ -1,6 +1,9 @@
 rootProject.name = 'clickstream-android'
 include ':app'
 include ':clickstream'
+include ':clickstream-logger'
+include ':clickstream-lifecycle'
+include ':clickstream-util'
 include ':clickstream-health-metrics'
 include ':clickstream-health-metrics-api'
 

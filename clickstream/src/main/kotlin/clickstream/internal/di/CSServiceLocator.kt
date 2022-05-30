@@ -11,6 +11,7 @@ import clickstream.internal.eventscheduler.CSBackgroundScheduler
 import clickstream.internal.eventscheduler.CSEventScheduler
 import clickstream.internal.networklayer.CSNetworkManager
 import clickstream.internal.workmanager.CSWorkManager
+import clickstream.lifecycle.CSAppLifeCycle
 import clickstream.logger.CSLogLevel
 import clickstream.logger.CSLogger
 import kotlinx.coroutines.CoroutineDispatcher
@@ -106,4 +107,5 @@ internal interface CSServiceLocator {
     val healthEventRepository: CSHealthEventRepository
     val healthEventProcessor: CSHealthEventProcessor
     val healthEventFactory: CSHealthEventFactory
+    val appLifeCycle: CSAppLifeCycle
 }

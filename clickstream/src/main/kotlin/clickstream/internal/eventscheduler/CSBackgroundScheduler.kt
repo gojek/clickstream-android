@@ -8,11 +8,11 @@ import clickstream.health.CSGuIdGenerator
 import clickstream.health.CSInfo
 import clickstream.health.CSTimeStampGenerator
 import clickstream.internal.di.CSServiceLocator
-import clickstream.internal.lifecycle.CSAppLifeCycle
-import clickstream.internal.lifecycle.CSBackgroundLifecycleManager
 import clickstream.internal.networklayer.CSBackgroundNetworkManager
 import clickstream.internal.utils.CSBatteryStatusObserver
 import clickstream.internal.utils.CSNetworkStatusObserver
+import clickstream.lifecycle.CSAppLifeCycle
+import clickstream.lifecycle.CSBackgroundLifecycleManager
 import clickstream.logger.CSLogger
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -31,7 +31,7 @@ private const val ONE_SEC: Long = 1000
  */
 @ExperimentalCoroutinesApi
 internal class CSBackgroundScheduler(
-    appLifeCycleObserver: CSAppLifeCycle,
+    appLifeCycle: CSAppLifeCycle,
     networkManager: CSBackgroundNetworkManager,
     dispatcher: CoroutineDispatcher,
     config: CSEventSchedulerConfig,
@@ -46,7 +46,7 @@ internal class CSBackgroundScheduler(
     private val info: CSInfo,
     eventHealthListener: CSEventHealthListener
 ) : CSEventScheduler(
-    appLifeCycleObserver,
+    appLifeCycle,
     networkManager,
     dispatcher,
     config,

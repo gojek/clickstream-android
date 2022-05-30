@@ -1,8 +1,9 @@
 package clickstream.health
 
-import clickstream.internal.lifecycle.CSAppLifeCycle
-import clickstream.internal.lifecycle.CSLifeCycleManager
+import clickstream.lifecycle.CSAppLifeCycle
+import clickstream.lifecycle.CSLifeCycleManager
 import clickstream.logger.CSLogger
+import clickstream.util.CSAppVersionSharedPref
 import com.gojek.clickstream.internal.Health
 import com.gojek.clickstream.internal.HealthDetails
 import kotlinx.coroutines.CoroutineDispatcher

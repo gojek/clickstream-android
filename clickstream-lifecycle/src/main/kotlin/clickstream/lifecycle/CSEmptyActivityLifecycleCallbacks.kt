@@ -1,10 +1,10 @@
-package clickstream.internal.lifecycle
+package clickstream.lifecycle
 
 import android.app.Activity
 import android.app.Application.ActivityLifecycleCallbacks
 import android.os.Bundle
 
-internal interface EmptyActivityLifecycleCallbacks : ActivityLifecycleCallbacks {
+internal interface CSEmptyActivityLifecycleCallbacks : ActivityLifecycleCallbacks {
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) { /*No Op */ }
 
     override fun onActivityStarted(activity: Activity) { /*No Op */ }
