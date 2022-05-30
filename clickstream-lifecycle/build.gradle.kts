@@ -32,10 +32,4 @@ android {
 dependencies {
     // Common
     deps.common.list.forEach(::implementation)
-
-    // Networking
-    deps.networkLibs.list.forEach(::implementation)
-    implementation(deps.networkLibs.scarletProtobuf) {
-        exclude(group = "com.google.protobuf")
-    }
 }
