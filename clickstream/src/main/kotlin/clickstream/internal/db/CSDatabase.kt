@@ -6,8 +6,6 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import clickstream.health.CSHealthEvent
-import clickstream.health.CSHealthEventDao
 import clickstream.internal.eventscheduler.CSEventData
 import clickstream.internal.eventscheduler.CSEventDataDao
 import clickstream.internal.eventscheduler.CSEventDataTypeConverters
@@ -17,7 +15,7 @@ import clickstream.internal.eventscheduler.CSEventDataTypeConverters
  *
  * The Events are cached, processed and then cleared.
  */
-@Database(entities = [CSEventData::class, CSHealthEvent::class], version = 7)
+@Database(entities = [CSEventData::class], version = 8)
 @TypeConverters(CSEventDataTypeConverters::class)
 internal abstract class CSDatabase : RoomDatabase() {
 
@@ -25,11 +23,6 @@ internal abstract class CSDatabase : RoomDatabase() {
      * The EventBatchDao holds the communication with the DB
      */
     abstract fun eventDataDao(): CSEventDataDao
-
-    /**
-     * The HealthDao holds the communication with the DB
-     */
-    abstract fun healthEventDao(): CSHealthEventDao
 
     companion object {
 

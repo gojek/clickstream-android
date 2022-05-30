@@ -6,7 +6,7 @@ import clickstream.config.CSConfig
 import clickstream.config.CSEventSchedulerConfig
 import clickstream.config.CSRemoteConfig
 import clickstream.connection.CSSocketConnectionListener
-import clickstream.health.CSEventGeneratedTimestampListener
+import clickstream.health.time.CSEventGeneratedTimestampListener
 import clickstream.health.CSEventHealthListener
 import clickstream.health.CSGuIdGenerator
 import clickstream.health.CSGuIdGeneratorImpl

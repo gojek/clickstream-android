@@ -1,4 +1,4 @@
-package clickstream.health
+package clickstream.health.model
 
 public object EventTypes {
     public const val INSTANT: String = "instant"

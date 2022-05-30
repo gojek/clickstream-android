@@ -1,4 +1,4 @@
-package clickstream.health
+package clickstream.health.internal
 
 import android.content.Context
 import androidx.annotation.GuardedBy

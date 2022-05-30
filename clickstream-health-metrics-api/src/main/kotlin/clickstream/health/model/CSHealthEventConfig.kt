@@ -1,12 +1,10 @@
-package clickstream.health
+package clickstream.health.model
 
 import java.util.Locale
 
 private const val DIVIDING_FACTOR: Int = 10
 private const val MULTIPLICATION_FACTOR: Int = 10
 public const val MAX_VERBOSITY_LEVEL: String = "maximum"
-public const val CS_DESTINATION: String = "CS"
-public const val CT_DESTINATION: String = "CT"
 public const val ALPHA: String = "alpha"
 
 /**

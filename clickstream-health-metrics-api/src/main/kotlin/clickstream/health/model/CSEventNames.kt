@@ -1,4 +1,4 @@
-package clickstream.health
+package clickstream.health.model
 
 public enum class CSEventNames(public val value: String) {
     ClickStreamFailedInit("ClickStream Failed Init"),

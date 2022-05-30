@@ -1,6 +1,6 @@
 package clickstream.config
 
-import clickstream.health.CSHealthEventConfig
+import clickstream.health.model.CSHealthEventConfig
 
 /**
  * The config which holds the configuration for processor, scheduler & network manager

@@ -1,5 +1,7 @@
 package clickstream.health
 
+import clickstream.health.model.CSEventHealth
+
 /**
  * A listener class which provide a callback for eventCreated.
  */

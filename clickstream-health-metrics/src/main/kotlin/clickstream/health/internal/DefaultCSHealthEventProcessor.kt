@@ -1,5 +1,24 @@
-package clickstream.health
+package clickstream.health.internal
 
+import clickstream.health.CSHealthEventFactory
+import clickstream.health.CSHealthEventLogger
+import clickstream.health.CSHealthEventProcessor
+import clickstream.health.CSHealthEventRepository
+import clickstream.health.CSInfo
+import clickstream.health.constant.CSEventDestination
+import clickstream.health.internal.CSHealthEvent.Companion.dtosMapTo
+import clickstream.health.internal.CSHealthEvent.Companion.mapToDtos
+import clickstream.health.internal.CSNetworkType.MOBILE_2G
+import clickstream.health.internal.CSNetworkType.MOBILE_3G
+import clickstream.health.internal.CSNetworkType.MOBILE_4G
+import clickstream.health.internal.CSNetworkType.WIFI
+import clickstream.health.model.CSEventNames.ClickStreamBatchSize
+import clickstream.health.model.CSEventNames.ClickStreamEventBatchLatency
+import clickstream.health.model.CSEventNames.ClickStreamEventBatchWaitTime
+import clickstream.health.model.CSEventNames.ClickStreamEventReceived
+import clickstream.health.model.CSEventNames.ClickStreamEventWaitTime
+import clickstream.health.model.CSHealthEventConfig
+import clickstream.health.model.CSHealthEventDTO
 import clickstream.lifecycle.CSAppLifeCycle
 import clickstream.lifecycle.CSLifeCycleManager
 import clickstream.logger.CSLogger
@@ -13,6 +32,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlin.collections.Map.Entry
 
 private const val ONE_SECOND = 1000
 private const val THREE_SECOND = 3000
@@ -40,7 +60,7 @@ internal enum class CSNetworkType {
 /**
  * The HealthEventProcessor is responsible for aggregating, sending and clearing health events for the sdk
  */
-public open class DefaultCSHealthEventProcessor(
+internal class DefaultCSHealthEventProcessor(
     appLifeCycleObserver: CSAppLifeCycle,
     private val healthEventRepository: CSHealthEventRepository,
     private val dispatcher: CoroutineDispatcher,
@@ -93,16 +113,16 @@ public open class DefaultCSHealthEventProcessor(
     override suspend fun getAggregateEventsBasedOnEventName(): List<Health> {
         logger.debug { "CSHealthEventProcessor#getAggregateEventsBasedOnEventName" }
 
-        if (!healthEventConfig.destination.contains(CS_DESTINATION) || (isHealthEventEnabled().not())) {
+        if (!healthEventConfig.destination.contains(CSEventDestination.CS_DESTINATION) || (isHealthEventEnabled().not())) {
             return emptyList()
         }
         val healthEvents = mutableListOf<Health>()
         healthEventRepository.getAggregateEvents()
             .also { list ->
                 list.groupBy { it.eventName }
-                    .forEach { entry ->
+                    .forEach { entry: Entry<String, List<CSHealthEventDTO>> ->
                         if (healthEventConfig.isTrackedViaClickstream(entry.key)) {
-                            val health = createHealthProto(entry.key, entry.value)
+                            val health = createHealthProto(entry.key, entry.value.dtosMapTo())
                             healthEvents += healthEventFactory.create(health)
                             logger.debug { "CSHealthEventProcessor#getAggregateEventsBasedOnEventName - Health events: $health" }
                         }
@@ -128,7 +148,7 @@ public open class DefaultCSHealthEventProcessor(
                 logger.debug { "CSHealthEventProcessor#sendEvents - Health Event condition is not satisfied for this user" }
                 return@launch
             }
-            if (healthEventConfig.destination.contains(CT_DESTINATION)) {
+            if (healthEventConfig.destination.contains(CSEventDestination.CT_DESTINATION)) {
                 logger.debug { "CSHealthEventProcessor#sendEvents - sendEventsToCleverTap" }
                 sendEventsToCleverTap()
             }
@@ -148,8 +168,8 @@ public open class DefaultCSHealthEventProcessor(
     private suspend fun sendInstantEvents() {
         logger.debug { "CSHealthEventProcessor#sendInstantEvents" }
 
-        val instantEvents = healthEventRepository.getInstantEvents()
-        pushEvents(instantEvents)
+        val instantEvents: List<CSHealthEventDTO> = healthEventRepository.getInstantEvents()
+        pushEvents(instantEvents.dtosMapTo())
         healthEventRepository.deleteHealthEvents(instantEvents)
     }
 
@@ -159,17 +179,18 @@ public open class DefaultCSHealthEventProcessor(
         val aggregateEvents = healthEventRepository.getAggregateEvents()
         aggregateEvents
             .groupBy { it.eventName }
-            .forEach { entry ->
-                val errorEvents = entry.value.filter { it.error.isNotBlank() }.groupBy { it.error }
+            .forEach { entry: Entry<String, List<CSHealthEventDTO>> ->
+                val errorEvents: Map<String, List<CSHealthEventDTO>> =
+                    entry.value.filter { it.error.isNotBlank() }.groupBy { it.error }
                 if (errorEvents.isEmpty()) {
-                    sendAggregateEventsBasedOnEventName(entry.value)
+                    sendAggregateEventsBasedOnEventName(entry.value.dtosMapTo())
                 } else {
                     sendAggregateEventsBasedOnError(errorEvents)
                 }
             }
     }
 
-    private suspend fun sendAggregateEventsBasedOnEventName(events: List<clickstream.health.CSHealthEvent>) {
+    private suspend fun sendAggregateEventsBasedOnEventName(events: List<CSHealthEvent>) {
         logger.debug { "CSHealthEventProcessor#sendAggregateEventsBasedOnEventName" }
 
         val batchSize = if (events.joinToString("") { it.eventId }.isNotBlank() ||
@@ -190,11 +211,11 @@ public open class DefaultCSHealthEventProcessor(
             }
     }
 
-    private suspend fun sendAggregateEventsBasedOnError(events: Map<String, List<clickstream.health.CSHealthEvent>>) {
+    private suspend fun sendAggregateEventsBasedOnError(events: Map<String, List<CSHealthEventDTO>>) {
         logger.debug { "CSHealthEventProcessor#sendAggregateEventsBasedOnError" }
 
-        events.forEach { entry ->
-            val batch = entry.value
+        events.forEach { entry: Entry<String, List<CSHealthEventDTO>> ->
+            val batch: List<CSHealthEvent> = entry.value.dtosMapTo()
             val healthEvent = batch[0].copy(
                 eventId = batch.filter { it.eventId.isNotBlank() }.joinToString { it.eventId },
                 eventBatchId = batch.filter { it.eventBatchId.isNotBlank() }
@@ -214,7 +235,7 @@ public open class DefaultCSHealthEventProcessor(
         val events = bucketEvents.map { event ->
             val eventName = event.eventName
             val bucketType = when {
-                eventName == CSEventNames.ClickStreamEventBatchLatency.value &&
+                eventName == ClickStreamEventBatchLatency.value &&
                         event.stopTime > event.startTime -> {
                     getBucketTypeForBatchLatency(
                         event.startTime,
@@ -222,14 +243,14 @@ public open class DefaultCSHealthEventProcessor(
                         event.networkType
                     )
                 }
-                eventName == CSEventNames.ClickStreamEventWaitTime.value &&
+                eventName == ClickStreamEventWaitTime.value &&
                         event.stopTime > event.startTime -> {
                     getBucketTypeForWaitTime(event.startTime, event.stopTime)
                 }
-                eventName == CSEventNames.ClickStreamEventBatchWaitTime.value &&
+                eventName == ClickStreamEventBatchWaitTime.value &&
                         event.stopTime > event.startTime ->
                     getBucketTypeForWaitTime(event.startTime, event.stopTime)
-                eventName == CSEventNames.ClickStreamBatchSize.value ->
+                eventName == ClickStreamBatchSize.value ->
                     getBucketTypeForBatchSize(event.batchSize)
                 else -> event.bucketType
             }
@@ -248,18 +269,18 @@ public open class DefaultCSHealthEventProcessor(
 
         val latencyInMs = (stopTime - startTime) / ONE_MS_TO_NANO
         return when {
-            networkType == CSNetworkType.WIFI.name && latencyInMs <= ONE_SECOND -> CSBucketTypes.LT_1sec_WIFI
-            networkType == CSNetworkType.WIFI.name && latencyInMs <= THREE_SECOND -> CSBucketTypes.MT_1sec_WIFI
-            networkType == CSNetworkType.WIFI.name && latencyInMs > THREE_SECOND -> CSBucketTypes.MT_3sec_WIFI
-            networkType == CSNetworkType.MOBILE_4G.name && latencyInMs <= ONE_SECOND -> CSBucketTypes.LT_1sec_4G
-            networkType == CSNetworkType.MOBILE_4G.name && latencyInMs <= THREE_SECOND -> CSBucketTypes.MT_1sec_4G
-            networkType == CSNetworkType.MOBILE_4G.name && latencyInMs > THREE_SECOND -> CSBucketTypes.MT_3sec_4G
-            networkType == CSNetworkType.MOBILE_3G.name && latencyInMs <= ONE_SECOND -> CSBucketTypes.LT_1sec_3G
-            networkType == CSNetworkType.MOBILE_3G.name && latencyInMs <= THREE_SECOND -> CSBucketTypes.MT_1sec_3G
-            networkType == CSNetworkType.MOBILE_3G.name && latencyInMs > THREE_SECOND -> CSBucketTypes.MT_3sec_3G
-            networkType == CSNetworkType.MOBILE_2G.name && latencyInMs <= ONE_SECOND -> CSBucketTypes.LT_1sec_2G
-            networkType == CSNetworkType.MOBILE_2G.name && latencyInMs <= THREE_SECOND -> CSBucketTypes.MT_1sec_2G
-            networkType == CSNetworkType.MOBILE_2G.name && latencyInMs > THREE_SECOND -> CSBucketTypes.MT_3sec_2G
+            networkType == WIFI.name && latencyInMs <= ONE_SECOND -> CSBucketTypes.LT_1sec_WIFI
+            networkType == WIFI.name && latencyInMs <= THREE_SECOND -> CSBucketTypes.MT_1sec_WIFI
+            networkType == WIFI.name && latencyInMs > THREE_SECOND -> CSBucketTypes.MT_3sec_WIFI
+            networkType == MOBILE_4G.name && latencyInMs <= ONE_SECOND -> CSBucketTypes.LT_1sec_4G
+            networkType == MOBILE_4G.name && latencyInMs <= THREE_SECOND -> CSBucketTypes.MT_1sec_4G
+            networkType == MOBILE_4G.name && latencyInMs > THREE_SECOND -> CSBucketTypes.MT_3sec_4G
+            networkType == MOBILE_3G.name && latencyInMs <= ONE_SECOND -> CSBucketTypes.LT_1sec_3G
+            networkType == MOBILE_3G.name && latencyInMs <= THREE_SECOND -> CSBucketTypes.MT_1sec_3G
+            networkType == MOBILE_3G.name && latencyInMs > THREE_SECOND -> CSBucketTypes.MT_3sec_3G
+            networkType == MOBILE_2G.name && latencyInMs <= ONE_SECOND -> CSBucketTypes.LT_1sec_2G
+            networkType == MOBILE_2G.name && latencyInMs <= THREE_SECOND -> CSBucketTypes.MT_1sec_2G
+            networkType == MOBILE_2G.name && latencyInMs > THREE_SECOND -> CSBucketTypes.MT_3sec_2G
             else -> ""
         }
     }
@@ -290,12 +311,13 @@ public open class DefaultCSHealthEventProcessor(
         }
     }
 
-    private suspend fun aggregateBuckets(bucketEvents: List<clickstream.health.CSHealthEvent>) {
+    private suspend fun aggregateBuckets(bucketEvents: List<CSHealthEventDTO>) {
         logger.debug { "CSHealthEventProcessor#aggregateBuckets" }
 
         val groupByEventNames = bucketEvents.groupBy { it.eventName }
-        groupByEventNames.forEach { entry ->
-            val groupByBucketType = entry.value.groupBy { it.bucketType }
+        groupByEventNames.forEach { entry: Entry<String, List<CSHealthEventDTO>> ->
+            val groupByBucketType: Map<String, List<CSHealthEvent>> =
+                entry.value.dtosMapTo().groupBy { it.bucketType }
             groupByBucketType.forEach {
                 val batches = it.value.chunked(MAX_BATCH_THRESHOLD)
                 batches.forEach { batch ->
@@ -314,20 +336,20 @@ public open class DefaultCSHealthEventProcessor(
         }
     }
 
-    private suspend fun pushEvents(events: List<clickstream.health.CSHealthEvent>) {
+    private suspend fun pushEvents(events: List<CSHealthEvent>) {
         logger.debug { "CSHealthEventProcessor#pushEvents" }
 
         events.forEach {
             if (!healthEventConfig.isTrackedViaClickstream(it.eventName)) {
                 healthEventLogger.logEvent(eventName = it.eventName, eventData = it.eventData())
-                healthEventRepository.deleteHealthEvents(events)
+                healthEventRepository.deleteHealthEvents(events.mapToDtos())
             }
         }
     }
 
     private fun createHealthProto(
         eventName: String,
-        events: List<clickstream.health.CSHealthEvent>
+        events: List<CSHealthEvent>
     ): Health {
         logger.debug { "CSHealthEventProcessor#createHealthProto" }
 
@@ -374,6 +396,6 @@ public open class DefaultCSHealthEventProcessor(
     private fun isExemptedFromVerbosityCheck(eventName: String): Boolean {
         logger.debug { "CSHealthEventProcessor#isExemptedFromVerbosityCheck" }
 
-        return eventName == CSEventNames.ClickStreamEventReceived.value
+        return eventName == ClickStreamEventReceived.value
     }
 }

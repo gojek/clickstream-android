@@ -6,7 +6,7 @@ import clickstream.analytics.event.impl.NoOpCSEventHealthListener
 import clickstream.config.timestamp.DefaultCSEventGeneratedTimestampListener
 import clickstream.connection.CSSocketConnectionListener
 import clickstream.connection.NoOpCSConnectionListener
-import clickstream.health.CSEventGeneratedTimestampListener
+import clickstream.health.time.CSEventGeneratedTimestampListener
 import clickstream.health.CSEventHealthListener
 import clickstream.health.CSHealthEventFactory
 import clickstream.health.CSHealthEventLogger
@@ -17,7 +17,6 @@ import clickstream.health.CSInfo
 import clickstream.internal.analytics.impl.NoOpCSHealthEventLogger
 import clickstream.internal.di.CSServiceLocator
 import clickstream.lifecycle.CSAppLifeCycle
-import clickstream.lifecycle.CSAppLifeCycleObserver
 import clickstream.logger.CSLogLevel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope

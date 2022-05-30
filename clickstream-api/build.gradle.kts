@@ -5,7 +5,7 @@ apply(from = "$rootDir/scripts/versioning.gradle")
 
 ext {
     set("PUBLISH_GROUP_ID", "com.gojek.android")
-    set("PUBLISH_ARTIFACT_ID", "clickstream")
+    set("PUBLISH_ARTIFACT_ID", "clickstream-api")
     set("PUBLISH_VERSION", ext.get("gitVersionName"))
 }
 
@@ -32,9 +32,8 @@ android {
 dependencies {
     // Clickstream
     implementation(files("$rootDir/libs/proto-sdk-1.18.6.jar"))
-    api(projects.clickstreamHealthMetrics)
-    implementation(projects.clickstreamHealthMetricsApi)
-    implementation(projects.clickstreamApi)
+    compileOnly(projects.clickstreamLogger)
+    compileOnly(projects.clickstreamLifecycle)
 
     // Common
     deps.common.list.forEach(::implementation)

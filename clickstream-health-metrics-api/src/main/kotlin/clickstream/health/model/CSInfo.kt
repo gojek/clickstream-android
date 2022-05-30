@@ -1,5 +1,7 @@
 package clickstream.health
 
+import clickstream.health.model.CSDeviceInfo
+
 /**
  * A common data class which wraps [CSAppInfo], [CSLocationInfo],
  * [CSUserInfo], [CSSessionInfo], [CSDeviceInfo]

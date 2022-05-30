@@ -1,10 +1,11 @@
-package clickstream.health
+package clickstream.health.internal
 
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import clickstream.health.internal.CSHealthEvent
 
 internal const val INSTANT_EVENT_TYPE = "instant"
 internal const val BUCKET_EVENT_TYPE = "bucket"
@@ -15,7 +16,7 @@ internal const val AGGREGATE_EVENT_TYPE = "aggregate"
  * Thread switching should be handled by the caller side in they implementation scope.
  */
 @Dao
-public interface CSHealthEventDao {
+internal interface CSHealthEventDao {
 
     /**
      * A function [insert] that accommodate an action to insert an sdk health event.
@@ -26,7 +27,7 @@ public interface CSHealthEventDao {
      * @param healthEvent - Event Data to be stored
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public suspend fun insert(healthEvent: CSHealthEvent)
+    suspend fun insert(healthEvent: CSHealthEvent)
 
     /**
      * A function [insertAll] that accommodate an action to save a [List] of [CSHealthEvent] object.
@@ -37,7 +38,7 @@ public interface CSHealthEventDao {
      * @param healthEventList - List of Event Data to be stored
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public suspend fun insertAll(healthEventList: List<CSHealthEvent>)
+    suspend fun insertAll(healthEventList: List<CSHealthEvent>)
 
     /**
      * A function [getEventByType] that retrieves all events based on the event type.
@@ -47,14 +48,14 @@ public interface CSHealthEventDao {
      *
      */
     @Query("SELECT * FROM HealthStats WHERE eventType = :eventType")
-    public suspend fun getEventByType(eventType: String): List<CSHealthEvent>
+    suspend fun getEventByType(eventType: String): List<CSHealthEvent>
 
     /**
      * A function [getBucketEventByEventBatchId] that accommodate an action to get list of [CSHealthEvent] objects
      * by given event name and batch ID.
      */
     @Query("SELECT * FROM HealthStats WHERE eventType = 'bucket' and eventName = :eventName and eventBatchId = :eventBatchId")
-    public suspend fun getBucketEventByEventBatchId(
+    suspend fun getBucketEventByEventBatchId(
         eventName: String,
         eventBatchId: String
     ): List<CSHealthEvent>
@@ -64,7 +65,7 @@ public interface CSHealthEventDao {
      * by given event name and event ID.
      */
     @Query("SELECT * FROM HealthStats WHERE eventType = 'bucket' and eventName = :eventName and eventId in (:eventId)")
-    public suspend fun getBucketEventsByEventIdList(
+    suspend fun getBucketEventsByEventIdList(
         eventName: String,
         eventId: List<String>
     ): List<CSHealthEvent>
@@ -79,7 +80,7 @@ public interface CSHealthEventDao {
      * @param sessionId - The sessionId for group of health events
      */
     @Query("DELETE FROM HealthStats WHERE sessionId = :sessionId and stopTime >= startTime")
-    public suspend fun deleteBySessionId(sessionId: String)
+    suspend fun deleteBySessionId(sessionId: String)
 
     /**
      *  function [deleteHealthEvent] that accommodate an action to delete of [CSHealthEvent] objects.
@@ -88,5 +89,5 @@ public interface CSHealthEventDao {
      * Thread switching must be handled by the caller side
      */
     @Delete
-    public suspend fun deleteHealthEvent(events: List<CSHealthEvent>)
+    suspend fun deleteHealthEvent(events: List<CSHealthEvent>)
 }

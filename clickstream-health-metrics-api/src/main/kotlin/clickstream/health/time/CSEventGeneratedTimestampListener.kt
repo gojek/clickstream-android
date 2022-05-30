@@ -1,4 +1,4 @@
-package clickstream.health
+package clickstream.health.time
 
 /**
  * An interface to generate time that will being use by internal events.

@@ -1,8 +1,8 @@
 package clickstream.internal.eventprocessor.impl
 
+import clickstream.CSMetaProvider
 import clickstream.health.CSInfo
 import clickstream.health.CSLocationInfo
-import clickstream.health.CSMetaProvider
 import com.gojek.clickstream.internal.HealthMeta.App
 import com.gojek.clickstream.internal.HealthMeta.Customer
 import com.gojek.clickstream.internal.HealthMeta.Device

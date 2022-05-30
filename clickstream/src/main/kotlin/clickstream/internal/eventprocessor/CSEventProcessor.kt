@@ -2,11 +2,11 @@ package clickstream.internal.eventprocessor
 
 import clickstream.CSEvent
 import clickstream.config.CSEventProcessorConfig
-import clickstream.health.CSEventNames
-import clickstream.health.CSHealthEvent
+import clickstream.health.model.CSHealthEventDTO
 import clickstream.health.CSHealthEventRepository
 import clickstream.health.CSInfo
-import clickstream.health.EventTypes
+import clickstream.health.model.EventTypes
+import clickstream.health.model.CSEventNames
 import clickstream.internal.eventscheduler.CSEventScheduler
 import clickstream.logger.CSLogger
 import clickstream.protoName
@@ -29,7 +29,7 @@ internal class CSEventProcessor(
     private val eventScheduler: CSEventScheduler,
     private val dispatcher: CoroutineDispatcher,
     private val logger: CSLogger,
-    private val healthEventRepository: clickstream.health.CSHealthEventRepository,
+    private val healthEventRepository: CSHealthEventRepository,
     private val info: CSInfo
 ) {
 
@@ -40,34 +40,27 @@ internal class CSEventProcessor(
      */
     suspend fun trackEvent(event: CSEvent) {
         logger.debug { "CSEventProcessor#trackEvent" }
-        logHealthEvent(
-            eventName = clickstream.health.CSEventNames.ClickStreamEventReceived.value,
-            eventId = event.guid.plus("_")
-                .plus(event.message::class.simpleName.orEmpty().toLowerCase(Locale.getDefault()))
+        recordHealthEvent(
+            eventName = CSEventNames.ClickStreamEventReceived.value,
+            eventId = event.guid.plus("_").plus(event.message::class.simpleName.orEmpty().toLowerCase(Locale.getDefault()))
         )
-        logHealthEvent(
-            eventName = clickstream.health.CSEventNames.ClickStreamEventObjectCreated.value,
+        recordHealthEvent(
+            eventName = CSEventNames.ClickStreamEventObjectCreated.value,
             eventId = event.guid
         )
         val eventName = event.message.protoName()
         when {
-            config.realtimeEvents.contains(eventName) -> {
-                eventScheduler.scheduleEvent(event)
-            }
-            config.instantEvent.contains(eventName) -> {
-                eventScheduler.sendInstantEvent(event)
-            }
-            else -> {
-                eventScheduler.scheduleEvent(event)
-            }
+            config.realtimeEvents.contains(eventName) -> eventScheduler.scheduleEvent(event)
+            config.instantEvent.contains(eventName) -> eventScheduler.sendInstantEvent(event)
+            else -> eventScheduler.scheduleEvent(event)
         }
     }
 
-    private suspend fun logHealthEvent(eventName: String, eventId: String) {
+    private suspend fun recordHealthEvent(eventName: String, eventId: String) {
         healthEventRepository.insertHealthEvent(
-            clickstream.health.CSHealthEvent(
+            CSHealthEventDTO(
                 eventName = eventName,
-                eventType = clickstream.health.EventTypes.AGGREGATE,
+                eventType = EventTypes.AGGREGATE,
                 eventId = eventId,
                 appVersion = info.appInfo.appVersion
             )

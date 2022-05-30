@@ -1,4 +1,4 @@
-package clickstream.health
+package clickstream.health.model
 
 public object CSHealthKeys {
     public const val EVENT_NAME: String = "event_name"

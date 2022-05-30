@@ -4,12 +4,12 @@ import clickstream.fake.fakeAppInfo
 import clickstream.fake.fakeCSHealthEventConfig
 import clickstream.fake.fakeCSInfo
 import clickstream.fake.fakeUserInfo
-import clickstream.health.CSHealthEvent
+import clickstream.health.internal.CSHealthEvent
 import clickstream.health.CSHealthEventFactory
 import clickstream.health.CSHealthEventRepository
 import clickstream.health.CSInfo
 import clickstream.health.CT_DESTINATION
-import clickstream.health.DefaultCSHealthEventProcessor
+import clickstream.health.internal.DefaultCSHealthEventProcessor
 import clickstream.internal.analytics.impl.NoOpCSHealthEventLogger
 import clickstream.internal.lifecycle.CSAppLifeCycle
 import clickstream.logger.CSLogLevel.OFF

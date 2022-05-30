@@ -1,4 +1,4 @@
-package clickstream.health
+package clickstream.health.model
 
 /**
  * A data class which expose event meta.

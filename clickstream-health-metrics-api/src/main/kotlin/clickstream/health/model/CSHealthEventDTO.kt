@@ -1,30 +1,8 @@
-package clickstream.health
+package clickstream.health.model
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import clickstream.health.model.CSEventNames.ClickStreamEventBatchCreated
 
-/**
- * The data class for health events which will be stored to the DB
- *
- * @param healthEventID - The unique ID for each health event
- * @param eventName - The event name for this event, will be one of [CSEventNames]
- * @param eventType - The event type for this event, will be one of [EventTypes]
- * @param timestamp - The timestamp at which the event was created
- * @param eventId - The event ID for which this health event for created
- * @param eventBatchId - The event batch ID for which this health event for created
- * @param error - The event type for this event, will be one of [CSErrorReasons]
- * @param sessionId - The sessionId for current app session
- * @param count - The count of events for aggregated events
- * @param networkType - The network type when event occurred
- * @param startTime - The time to be captured for a performance event
- * @param stopTime - The time to be captured for a performance event
- * @param bucketType - The bucket type for a performance event
- * @param batchSize - The size of an event batch
- * @param appVersion - Host application version that internally we used for measure drop rates.
- */
-@Entity(tableName = "HealthStats")
-public data class CSHealthEvent(
-    @PrimaryKey(autoGenerate = true)
+public data class CSHealthEventDTO(
     val healthEventID: Int = 0,
     val eventName: String,
     val eventType: String,
@@ -41,9 +19,7 @@ public data class CSHealthEvent(
     val batchSize: Long = 0L,
     val appVersion: String
 ) {
-    /**
-     * Returns HashMap of event data which is used for health & performance tracking.     *
-     */
+
     public fun eventData(): HashMap<String, Any> {
         val eventData: HashMap<String, Any> = hashMapOf()
 
@@ -84,7 +60,7 @@ public data class CSHealthEvent(
     private fun getEventIdKey(): String =
         when (eventType) {
             EventTypes.INSTANT -> {
-                if (eventName == CSEventNames.ClickStreamEventBatchCreated.value) {
+                if (eventName == ClickStreamEventBatchCreated.value) {
                     CSHealthKeys.EVENTS
                 } else {
                     CSHealthKeys.EVENT_ID

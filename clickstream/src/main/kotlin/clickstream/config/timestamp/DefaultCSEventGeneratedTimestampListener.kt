@@ -1,6 +1,6 @@
 package clickstream.config.timestamp
 
-import clickstream.health.CSEventGeneratedTimestampListener
+import clickstream.health.time.CSEventGeneratedTimestampListener
 
 /**
  * A default implementation of [CSEventGeneratedTimestampListener].
