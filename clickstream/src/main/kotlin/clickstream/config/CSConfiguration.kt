@@ -92,8 +92,6 @@ public class CSConfiguration private constructor(
         private lateinit var dispatcher: CoroutineDispatcher
         private lateinit var eventGeneratedListener: CSEventGeneratedTimestampListener
         private lateinit var socketConnectionListener: CSSocketConnectionListener
-        private lateinit var eventHealthListener: CSEventHealthListener
-        private lateinit var healthListener: CSHealthEventLoggerListener
         private lateinit var remoteConfig: CSRemoteConfig
         private var logLevel: CSLogLevel = CSLogLevel.OFF
 
@@ -105,26 +103,6 @@ public class CSConfiguration private constructor(
          */
         public fun setDispatcher(dispatcher: CoroutineDispatcher): Builder = apply {
             this.dispatcher = dispatcher
-        }
-
-        /**
-         * Specifies a custom [CSHealthEventLoggerListener] for [ClickStream].
-         *
-         * @param health A [CSHealthEventLoggerListener] for creating custom health tracker's.
-         * @return This [Builder] instance
-         */
-        public fun setHealthListener(health: CSHealthEventLoggerListener): Builder = apply {
-            this.healthListener = health
-        }
-
-        /**
-         * Specifies a custom [CSEventHealthListener] for [ClickStream].
-         *
-         * @param health A [CSEventHealthListener] for creating custom health tracker's.
-         * @return This [Builder] instance
-         */
-        public fun setEventHealthListener(health: CSEventHealthListener): Builder = apply {
-            this.eventHealthListener = health
         }
 
         /**
@@ -186,17 +164,11 @@ public class CSConfiguration private constructor(
             if (::eventGeneratedListener.isInitialized.not()) {
                 eventGeneratedListener = DefaultCSEventGeneratedTimestampListener()
             }
-            if (::healthListener.isInitialized.not()) {
-                healthListener = NoOpCSHealthEventLogger()
-            }
             if (::socketConnectionListener.isInitialized.not()) {
                 socketConnectionListener = NoOpCSConnectionListener()
             }
             if (::remoteConfig.isInitialized.not()) {
                 remoteConfig = NoOpCSRemoteConfig()
-            }
-            if (::eventHealthListener.isInitialized.not()) {
-                eventHealthListener = NoOpCSEventHealthListener()
             }
             return CSConfiguration(
                 context, dispatcher,
