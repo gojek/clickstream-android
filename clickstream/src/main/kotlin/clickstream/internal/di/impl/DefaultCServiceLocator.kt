@@ -3,6 +3,7 @@ package clickstream.internal.di.impl
 import android.app.Application
 import android.content.Context
 import clickstream.CSInfo
+import clickstream.analytics.event.CSEventHealthListener
 import clickstream.config.CSConfig
 import clickstream.config.CSEventSchedulerConfig
 import clickstream.config.CSRemoteConfig
@@ -11,7 +12,6 @@ import clickstream.connection.CSSocketConnectionListener
 import clickstream.internal.analytics.CSHealthEventLogger
 import clickstream.internal.analytics.CSHealthEventProcessor
 import clickstream.internal.analytics.CSHealthEventRepository
-import clickstream.analytics.event.CSEventHealthListener
 import clickstream.internal.analytics.impl.DefaultCSHealthEventRepository
 import clickstream.internal.db.CSAppVersionSharedPref
 import clickstream.internal.db.CSDatabase
@@ -179,9 +179,7 @@ internal class DefaultCServiceLocator(
         DefaultCSHealthEventRepository(
             sessionId = info.sessionInfo.sessionID,
             healthEventDao = db.healthEventDao(),
-            info = info,
-            remoteConfig = remoteConfig,
-            logger = logger
+            info = info
         )
     }
 

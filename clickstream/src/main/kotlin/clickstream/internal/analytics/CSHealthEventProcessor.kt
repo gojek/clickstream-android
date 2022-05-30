@@ -64,22 +64,18 @@ internal open class CSHealthEventProcessor(
     private var coroutineScope: CoroutineScope = CoroutineScope(job + dispatcher)
 
     init {
-        if (remoteConfig.isHealthMetricsEnabled) {
-            logger.debug { "CSHealthEventProcessor#init" }
-            addObserver()
-            coroutineScope.launch {
-                if (!appVersionPreference.isAppVersionEqual(appVersion) && isActive) {
-                    healthEventRepository.deleteHealthEvents(
-                        healthEventRepository.getAggregateEvents()
-                            .filter { healthEventConfig.isTrackedViaClickstream(it.eventName) })
-                }
+        logger.debug { "CSHealthEventProcessor#init" }
+        addObserver()
+        coroutineScope.launch {
+            if (!appVersionPreference.isAppVersionEqual(appVersion) && isActive) {
+                healthEventRepository.deleteHealthEvents(
+                    healthEventRepository.getAggregateEvents()
+                        .filter { healthEventConfig.isTrackedViaClickstream(it.eventName) })
             }
         }
     }
 
     override fun onStart() {
-        if (remoteConfig.isHealthMetricsEnabled.not()) return
-
         logger.debug { "CSHealthEventProcessor#onStart" }
 
         if (coroutineScope.isActive) {
@@ -88,8 +84,6 @@ internal open class CSHealthEventProcessor(
     }
 
     override fun onStop() {
-        if (remoteConfig.isHealthMetricsEnabled.not()) return
-
         logger.debug { "CSHealthEventProcessor#onStop" }
 
         if (coroutineScope.isActive) {
@@ -104,8 +98,6 @@ internal open class CSHealthEventProcessor(
      * Returns list of health protos after aggregation
      */
     internal suspend fun getAggregateEventsBasedOnEventName(): List<Health> {
-        if (remoteConfig.isHealthMetricsEnabled.not()) return emptyList()
-
         logger.debug { "CSHealthEventProcessor#getAggregateEventsBasedOnEventName" }
 
         if (!healthEventConfig.destination.contains(CS_DESTINATION) || (isHealthEventEnabled().not())) {
