@@ -17,6 +17,7 @@ import clickstream.internal.NoOpCSEventHealthListener
 import clickstream.internal.analytics.impl.NoOpCSHealthEventLogger
 import clickstream.internal.di.CSServiceLocator
 import clickstream.lifecycle.CSAppLifeCycle
+import clickstream.lifecycle.impl.DefaultCSAppLifeCycleObserver
 import clickstream.logger.CSLogLevel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -87,7 +88,9 @@ public class CSConfiguration private constructor(
          */
         private val config: CSConfig,
 
-        private val healthGateway: CSHealthGateway
+        private val appLifeCycle: CSAppLifeCycle,
+
+        private val healthGateway: CSHealthGateway 
     ) {
         private lateinit var dispatcher: CoroutineDispatcher
         private lateinit var eventGeneratedListener: CSEventGeneratedTimestampListener
@@ -181,7 +184,7 @@ public class CSConfiguration private constructor(
                 healthGateway.healthEventRepository,
                 healthGateway.healthEventProcessor,
                 healthGateway.healthEventFactory,
-                healthGateway.appLifeCycle
+                appLifeCycle
             )
         }
     }

@@ -32,9 +32,9 @@ android {
 dependencies {
     // Clickstream
     compileOnly(files("$rootDir/libs/proto-sdk-1.18.6.jar"))
-    compileOnly(projects.clickstreamApi)
     compileOnly(projects.clickstreamLogger)
-    compileOnly(projects.clickstreamHealthMetricsApi)
+    api(projects.clickstreamHealthMetricsApi)
+    api(projects.clickstreamApi)
     api(projects.clickstreamLifecycle)
     api(projects.clickstreamUtil)
 

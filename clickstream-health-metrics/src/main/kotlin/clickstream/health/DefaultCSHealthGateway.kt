@@ -16,7 +16,6 @@ import clickstream.health.internal.DefaultCSHealthEventProcessor
 import clickstream.health.internal.DefaultCSHealthEventRepository
 import clickstream.health.model.CSHealthEventConfig
 import clickstream.lifecycle.CSAppLifeCycle
-import clickstream.lifecycle.impl.DefaultCSAppLifeCycleObserver
 import clickstream.logger.CSLogger
 import clickstream.util.CSAppVersionSharedPref
 import clickstream.util.impl.DefaultCSAppVersionSharedPref
@@ -36,14 +35,13 @@ public object DefaultCSHealthGateway {
         timeStampGenerator: CSTimeStampGenerator,
         metaProvider: CSMetaProvider,
         eventHealthListener: CSEventHealthListener,
+        appLifeCycle: CSAppLifeCycle,
         guIdGenerator: CSGuIdGenerator = DefaultCSGuIdGenerator(),
-        appLifeCycle: CSAppLifeCycle = DefaultCSAppLifeCycleObserver(context),
         dispatcher: CoroutineDispatcher = Dispatchers.Default,
         appVersionPreference: CSAppVersionSharedPref = DefaultCSAppVersionSharedPref(context)
     ): CSHealthGateway {
 
         return object : CSHealthGateway {
-            override val appLifeCycle: CSAppLifeCycle = appLifeCycle
             override val eventHealthListener: CSEventHealthListener = eventHealthListener
             override val healthEventRepository: CSHealthEventRepository by lazy {
                 DefaultCSHealthEventRepository(

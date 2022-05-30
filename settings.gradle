@@ -7,5 +7,6 @@ include ':clickstream-lifecycle'
 include ':clickstream-util'
 include ':clickstream-health-metrics'
 include ':clickstream-health-metrics-api'
+include ':clickstream-health-metrics-noop'
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")

@@ -6,4 +6,5 @@
 ./gradlew :clickstream-lifecycle:assembleRelease && ./gradlew :clickstream-lifecycle:publishToMavenLocal &&
 ./gradlew :clickstream-util:assembleRelease && ./gradlew :clickstream-util:publishToMavenLocal &&
 ./gradlew :clickstream-health-metrics:assembleRelease && ./gradlew :clickstream-health-metrics:publishToMavenLocal &&
+./gradlew :clickstream-health-metrics-noop:assembleRelease && ./gradlew :clickstream-health-metrics-noop:publishToMavenLocal &&
 ./gradlew :clickstream-health-metrics-api:assembleRelease && ./gradlew :clickstream-health-metrics-api:publishToMavenLocal
