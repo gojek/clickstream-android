@@ -1,6 +1,6 @@
-package clickstream.health.model
+package clickstream.health.constant
 
-public object CSHealthKeys {
+public object CSHealthKeysConstant {
     public const val EVENT_NAME: String = "event_name"
     public const val EVENT_TYPE: String = "clickstream_event_type"
     public const val TIMESTAMP: String = "clickstream_timestamp"

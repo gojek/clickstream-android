@@ -1,17 +1,17 @@
 package clickstream.internal.eventscheduler
 
 import clickstream.CSEvent
+import clickstream.CSInfo
 import clickstream.config.CSEventSchedulerConfig
 import clickstream.health.CSEventHealthListener
-import clickstream.health.model.CSEventNames.ClickStreamEventBatchCreated
-import clickstream.health.model.CSEventNames.ClickStreamEventBatchTriggerFailed
-import clickstream.health.model.CSEventNames.ClickStreamEventCached
-import clickstream.health.model.CSEventNames.ClickStreamInvalidMessage
 import clickstream.health.CSGuIdGenerator
-import clickstream.health.model.CSHealthEventDTO
-import clickstream.health.CSInfo
 import clickstream.health.CSTimeStampGenerator
-import clickstream.health.model.EventTypes
+import clickstream.health.constant.CSEventNamesConstant.ClickStreamEventBatchCreated
+import clickstream.health.constant.CSEventNamesConstant.ClickStreamEventBatchTriggerFailed
+import clickstream.health.constant.CSEventNamesConstant.ClickStreamEventCached
+import clickstream.health.constant.CSEventNamesConstant.ClickStreamInvalidMessage
+import clickstream.health.constant.CSEventTypesConstant
+import clickstream.health.model.CSHealthEventDTO
 import clickstream.internal.analytics.CSErrorReasons
 import clickstream.internal.networklayer.CSNetworkManager
 import clickstream.internal.utils.CSBatteryLevel
@@ -118,7 +118,7 @@ internal open class CSEventScheduler(
         logHealthEvent(
             CSHealthEventDTO(
                 eventName = ClickStreamEventCached.value,
-                eventType = EventTypes.AGGREGATE,
+                eventType = CSEventTypesConstant.AGGREGATE,
                 eventId = eventData.eventGuid,
                 appVersion = info.appInfo.appVersion
             )
@@ -245,7 +245,7 @@ internal open class CSEventScheduler(
             logHealthEvent(
                 CSHealthEventDTO(
                     eventName = ClickStreamEventBatchCreated.value,
-                    eventType = EventTypes.AGGREGATE,
+                    eventType = CSEventTypesConstant.AGGREGATE,
                     eventBatchId = eventRequest.reqGuid,
                     eventId = batch.joinToString { it.eventGuid },
                     appVersion = info.appInfo.appVersion
@@ -308,7 +308,7 @@ internal open class CSEventScheduler(
             logHealthEvent(
                 CSHealthEventDTO(
                     eventName = ClickStreamInvalidMessage.value,
-                    eventType = EventTypes.AGGREGATE,
+                    eventType = CSEventTypesConstant.AGGREGATE,
                     error = message.toByteString().toString(),
                     appVersion = info.appInfo.appVersion
                 )
@@ -321,7 +321,7 @@ internal open class CSEventScheduler(
         logHealthEvent(
             CSHealthEventDTO(
                 eventName = ClickStreamEventBatchTriggerFailed.value,
-                eventType = EventTypes.AGGREGATE,
+                eventType = CSEventTypesConstant.AGGREGATE,
                 error = CSErrorReasons.SOCKET_NOT_OPEN,
                 appVersion = info.appInfo.appVersion
             )
@@ -333,7 +333,7 @@ internal open class CSEventScheduler(
         logHealthEvent(
             CSHealthEventDTO(
                 eventName = ClickStreamEventBatchTriggerFailed.value,
-                eventType = EventTypes.AGGREGATE,
+                eventType = CSEventTypesConstant.AGGREGATE,
                 error = CSErrorReasons.NETWORK_UNAVAILABLE,
                 appVersion = info.appInfo.appVersion
             )
@@ -345,7 +345,7 @@ internal open class CSEventScheduler(
         logHealthEvent(
             CSHealthEventDTO(
                 eventName = ClickStreamEventBatchTriggerFailed.value,
-                eventType = EventTypes.AGGREGATE,
+                eventType = CSEventTypesConstant.AGGREGATE,
                 error = CSErrorReasons.LOW_BATTERY,
                 appVersion = info.appInfo.appVersion
             )

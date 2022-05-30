@@ -1,6 +1,7 @@
 package clickstream.health
 
 import android.content.Context
+import clickstream.CSInfo
 import clickstream.CSMetaProvider
 import clickstream.health.internal.CSHealthDatabase
 import clickstream.health.internal.DefaultCSHealthEventFactory
@@ -18,11 +19,10 @@ public object DefaultCSHealthGateway {
 
     public fun factory(
         context: Context,
-        csInfo: CSInfo,
         appLifeCycle: CSAppLifeCycle,
         dispatcher: CoroutineDispatcher,
         healthEventConfig: CSHealthEventConfig,
-        info: CSInfo,
+        csInfo: CSInfo,
         logger: CSLogger,
         healthEventLogger: CSHealthEventLogger,
         appVersion: String,
@@ -49,7 +49,7 @@ public object DefaultCSHealthGateway {
                     healthEventRepository = healthEventRepository,
                     dispatcher = dispatcher,
                     healthEventConfig = healthEventConfig,
-                    info = info,
+                    info = csInfo,
                     logger = logger,
                     healthEventLogger = healthEventLogger,
                     healthEventFactory = healthEventFactory,

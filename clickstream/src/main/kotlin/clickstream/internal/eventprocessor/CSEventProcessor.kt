@@ -1,12 +1,12 @@
 package clickstream.internal.eventprocessor
 
 import clickstream.CSEvent
+import clickstream.CSInfo
 import clickstream.config.CSEventProcessorConfig
-import clickstream.health.model.CSHealthEventDTO
 import clickstream.health.CSHealthEventRepository
-import clickstream.health.CSInfo
-import clickstream.health.model.EventTypes
-import clickstream.health.model.CSEventNames
+import clickstream.health.constant.CSEventNamesConstant
+import clickstream.health.constant.CSEventTypesConstant
+import clickstream.health.model.CSHealthEventDTO
 import clickstream.internal.eventscheduler.CSEventScheduler
 import clickstream.logger.CSLogger
 import clickstream.protoName
@@ -41,11 +41,12 @@ internal class CSEventProcessor(
     suspend fun trackEvent(event: CSEvent) {
         logger.debug { "CSEventProcessor#trackEvent" }
         recordHealthEvent(
-            eventName = CSEventNames.ClickStreamEventReceived.value,
-            eventId = event.guid.plus("_").plus(event.message::class.simpleName.orEmpty().toLowerCase(Locale.getDefault()))
+            eventName = CSEventNamesConstant.ClickStreamEventReceived.value,
+            eventId = event.guid.plus("_")
+                .plus(event.message::class.simpleName.orEmpty().toLowerCase(Locale.getDefault()))
         )
         recordHealthEvent(
-            eventName = CSEventNames.ClickStreamEventObjectCreated.value,
+            eventName = CSEventNamesConstant.ClickStreamEventObjectCreated.value,
             eventId = event.guid
         )
         val eventName = event.message.protoName()
@@ -60,7 +61,7 @@ internal class CSEventProcessor(
         healthEventRepository.insertHealthEvent(
             CSHealthEventDTO(
                 eventName = eventName,
-                eventType = EventTypes.AGGREGATE,
+                eventType = CSEventTypesConstant.AGGREGATE,
                 eventId = eventId,
                 appVersion = info.appInfo.appVersion
             )

@@ -1,22 +1,22 @@
 package clickstream.health.internal
 
+import clickstream.CSInfo
 import clickstream.health.CSHealthEventFactory
 import clickstream.health.CSHealthEventLogger
 import clickstream.health.CSHealthEventProcessor
 import clickstream.health.CSHealthEventRepository
-import clickstream.health.CSInfo
-import clickstream.health.constant.CSEventDestination
+import clickstream.health.constant.CSEventDestinationConstant
+import clickstream.health.constant.CSEventNamesConstant.ClickStreamBatchSize
+import clickstream.health.constant.CSEventNamesConstant.ClickStreamEventBatchLatency
+import clickstream.health.constant.CSEventNamesConstant.ClickStreamEventBatchWaitTime
+import clickstream.health.constant.CSEventNamesConstant.ClickStreamEventReceived
+import clickstream.health.constant.CSEventNamesConstant.ClickStreamEventWaitTime
 import clickstream.health.internal.CSHealthEvent.Companion.dtosMapTo
 import clickstream.health.internal.CSHealthEvent.Companion.mapToDtos
 import clickstream.health.internal.CSNetworkType.MOBILE_2G
 import clickstream.health.internal.CSNetworkType.MOBILE_3G
 import clickstream.health.internal.CSNetworkType.MOBILE_4G
 import clickstream.health.internal.CSNetworkType.WIFI
-import clickstream.health.model.CSEventNames.ClickStreamBatchSize
-import clickstream.health.model.CSEventNames.ClickStreamEventBatchLatency
-import clickstream.health.model.CSEventNames.ClickStreamEventBatchWaitTime
-import clickstream.health.model.CSEventNames.ClickStreamEventReceived
-import clickstream.health.model.CSEventNames.ClickStreamEventWaitTime
 import clickstream.health.model.CSHealthEventConfig
 import clickstream.health.model.CSHealthEventDTO
 import clickstream.lifecycle.CSAppLifeCycle
@@ -113,7 +113,7 @@ internal class DefaultCSHealthEventProcessor(
     override suspend fun getAggregateEventsBasedOnEventName(): List<Health> {
         logger.debug { "CSHealthEventProcessor#getAggregateEventsBasedOnEventName" }
 
-        if (!healthEventConfig.destination.contains(CSEventDestination.CS_DESTINATION) || (isHealthEventEnabled().not())) {
+        if (!healthEventConfig.destination.contains(CSEventDestinationConstant.CS_DESTINATION) || (isHealthEventEnabled().not())) {
             return emptyList()
         }
         val healthEvents = mutableListOf<Health>()
@@ -148,7 +148,7 @@ internal class DefaultCSHealthEventProcessor(
                 logger.debug { "CSHealthEventProcessor#sendEvents - Health Event condition is not satisfied for this user" }
                 return@launch
             }
-            if (healthEventConfig.destination.contains(CSEventDestination.CT_DESTINATION)) {
+            if (healthEventConfig.destination.contains(CSEventDestinationConstant.CT_DESTINATION)) {
                 logger.debug { "CSHealthEventProcessor#sendEvents - sendEventsToCleverTap" }
                 sendEventsToCleverTap()
             }

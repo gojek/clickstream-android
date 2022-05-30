@@ -1,8 +1,8 @@
 package clickstream.internal.networklayer
 
+import clickstream.CSInfo
 import clickstream.connection.CSSocketConnectionListener
 import clickstream.health.CSHealthEventRepository
-import clickstream.health.CSInfo
 import clickstream.lifecycle.CSAppLifeCycle
 import clickstream.logger.CSLogger
 import kotlinx.coroutines.CoroutineDispatcher

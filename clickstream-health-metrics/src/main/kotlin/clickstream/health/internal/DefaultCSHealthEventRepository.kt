@@ -1,11 +1,11 @@
 package clickstream.health.internal
 
-import clickstream.health.model.CSHealthEventDTO
+import clickstream.CSInfo
 import clickstream.health.CSHealthEventRepository
-import clickstream.health.CSInfo
 import clickstream.health.internal.CSHealthEvent.Companion.dtoMapTo
 import clickstream.health.internal.CSHealthEvent.Companion.dtosMapTo
 import clickstream.health.internal.CSHealthEvent.Companion.mapToDtos
+import clickstream.health.model.CSHealthEventDTO
 
 /**
  * The HealthRepositoryImpl is the implementation detail of the [CSHealthEventRepository].

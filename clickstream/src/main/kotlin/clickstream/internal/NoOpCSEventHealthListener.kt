@@ -1,4 +1,4 @@
-package clickstream.analytics.event.impl
+package clickstream.internal
 
 import clickstream.health.model.CSEventHealth
 import clickstream.health.CSEventHealthListener

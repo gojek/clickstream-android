@@ -1,6 +1,6 @@
-package clickstream.health.model
+package clickstream.health.constant
 
-public enum class CSEventNames(public val value: String) {
+public enum class CSEventNamesConstant(public val value: String) {
     ClickStreamFailedInit("ClickStream Failed Init"),
     ClickStreamEventReceived("Clickstream Event Received"),
     ClickStreamEventObjectCreated("Clickstream Event Object Created"),

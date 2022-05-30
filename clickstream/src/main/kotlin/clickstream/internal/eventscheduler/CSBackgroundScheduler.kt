@@ -1,14 +1,14 @@
 package clickstream.internal.eventscheduler
 
 import clickstream.CSEvent
+import clickstream.CSInfo
 import clickstream.config.CSEventSchedulerConfig
 import clickstream.health.CSEventHealthListener
-import clickstream.health.model.CSEventNames.ClickStreamFlushOnBackground
 import clickstream.health.CSGuIdGenerator
-import clickstream.health.model.CSHealthEventDTO
-import clickstream.health.CSInfo
 import clickstream.health.CSTimeStampGenerator
-import clickstream.health.model.EventTypes
+import clickstream.health.constant.CSEventNamesConstant.ClickStreamFlushOnBackground
+import clickstream.health.constant.CSEventTypesConstant
+import clickstream.health.model.CSHealthEventDTO
 import clickstream.internal.di.CSServiceLocator
 import clickstream.internal.networklayer.CSBackgroundNetworkManager
 import clickstream.internal.utils.CSBatteryStatusObserver
@@ -112,7 +112,7 @@ internal class CSBackgroundScheduler(
         reqId?.let {
             CSHealthEventDTO(
                 eventName = ClickStreamFlushOnBackground.value,
-                eventType = EventTypes.AGGREGATE,
+                eventType = CSEventTypesConstant.AGGREGATE,
                 eventBatchId = it,
                 eventId = events.joinToString { event -> event.eventGuid },
                 appVersion = info.appInfo.appVersion

@@ -1,12 +1,12 @@
 package clickstream.internal.networklayer
 
+import clickstream.CSInfo
 import clickstream.config.CSNetworkConfig
-import clickstream.health.model.CSHealthEventDTO
 import clickstream.health.CSHealthEventRepository
-import clickstream.health.CSInfo
 import clickstream.health.CSTimeStampGenerator
-import clickstream.health.model.CSEventNames
-import clickstream.health.model.EventTypes
+import clickstream.health.constant.CSEventNamesConstant
+import clickstream.health.constant.CSEventTypesConstant
+import clickstream.health.model.CSHealthEventDTO
 import clickstream.internal.analytics.CSErrorReasons
 import clickstream.internal.utils.CSTimeStampMessageBuilder
 import clickstream.isHealthEvent
@@ -144,8 +144,8 @@ internal abstract class CSRetryableCallback(
                 "CSRetryableCallback#sendEvent - Request sent to the server failed: ${eventRequest.reqGuid}"
             }
             recordHealthEvent(
-                eventName = CSEventNames.ClickStreamBatchWriteFailed.value,
-                eventType = EventTypes.AGGREGATE,
+                eventName = CSEventNamesConstant.ClickStreamBatchWriteFailed.value,
+                eventType = CSEventTypesConstant.AGGREGATE,
                 eventBatchId = eventRequest.reqGuid,
                 error = "Batch write failed"
             )
@@ -175,8 +175,8 @@ internal abstract class CSRetryableCallback(
             }
 
             recordHealthEvent(
-                eventName = CSEventNames.ClickStreamEventBatchTimeout.value,
-                eventType = EventTypes.AGGREGATE,
+                eventName = CSEventNamesConstant.ClickStreamEventBatchTimeout.value,
+                eventType = CSEventTypesConstant.AGGREGATE,
                 eventBatchId = eventRequest.reqGuid,
                 error = "SocketTimeout"
             )
@@ -226,8 +226,8 @@ internal abstract class CSRetryableCallback(
 
         coroutineScope.launch(dispatcher) {
             recordHealthEvent(
-                eventName = CSEventNames.ClickStreamBatchSent.value,
-                eventType = EventTypes.AGGREGATE,
+                eventName = CSEventNamesConstant.ClickStreamBatchSent.value,
+                eventType = CSEventTypesConstant.AGGREGATE,
                 eventBatchId = eventRequest.reqGuid,
                 error = ""
             )
@@ -243,8 +243,8 @@ internal abstract class CSRetryableCallback(
         }
 
         recordHealthEvent(
-            eventName = CSEventNames.ClickStreamEventBatchAck.value,
-            eventType = EventTypes.AGGREGATE,
+            eventName = CSEventNamesConstant.ClickStreamEventBatchAck.value,
+            eventType = CSEventTypesConstant.AGGREGATE,
             eventBatchId = eventRequest.reqGuid,
             error = ""
         )
@@ -275,8 +275,8 @@ internal abstract class CSRetryableCallback(
                 }
 
                 recordHealthEvent(
-                    eventName = CSEventNames.ClickStreamConnectionFailed.value,
-                    eventType = EventTypes.AGGREGATE,
+                    eventName = CSEventNamesConstant.ClickStreamConnectionFailed.value,
+                    eventType = CSEventTypesConstant.AGGREGATE,
                     error = CSErrorReasons.MAX_CONNECTION_LIMIT_REACHED,
                     eventBatchId = eventRequestGuid
                 )
@@ -287,8 +287,8 @@ internal abstract class CSRetryableCallback(
                 }
 
                 recordHealthEvent(
-                    eventName = CSEventNames.ClickStreamConnectionFailed.value,
-                    eventType = EventTypes.AGGREGATE,
+                    eventName = CSEventNamesConstant.ClickStreamConnectionFailed.value,
+                    eventType = CSEventTypesConstant.AGGREGATE,
                     error = CSErrorReasons.MAX_USER_LIMIT_REACHED,
                     eventBatchId = eventRequestGuid
                 )
@@ -299,8 +299,8 @@ internal abstract class CSRetryableCallback(
                 }
 
                 recordHealthEvent(
-                    eventName = CSEventNames.ClickStreamEventBatchErrorResponse.value,
-                    eventType = EventTypes.AGGREGATE,
+                    eventName = CSEventNamesConstant.ClickStreamEventBatchErrorResponse.value,
+                    eventType = CSEventTypesConstant.AGGREGATE,
                     error = CSErrorReasons.PARSING_EXCEPTION,
                     eventBatchId = eventRequestGuid
                 )
@@ -311,8 +311,8 @@ internal abstract class CSRetryableCallback(
                 }
 
                 recordHealthEvent(
-                    eventName = CSEventNames.ClickStreamEventBatchErrorResponse.value,
-                    eventType = EventTypes.AGGREGATE,
+                    eventName = CSEventNamesConstant.ClickStreamEventBatchErrorResponse.value,
+                    eventType = CSEventTypesConstant.AGGREGATE,
                     error = CSErrorReasons.UNKNOWN,
                     eventBatchId = eventRequestGuid
                 )

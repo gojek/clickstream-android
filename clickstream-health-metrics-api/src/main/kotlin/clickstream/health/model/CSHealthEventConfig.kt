@@ -1,11 +1,7 @@
 package clickstream.health.model
 
+import clickstream.health.constant.CSEventNamesConstant
 import java.util.Locale
-
-private const val DIVIDING_FACTOR: Int = 10
-private const val MULTIPLICATION_FACTOR: Int = 10
-public const val MAX_VERBOSITY_LEVEL: String = "maximum"
-public const val ALPHA: String = "alpha"
 
 /**
  * Config for HealthEventTracker, based on which the health events are handled
@@ -22,9 +18,11 @@ public data class CSHealthEventConfig(
     /**
      * Checking whether the current app version is greater than the version in the config.
      */
-    private fun isAppVersionGreater(appVersion: String): Boolean =
-        appVersion.isNotBlank() && minTrackedVersion.isNotBlank() &&
-                convertVersionToNumber(appVersion) >= convertVersionToNumber(minTrackedVersion)
+    private fun isAppVersionGreater(appVersion: String): Boolean {
+        return appVersion.isNotBlank() &&
+            minTrackedVersion.isNotBlank() &&
+            convertVersionToNumber(appVersion) >= convertVersionToNumber(minTrackedVersion)
+    }
 
     /**
      * Checking whether the userID is present in the randomUserIdRemainder list
@@ -36,8 +34,9 @@ public data class CSHealthEventConfig(
     /**
      * Checking whether the user is on alpha
      */
-    private fun isAlpha(appVersion: String): Boolean =
-        appVersion.contains(ALPHA, true)
+    private fun isAlpha(appVersion: String): Boolean {
+        return appVersion.contains(ALPHA, true)
+    }
 
     /**
      * With the given app version and user ID, it is
@@ -61,13 +60,13 @@ public data class CSHealthEventConfig(
      */
     public fun isTrackedViaClickstream(eventName: String): Boolean =
         listOf(
-            CSEventNames.ClickStreamEventReceived.value,
-            CSEventNames.ClickStreamEventObjectCreated.value,
-            CSEventNames.ClickStreamEventCached.value,
-            CSEventNames.ClickStreamEventBatchCreated.value,
-            CSEventNames.ClickStreamBatchSent.value,
-            CSEventNames.ClickStreamEventBatchAck.value,
-            CSEventNames.ClickStreamFlushOnBackground.value
+            CSEventNamesConstant.ClickStreamEventReceived.value,
+            CSEventNamesConstant.ClickStreamEventObjectCreated.value,
+            CSEventNamesConstant.ClickStreamEventCached.value,
+            CSEventNamesConstant.ClickStreamEventBatchCreated.value,
+            CSEventNamesConstant.ClickStreamBatchSent.value,
+            CSEventNamesConstant.ClickStreamEventBatchAck.value,
+            CSEventNamesConstant.ClickStreamFlushOnBackground.value
         ).contains(eventName)
 
     /**
@@ -75,10 +74,17 @@ public data class CSHealthEventConfig(
      *
      * @return Boolean - True if the condition satisfies else false
      */
-    public fun isVerboseLoggingEnabled(): Boolean =
-        verbosityLevel.toLowerCase(Locale.getDefault()) == MAX_VERBOSITY_LEVEL
+    public fun isVerboseLoggingEnabled(): Boolean {
+        return verbosityLevel.toLowerCase(Locale.getDefault()) == MAX_VERBOSITY_LEVEL
+    }
 
     public companion object {
+        private const val DIVIDING_FACTOR: Int = 10
+        private const val MULTIPLICATION_FACTOR: Int = 10
+
+        private const val MAX_VERBOSITY_LEVEL: String = "maximum"
+        private const val ALPHA: String = "alpha"
+
         /**
          * Creates the default instance of the config
          */

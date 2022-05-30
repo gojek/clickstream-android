@@ -2,17 +2,17 @@ package clickstream.health.internal
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import clickstream.health.model.CSEventNames.ClickStreamEventBatchCreated
+import clickstream.health.constant.CSEventNamesConstant.ClickStreamEventBatchCreated
 import clickstream.health.model.CSHealthEventDTO
-import clickstream.health.model.CSHealthKeys
-import clickstream.health.model.EventTypes
+import clickstream.health.constant.CSHealthKeysConstant
+import clickstream.health.constant.CSEventTypesConstant
 
 /**
  * The data class for health events which will be stored to the DB
  *
  * @param healthEventID - The unique ID for each health event
  * @param eventName - The event name for this event, will be one of [CSEventNames]
- * @param eventType - The event type for this event, will be one of [EventTypes]
+ * @param eventType - The event type for this event, will be one of [CSEventTypesConstant]
  * @param timestamp - The timestamp at which the event was created
  * @param eventId - The event ID for which this health event for created
  * @param eventBatchId - The event batch ID for which this health event for created
@@ -103,15 +103,15 @@ internal data class CSHealthEvent(
         val eventData: HashMap<String, Any> = hashMapOf()
 
         if (eventType.isNotBlank()) {
-            eventData[CSHealthKeys.EVENT_TYPE] = eventType
+            eventData[CSHealthKeysConstant.EVENT_TYPE] = eventType
         }
 
         if (sessionId.isNotBlank()) {
-            eventData[CSHealthKeys.SESSION_ID] = sessionId
+            eventData[CSHealthKeysConstant.SESSION_ID] = sessionId
         }
 
         if (error.isNotBlank()) {
-            eventData[CSHealthKeys.REASON] = error
+            eventData[CSHealthKeysConstant.REASON] = error
         }
 
         if (eventId.isNotBlank()) {
@@ -122,15 +122,15 @@ internal data class CSHealthEvent(
             eventData[getEvenBatchIdKey()] = eventBatchId
         }
         if (timestamp.isNotBlank()) {
-            eventData[CSHealthKeys.TIMESTAMP] = timestamp
+            eventData[CSHealthKeysConstant.TIMESTAMP] = timestamp
         }
 
         if (count != 0) {
-            eventData[CSHealthKeys.COUNT] = count
+            eventData[CSHealthKeysConstant.COUNT] = count
         }
 
         if (bucketType.isNotBlank()) {
-            eventData[CSHealthKeys.BUCKET] = bucketType
+            eventData[CSHealthKeysConstant.BUCKET] = bucketType
         }
 
         return eventData
@@ -138,23 +138,23 @@ internal data class CSHealthEvent(
 
     private fun getEventIdKey(): String =
         when (eventType) {
-            EventTypes.INSTANT -> {
+            CSEventTypesConstant.INSTANT -> {
                 if (eventName == ClickStreamEventBatchCreated.value) {
-                    CSHealthKeys.EVENTS
+                    CSHealthKeysConstant.EVENTS
                 } else {
-                    CSHealthKeys.EVENT_ID
+                    CSHealthKeysConstant.EVENT_ID
                 }
             }
-            EventTypes.AGGREGATE -> CSHealthKeys.EVENTS
-            EventTypes.BUCKET -> CSHealthKeys.EVENTS
-            else -> CSHealthKeys.EVENTS
+            CSEventTypesConstant.AGGREGATE -> CSHealthKeysConstant.EVENTS
+            CSEventTypesConstant.BUCKET -> CSHealthKeysConstant.EVENTS
+            else -> CSHealthKeysConstant.EVENTS
         }
 
     private fun getEvenBatchIdKey(): String =
         when (eventType) {
-            EventTypes.INSTANT -> CSHealthKeys.EVENT_BATCH_ID
-            EventTypes.AGGREGATE -> CSHealthKeys.EVENT_BATCHES
-            EventTypes.BUCKET -> CSHealthKeys.EVENT_BATCHES
-            else -> CSHealthKeys.EVENT_BATCHES
+            CSEventTypesConstant.INSTANT -> CSHealthKeysConstant.EVENT_BATCH_ID
+            CSEventTypesConstant.AGGREGATE -> CSHealthKeysConstant.EVENT_BATCHES
+            CSEventTypesConstant.BUCKET -> CSHealthKeysConstant.EVENT_BATCHES
+            else -> CSHealthKeysConstant.EVENT_BATCHES
         }
 }

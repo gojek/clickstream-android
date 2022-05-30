@@ -2,20 +2,20 @@ package clickstream.internal.di.impl
 
 import android.app.Application
 import android.content.Context
+import clickstream.CSInfo
 import clickstream.config.CSConfig
 import clickstream.config.CSEventSchedulerConfig
 import clickstream.config.CSRemoteConfig
 import clickstream.connection.CSSocketConnectionListener
-import clickstream.health.time.CSEventGeneratedTimestampListener
 import clickstream.health.CSEventHealthListener
 import clickstream.health.CSGuIdGenerator
 import clickstream.health.CSGuIdGeneratorImpl
 import clickstream.health.CSHealthEventFactory
 import clickstream.health.CSHealthEventProcessor
 import clickstream.health.CSHealthEventRepository
-import clickstream.health.CSInfo
 import clickstream.health.CSTimeStampGenerator
 import clickstream.health.DefaultCSTimeStampGenerator
+import clickstream.health.time.CSEventGeneratedTimestampListener
 import clickstream.internal.db.CSDatabase
 import clickstream.internal.di.CSServiceLocator
 import clickstream.internal.eventprocessor.CSEventProcessor
@@ -54,11 +54,11 @@ internal class DefaultCServiceLocator(
     private val context: Context,
     private val info: CSInfo,
     private val config: CSConfig,
-    override val logLevel: CSLogLevel,
-    override val dispatcher: CoroutineDispatcher,
     private val eventGeneratedTimestampListener: CSEventGeneratedTimestampListener,
     private val socketConnectionListener: CSSocketConnectionListener,
     private val remoteConfig: CSRemoteConfig,
+    override val logLevel: CSLogLevel,
+    override val dispatcher: CoroutineDispatcher,
     override val eventHealthListener: CSEventHealthListener,
     override val healthEventRepository: CSHealthEventRepository,
     override val healthEventProcessor: CSHealthEventProcessor,

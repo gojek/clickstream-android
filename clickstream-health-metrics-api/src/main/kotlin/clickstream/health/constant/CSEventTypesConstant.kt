@@ -1,6 +1,6 @@
-package clickstream.health.model
+package clickstream.health.constant
 
-public object EventTypes {
+public object CSEventTypesConstant {
     public const val INSTANT: String = "instant"
     public const val AGGREGATE: String = "aggregate"
     public const val BUCKET: String = "bucket"

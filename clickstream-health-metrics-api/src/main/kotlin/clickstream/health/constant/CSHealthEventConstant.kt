@@ -1,4 +1,4 @@
-package clickstream.health.model
+package clickstream.health.constant
 
 public object CSHealthEventConstant {
     public const val HEALTH_ID: String = "healthEventID"

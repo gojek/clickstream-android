@@ -1,6 +1,8 @@
 package clickstream.health.model
 
-import clickstream.health.model.CSEventNames.ClickStreamEventBatchCreated
+import clickstream.health.constant.CSEventNamesConstant.ClickStreamEventBatchCreated
+import clickstream.health.constant.CSHealthKeysConstant
+import clickstream.health.constant.CSEventTypesConstant
 
 public data class CSHealthEventDTO(
     val healthEventID: Int = 0,
@@ -24,15 +26,15 @@ public data class CSHealthEventDTO(
         val eventData: HashMap<String, Any> = hashMapOf()
 
         if (eventType.isNotBlank()) {
-            eventData[CSHealthKeys.EVENT_TYPE] = eventType
+            eventData[CSHealthKeysConstant.EVENT_TYPE] = eventType
         }
 
         if (sessionId.isNotBlank()) {
-            eventData[CSHealthKeys.SESSION_ID] = sessionId
+            eventData[CSHealthKeysConstant.SESSION_ID] = sessionId
         }
 
         if (error.isNotBlank()) {
-            eventData[CSHealthKeys.REASON] = error
+            eventData[CSHealthKeysConstant.REASON] = error
         }
 
         if (eventId.isNotBlank()) {
@@ -43,15 +45,15 @@ public data class CSHealthEventDTO(
             eventData[getEvenBatchIdKey()] = eventBatchId
         }
         if (timestamp.isNotBlank()) {
-            eventData[CSHealthKeys.TIMESTAMP] = timestamp
+            eventData[CSHealthKeysConstant.TIMESTAMP] = timestamp
         }
 
         if (count != 0) {
-            eventData[CSHealthKeys.COUNT] = count
+            eventData[CSHealthKeysConstant.COUNT] = count
         }
 
         if (bucketType.isNotBlank()) {
-            eventData[CSHealthKeys.BUCKET] = bucketType
+            eventData[CSHealthKeysConstant.BUCKET] = bucketType
         }
 
         return eventData
@@ -59,23 +61,23 @@ public data class CSHealthEventDTO(
 
     private fun getEventIdKey(): String =
         when (eventType) {
-            EventTypes.INSTANT -> {
+            CSEventTypesConstant.INSTANT -> {
                 if (eventName == ClickStreamEventBatchCreated.value) {
-                    CSHealthKeys.EVENTS
+                    CSHealthKeysConstant.EVENTS
                 } else {
-                    CSHealthKeys.EVENT_ID
+                    CSHealthKeysConstant.EVENT_ID
                 }
             }
-            EventTypes.AGGREGATE -> CSHealthKeys.EVENTS
-            EventTypes.BUCKET -> CSHealthKeys.EVENTS
-            else -> CSHealthKeys.EVENTS
+            CSEventTypesConstant.AGGREGATE -> CSHealthKeysConstant.EVENTS
+            CSEventTypesConstant.BUCKET -> CSHealthKeysConstant.EVENTS
+            else -> CSHealthKeysConstant.EVENTS
         }
 
     private fun getEvenBatchIdKey(): String =
         when (eventType) {
-            EventTypes.INSTANT -> CSHealthKeys.EVENT_BATCH_ID
-            EventTypes.AGGREGATE -> CSHealthKeys.EVENT_BATCHES
-            EventTypes.BUCKET -> CSHealthKeys.EVENT_BATCHES
-            else -> CSHealthKeys.EVENT_BATCHES
+            CSEventTypesConstant.INSTANT -> CSHealthKeysConstant.EVENT_BATCH_ID
+            CSEventTypesConstant.AGGREGATE -> CSHealthKeysConstant.EVENT_BATCHES
+            CSEventTypesConstant.BUCKET -> CSHealthKeysConstant.EVENT_BATCHES
+            else -> CSHealthKeysConstant.EVENT_BATCHES
         }
 }
