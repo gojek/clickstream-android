@@ -1,4 +1,4 @@
-package clickstream.internal.analytics
+package clickstream.health
 
 internal object CSBucketTypes {
     // Batch Latency

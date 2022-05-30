@@ -1,6 +1,6 @@
 package clickstream.internal.analytics.impl
 
-import clickstream.internal.analytics.CSHealthEventLogger
+import clickstream.health.CSHealthEventLogger
 
 internal class NoOpCSHealthEventLogger : CSHealthEventLogger {
 

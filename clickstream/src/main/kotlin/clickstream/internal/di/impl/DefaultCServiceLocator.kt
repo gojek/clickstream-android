@@ -8,19 +8,13 @@ import clickstream.config.CSEventSchedulerConfig
 import clickstream.config.CSRemoteConfig
 import clickstream.config.timestamp.CSEventGeneratedTimestampListener
 import clickstream.connection.CSSocketConnectionListener
+import clickstream.health.CSHealthEventFactory
+import clickstream.health.CSHealthEventProcessor
 import clickstream.health.CSHealthEventRepository
 import clickstream.health.CSInfo
-import clickstream.internal.analytics.CSHealthEventLogger
-import clickstream.internal.analytics.CSHealthEventProcessor
-import clickstream.internal.db.CSAppVersionSharedPref
 import clickstream.internal.db.CSDatabase
-import clickstream.internal.db.impl.DefaultCSAppVersionSharedPref
 import clickstream.internal.di.CSServiceLocator
 import clickstream.internal.eventprocessor.CSEventProcessor
-import clickstream.internal.eventprocessor.CSHealthEventFactory
-import clickstream.internal.eventprocessor.CSMetaProvider
-import clickstream.internal.eventprocessor.impl.DefaultCSHealthEventFactory
-import clickstream.internal.eventprocessor.impl.DefaultCSMetaProvider
 import clickstream.internal.eventscheduler.CSBackgroundScheduler
 import clickstream.internal.eventscheduler.CSEventRepository
 import clickstream.internal.eventscheduler.CSEventScheduler
@@ -62,13 +56,14 @@ internal class DefaultCServiceLocator(
     private val info: CSInfo,
     private val config: CSConfig,
     override val logLevel: CSLogLevel,
-    healthEventLogger: CSHealthEventLogger,
     override val dispatcher: CoroutineDispatcher,
     private val eventGeneratedTimestampListener: CSEventGeneratedTimestampListener,
     private val socketConnectionListener: CSSocketConnectionListener,
     private val remoteConfig: CSRemoteConfig,
     override val eventHealthListener: CSEventHealthListener,
-    override val healthEventRepository: CSHealthEventRepository
+    override val healthEventRepository: CSHealthEventRepository,
+    override val healthEventProcessor: CSHealthEventProcessor,
+    override val healthEventFactory: CSHealthEventFactory
 ) : CSServiceLocator {
 
     private val guidGenerator: CSGuIdGenerator by lazy {
@@ -87,18 +82,8 @@ internal class DefaultCServiceLocator(
         CSNetworkStatusObserver(context)
     }
 
-    /**
-     * The Db will which will store the events sent to the sdk
-     */
     private val db: CSDatabase by lazy {
         CSDatabase.getInstance(context)
-    }
-
-    /**
-     * The preference which will store the app version
-     */
-    private val appVersionPreference: CSAppVersionSharedPref by lazy {
-        DefaultCSAppVersionSharedPref(context)
     }
 
     private val lifecycle: Lifecycle by lazy {
@@ -132,18 +117,6 @@ internal class DefaultCServiceLocator(
     private val eventRepository: CSEventRepository by lazy {
         DefaultCSEventRepository(
             eventDataDao = db.eventDataDao()
-        )
-    }
-
-    private val metaProvider: CSMetaProvider by lazy {
-        DefaultCSMetaProvider(info = info)
-    }
-
-    private val healthEventFactory: CSHealthEventFactory by lazy {
-        DefaultCSHealthEventFactory(
-            guIdGenerator = guidGenerator,
-            timeStampGenerator = timeStampGenerator,
-            metaProvider = metaProvider,
         )
     }
 
@@ -213,22 +186,6 @@ internal class DefaultCServiceLocator(
             healthEventRepository = healthEventRepository,
             logger = logger,
             info = info
-        )
-    }
-
-    override val healthEventProcessor: CSHealthEventProcessor by lazy {
-        CSHealthEventProcessor(
-            appLifeCycleObserver = appLifeCycleObserver,
-            healthEventFactory = healthEventFactory,
-            healthEventRepository = healthEventRepository,
-            dispatcher = dispatcher,
-            healthEventConfig = config.healthEventConfig,
-            info = info,
-            logger = logger,
-            healthEventLogger = healthEventLogger,
-            appVersion = info.appInfo.appVersion,
-            appVersionPreference = appVersionPreference,
-            remoteConfig = remoteConfig
         )
     }
 

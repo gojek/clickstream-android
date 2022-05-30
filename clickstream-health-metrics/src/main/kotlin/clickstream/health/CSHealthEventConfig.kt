@@ -1,6 +1,5 @@
-package clickstream.config
+package clickstream.health
 
-import clickstream.health.CSEventNames
 import java.util.Locale
 
 private const val DIVIDING_FACTOR: Int = 10

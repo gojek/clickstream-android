@@ -8,7 +8,7 @@ import clickstream.logger.CSLogConstant.CLICK_STREAM_LOG_TAG
  *
  * Internal log can use any engine e.g Timber or sl4j.
  */
-internal class CSLogger(
+public class CSLogger(
     private val logLevel: CSLogLevel
 ) {
 
@@ -17,7 +17,7 @@ internal class CSLogger(
      *
      * @param message which will be printed
      */
-    internal fun debug(message: () -> String) {
+    public fun debug(message: () -> String) {
         if (isDebug()) Log.d(CLICK_STREAM_LOG_TAG, message())
     }
 
@@ -27,7 +27,7 @@ internal class CSLogger(
      * @param suffix which holds some additional info or tag
      * @param message which will be printed
      */
-    internal fun debug(suffix: () -> String, message: () -> String) {
+    public fun debug(suffix: () -> String, message: () -> String) {
         if (isDebug()) Log.d("$CLICK_STREAM_LOG_TAG:${suffix()}", message())
     }
 
@@ -39,7 +39,7 @@ internal class CSLogger(
      * @param message which will be printed
      * @param t which holds the exception
      */
-    internal fun debug(suffix: () -> String, message: () -> String, t: () -> Throwable) {
+    public fun debug(suffix: () -> String, message: () -> String, t: () -> Throwable) {
         if (isDebug()) Log.d("$CLICK_STREAM_LOG_TAG:${suffix()}", message(), t())
     }
 

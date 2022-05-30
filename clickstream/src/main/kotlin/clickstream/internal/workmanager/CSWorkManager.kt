@@ -30,8 +30,8 @@ internal class CSWorkManager(
     override fun onStart() {
         logger.debug {
             "CSWorkManager#onStart -" +
-            "backgroundTaskEnabled ${eventSchedulerConfig.backgroundTaskEnabled}, " +
-            "isForegroundEventFlushEnabled ${remoteConfig.isForegroundEventFlushEnabled}"
+                    "backgroundTaskEnabled ${eventSchedulerConfig.backgroundTaskEnabled}, " +
+                    "isForegroundEventFlushEnabled ${remoteConfig.isForegroundEventFlushEnabled}"
         }
 
         backgroundLifecycleManager.onStop()

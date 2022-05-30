@@ -1,7 +1,7 @@
 package clickstream.internal.db.impl
 
 import android.content.Context
-import clickstream.internal.db.CSAppVersionSharedPref
+import clickstream.health.CSAppVersionSharedPref
 import kotlinx.coroutines.coroutineScope
 
 private const val CLICKSTREAM_PREF = "Clickstream_Version_Pref"

@@ -32,7 +32,7 @@ android {
 dependencies {
     // Clickstream
     implementation(files("$rootDir/libs/proto-sdk-1.18.6.jar"))
-    implementation(projects.clickstreamHealthMetrics)
+    api(projects.clickstreamHealthMetrics)
 
     // Common
     deps.common.list.forEach(::implementation)

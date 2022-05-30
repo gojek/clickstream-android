@@ -13,23 +13,23 @@ private const val SHUTDOWN_REASON_CODE = 1001
  * Start -> Called when app goes to background
  * Stop -> Called `connectionTerminationTimerWaitTimeInMillis` after app moves to background
  */
-internal class CSBackgroundLifecycleManager(
+public class CSBackgroundLifecycleManager(
     private val lifecycleRegistry: LifecycleRegistry
 ) : Lifecycle by lifecycleRegistry {
 
-    constructor() : this(LifecycleRegistry())
+    public constructor() : this(LifecycleRegistry())
 
     /**
      * Starts the socket
      */
-    fun onStart() {
+    public fun onStart() {
         lifecycleRegistry.onNext(Started)
     }
 
     /**
      * Stops the socket
      */
-    fun onStop() {
+    public fun onStop() {
         lifecycleRegistry.onNext(
             WithReason(
                 ShutdownReason(SHUTDOWN_REASON_CODE, "Gracefully stopped by the lifecycle")

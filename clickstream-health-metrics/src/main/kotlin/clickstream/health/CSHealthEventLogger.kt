@@ -1,4 +1,4 @@
-package clickstream.internal.analytics
+package clickstream.health
 
 /**
  * ClickStreamTracker can be implemented by host app to provide observer for ClickStream events

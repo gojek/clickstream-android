@@ -8,7 +8,7 @@ import clickstream.internal.lifecycle.CSAppLifeCycleObserver
 import clickstream.internal.lifecycle.EmptyActivityLifecycleCallbacks
 import java.util.concurrent.CopyOnWriteArrayList
 
-internal class DefaultCSAppLifeCycleObserver(
+public class DefaultCSAppLifeCycleObserver(
     context: Context
 ) : CSAppLifeCycle {
 

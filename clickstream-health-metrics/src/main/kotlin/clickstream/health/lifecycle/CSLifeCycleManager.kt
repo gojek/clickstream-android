@@ -7,14 +7,14 @@ import androidx.lifecycle.LifecycleObserver
  * Start -> Called when app goes to background
  * Stop -> Called `connectionTerminationTimerWaitTimeInMillis` after app moves to background
  */
-internal abstract class CSLifeCycleManager(
+public abstract class CSLifeCycleManager(
     private val appLifeCycleObserver: CSAppLifeCycle
 ) : LifecycleObserver {
 
     /**
      * Subscribes to the application LifeCycle
      */
-    fun addObserver() {
+    public fun addObserver() {
         appLifeCycleObserver.addObserver(object : CSAppLifeCycleObserver {
             override fun onAppStart() {
                 onStart()
@@ -26,7 +26,7 @@ internal abstract class CSLifeCycleManager(
         })
     }
 
-    abstract fun onStart()
+    public abstract fun onStart()
 
-    abstract fun onStop()
+    public abstract fun onStop()
 }

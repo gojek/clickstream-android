@@ -1,11 +1,13 @@
 package clickstream.internal.eventscheduler
 
 import clickstream.CSEvent
-import clickstream.CSInfo
-import clickstream.config.CSEventSchedulerConfig
-import clickstream.internal.analytics.CSEventNames
-import clickstream.internal.analytics.EventTypes
 import clickstream.analytics.event.CSEventHealthListener
+import clickstream.config.CSEventSchedulerConfig
+import clickstream.health.CSEventNames
+import clickstream.health.CSHealthEvent
+import clickstream.health.CSHealthEventRepository
+import clickstream.health.CSInfo
+import clickstream.health.EventTypes
 import clickstream.internal.di.CSServiceLocator
 import clickstream.internal.lifecycle.CSAppLifeCycle
 import clickstream.internal.lifecycle.CSBackgroundLifecycleManager

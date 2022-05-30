@@ -1,9 +1,11 @@
 package clickstream.internal.di
 
 import androidx.annotation.GuardedBy
-import clickstream.config.CSEventSchedulerConfig
-import clickstream.internal.analytics.CSHealthEventProcessor
 import clickstream.analytics.event.CSEventHealthListener
+import clickstream.config.CSEventSchedulerConfig
+import clickstream.health.CSHealthEventFactory
+import clickstream.health.CSHealthEventProcessor
+import clickstream.health.CSHealthEventRepository
 import clickstream.internal.eventprocessor.CSEventProcessor
 import clickstream.internal.eventscheduler.CSBackgroundScheduler
 import clickstream.internal.eventscheduler.CSEventScheduler
@@ -61,11 +63,6 @@ internal interface CSServiceLocator {
     val dispatcher: CoroutineDispatcher
 
     /**
-     * The HealthEventRepository that communicates with the health event table
-     */
-    val healthEventRepository: CSHealthEventRepository
-
-    /**
      * Network Manage which communicates with the backend
      */
     val networkManager: CSNetworkManager
@@ -79,11 +76,6 @@ internal interface CSServiceLocator {
      * EventProcessor which processes and dispatches to scheduler
      */
     val eventProcessor: CSEventProcessor
-
-    /**
-     * Processes the health events and sends to BE
-     */
-    val healthEventProcessor: CSHealthEventProcessor
 
     /**
      * The background work manager which flushes the event
@@ -111,4 +103,7 @@ internal interface CSServiceLocator {
     val logger: CSLogger
 
     val eventHealthListener: CSEventHealthListener
+    val healthEventRepository: CSHealthEventRepository
+    val healthEventProcessor: CSHealthEventProcessor
+    val healthEventFactory: CSHealthEventFactory
 }

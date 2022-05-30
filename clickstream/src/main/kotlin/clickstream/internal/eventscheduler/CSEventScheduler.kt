@@ -1,13 +1,15 @@
 package clickstream.internal.eventscheduler
 
 import clickstream.CSEvent
-import clickstream.CSInfo
-import clickstream.config.CSEventSchedulerConfig
-import clickstream.internal.analytics.CSErrorReasons
-import clickstream.internal.analytics.CSEventNames
-import clickstream.internal.analytics.CSEventNames.ClickStreamEventBatchTriggerFailed
-import clickstream.internal.analytics.EventTypes
 import clickstream.analytics.event.CSEventHealthListener
+import clickstream.config.CSEventSchedulerConfig
+import clickstream.health.CSEventNames
+import clickstream.health.CSEventNames.ClickStreamEventBatchTriggerFailed
+import clickstream.health.CSHealthEvent
+import clickstream.health.CSHealthEventRepository
+import clickstream.health.CSInfo
+import clickstream.health.EventTypes
+import clickstream.internal.analytics.CSErrorReasons
 import clickstream.internal.lifecycle.CSAppLifeCycle
 import clickstream.internal.lifecycle.CSLifeCycleManager
 import clickstream.internal.networklayer.CSNetworkManager
@@ -167,14 +169,14 @@ internal open class CSEventScheduler(
                         eventRepository.deleteEventDataByGuId(it.value)
                         logger.debug {
                             "CSEventScheduler#setupObservers - " +
-                            "Event Request sent successfully and deleted from DB: ${it.value}"
+                                    "Event Request sent successfully and deleted from DB: ${it.value}"
                         }
                     }
                     is CSResult.Failure -> {
                         eventRepository.resetOnGoingForGuid(it.value)
                         logger.debug {
                             "CSEventScheduler#setupObservers - " +
-                            "Event Request failed due to: ${it.exception.message}"
+                                    "Event Request failed due to: ${it.exception.message}"
                         }
                     }
                 }
@@ -232,12 +234,12 @@ internal open class CSEventScheduler(
         if (batch.isNotEmpty() && batch[0].messageName != Health::class.qualifiedName.orEmpty()) {
             logger.debug {
                 "CSEventScheduler#forwardEvents#batch - " +
-                "eventBatchId : ${eventRequest.reqGuid}, " +
-                "eventId : ${batch.joinToString { it.eventGuid }}"
+                        "eventBatchId : ${eventRequest.reqGuid}, " +
+                        "eventId : ${batch.joinToString { it.eventGuid }}"
             }
             logger.debug {
                 "CSEventScheduler#forwardEvents#batch - " +
-                "messageName : ${batch[0].messageName}"
+                        "messageName : ${batch[0].messageName}"
             }
             logHealthEvent(
                 CSHealthEvent(

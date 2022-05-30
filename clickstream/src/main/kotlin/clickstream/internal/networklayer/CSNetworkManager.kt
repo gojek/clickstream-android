@@ -1,6 +1,5 @@
 package clickstream.internal.networklayer
 
-import clickstream.CSInfo
 import clickstream.connection.CSConnectionEvent.OnConnectionClosed
 import clickstream.connection.CSConnectionEvent.OnConnectionClosing
 import clickstream.connection.CSConnectionEvent.OnConnectionConnected
@@ -9,9 +8,12 @@ import clickstream.connection.CSConnectionEvent.OnConnectionFailed
 import clickstream.connection.CSConnectionEvent.OnMessageReceived
 import clickstream.connection.CSSocketConnectionListener
 import clickstream.connection.mapTo
+import clickstream.health.CSEventNames
+import clickstream.health.CSHealthEvent
+import clickstream.health.CSHealthEventRepository
+import clickstream.health.CSInfo
+import clickstream.health.EventTypes
 import clickstream.internal.analytics.CSErrorReasons
-import clickstream.internal.analytics.CSEventNames
-import clickstream.internal.analytics.EventTypes
 import clickstream.internal.lifecycle.CSAppLifeCycle
 import clickstream.internal.lifecycle.CSLifeCycleManager
 import clickstream.internal.utils.CSResult

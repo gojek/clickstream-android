@@ -1,12 +1,5 @@
-package clickstream.internal.analytics
+package clickstream.health
 
-import clickstream.CSInfo
-import clickstream.config.CSHealthEventConfig
-import clickstream.config.CSRemoteConfig
-import clickstream.config.CS_DESTINATION
-import clickstream.config.CT_DESTINATION
-import clickstream.internal.db.CSAppVersionSharedPref
-import clickstream.internal.eventprocessor.CSHealthEventFactory
 import clickstream.internal.lifecycle.CSAppLifeCycle
 import clickstream.internal.lifecycle.CSLifeCycleManager
 import clickstream.logger.CSLogger
@@ -46,7 +39,7 @@ internal enum class CSNetworkType {
 /**
  * The HealthEventProcessor is responsible for aggregating, sending and clearing health events for the sdk
  */
-internal open class CSHealthEventProcessor(
+public open class CSHealthEventProcessor(
     appLifeCycleObserver: CSAppLifeCycle,
     private val healthEventRepository: CSHealthEventRepository,
     private val dispatcher: CoroutineDispatcher,
@@ -56,8 +49,7 @@ internal open class CSHealthEventProcessor(
     private val healthEventLogger: CSHealthEventLogger,
     private val healthEventFactory: CSHealthEventFactory,
     private val appVersion: String,
-    private val appVersionPreference: CSAppVersionSharedPref,
-    private val remoteConfig: CSRemoteConfig
+    private val appVersionPreference: CSAppVersionSharedPref
 ) : CSLifeCycleManager(appLifeCycleObserver) {
 
     private var job: Job = SupervisorJob()
@@ -97,7 +89,7 @@ internal open class CSHealthEventProcessor(
     /**
      * Returns list of health protos after aggregation
      */
-    internal suspend fun getAggregateEventsBasedOnEventName(): List<Health> {
+    public suspend fun getAggregateEventsBasedOnEventName(): List<Health> {
         logger.debug { "CSHealthEventProcessor#getAggregateEventsBasedOnEventName" }
 
         if (!healthEventConfig.destination.contains(CS_DESTINATION) || (isHealthEventEnabled().not())) {
@@ -353,7 +345,13 @@ internal open class CSHealthEventProcessor(
             numberOfBatches = eventBatchGuids.size.toLong()
 
             logger.debug { "CSHealthEventProcessor#createHealthProto# - isVerboseLoggingEnabled ${healthEventConfig.isVerboseLoggingEnabled()}" }
-            logger.debug { "CSHealthEventProcessor#createHealthProto# - isExemptedFromVerbosityCheck ${isExemptedFromVerbosityCheck(eventName)}" }
+            logger.debug {
+                "CSHealthEventProcessor#createHealthProto# - isExemptedFromVerbosityCheck ${
+                    isExemptedFromVerbosityCheck(
+                        eventName
+                    )
+                }"
+            }
 
             if (healthEventConfig.isVerboseLoggingEnabled() || isExemptedFromVerbosityCheck(
                     eventName

@@ -1,6 +1,6 @@
 package clickstream.internal.eventprocessor.impl
 
-import clickstream.internal.eventprocessor.CSHealthEventFactory
+import clickstream.health.CSHealthEventFactory
 import clickstream.internal.eventprocessor.CSMetaProvider
 import clickstream.internal.utils.CSGuIdGenerator
 import clickstream.internal.utils.CSTimeStampGenerator

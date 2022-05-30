@@ -8,8 +8,6 @@ import clickstream.fake.fakeCSHealthEventConfig
 import clickstream.fake.fakeCSInfo
 import clickstream.fake.fakeUserInfo
 import clickstream.internal.analytics.impl.NoOpCSHealthEventLogger
-import clickstream.internal.db.CSAppVersionSharedPref
-import clickstream.internal.eventprocessor.CSHealthEventFactory
 import clickstream.internal.lifecycle.CSAppLifeCycle
 import clickstream.logger.CSLogLevel.OFF
 import clickstream.logger.CSLogger
