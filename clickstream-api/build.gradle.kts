@@ -31,7 +31,7 @@ android {
 
 dependencies {
     // Clickstream
-    implementation(files("$rootDir/libs/proto-sdk-1.18.6.jar"))
+    compileOnly(files("$rootDir/libs/proto-sdk-1.18.6.jar"))
     compileOnly(projects.clickstreamLogger)
     compileOnly(projects.clickstreamLifecycle)
 

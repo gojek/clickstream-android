@@ -31,13 +31,12 @@ android {
 
 dependencies {
     // Clickstream
-    implementation(files("$rootDir/libs/proto-sdk-1.18.6.jar"))
+    compileOnly(files("$rootDir/libs/proto-sdk-1.18.6.jar"))
     compileOnly(projects.clickstreamHealthMetricsApi)
     compileOnly(projects.clickstreamApi)
-    api(projects.clickstreamLogger)
-    api(projects.clickstreamLifecycle)
-    api(projects.clickstreamUtil)
-    api(projects.clickstreamHealthMetricsApi)
+    implementation(projects.clickstreamLogger)
+    implementation(projects.clickstreamLifecycle)
+    implementation(projects.clickstreamUtil)
 
     // Common
     deps.common.list.forEach(::implementation)
