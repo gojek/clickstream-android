@@ -4,8 +4,8 @@ import androidx.annotation.GuardedBy
 import clickstream.config.CSEventSchedulerConfig
 import clickstream.health.CSEventHealthListener
 import clickstream.health.CSHealthEventFactory
+import clickstream.health.CSHealthEventProcessor
 import clickstream.health.CSHealthEventRepository
-import clickstream.health.DefaultCSHealthEventProcessor
 import clickstream.internal.eventprocessor.CSEventProcessor
 import clickstream.internal.eventscheduler.CSBackgroundScheduler
 import clickstream.internal.eventscheduler.CSEventScheduler
@@ -41,7 +41,7 @@ internal interface CSServiceLocator {
                     if (sInstance == null) {
                         requireNotNull(sInstance) {
                             "Service Locator should be created and set by using " +
-                                    "[setServiceLocator] function."
+                            "[setServiceLocator] function."
                         }
                     }
                 }
@@ -104,6 +104,6 @@ internal interface CSServiceLocator {
 
     val eventHealthListener: CSEventHealthListener
     val healthEventRepository: CSHealthEventRepository
-    val healthEventProcessor: DefaultCSHealthEventProcessor
+    val healthEventProcessor: CSHealthEventProcessor
     val healthEventFactory: CSHealthEventFactory
 }

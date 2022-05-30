@@ -11,6 +11,7 @@ import clickstream.health.CSEventHealthListener
 import clickstream.health.CSGuIdGenerator
 import clickstream.health.CSGuIdGeneratorImpl
 import clickstream.health.CSHealthEventFactory
+import clickstream.health.CSHealthEventProcessor
 import clickstream.health.CSHealthEventRepository
 import clickstream.health.CSInfo
 import clickstream.health.CSTimeStampGenerator
@@ -62,7 +63,7 @@ internal class DefaultCServiceLocator(
     private val remoteConfig: CSRemoteConfig,
     override val eventHealthListener: CSEventHealthListener,
     override val healthEventRepository: CSHealthEventRepository,
-    override val healthEventProcessor: DefaultCSHealthEventProcessor,
+    override val healthEventProcessor: CSHealthEventProcessor,
     override val healthEventFactory: CSHealthEventFactory
 ) : CSServiceLocator {
 
