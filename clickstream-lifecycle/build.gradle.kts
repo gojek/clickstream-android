@@ -32,4 +32,7 @@ android {
 dependencies {
     // Common
     deps.common.list.forEach(::implementation)
+
+    // Networking
+    implementation(deps.networkLibs.scarlet)
 }

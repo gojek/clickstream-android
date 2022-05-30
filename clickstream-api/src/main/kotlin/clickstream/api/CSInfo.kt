@@ -1,4 +1,4 @@
-package clickstream
+package clickstream.api
 
 /**
  * A common data class which wraps [CSAppInfo], [CSLocationInfo],

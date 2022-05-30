@@ -1,8 +1,10 @@
 package clickstream.health
 
 import android.content.Context
-import clickstream.CSInfo
-import clickstream.CSMetaProvider
+import clickstream.api.CSInfo
+import clickstream.api.CSMetaProvider
+import clickstream.health.identity.CSGuIdGenerator
+import clickstream.health.identity.DefaultCSGuIdGenerator
 import clickstream.health.intermediate.CSEventHealthListener
 import clickstream.health.intermediate.CSHealthEventFactory
 import clickstream.health.intermediate.CSHealthEventLoggerListener
@@ -14,28 +16,30 @@ import clickstream.health.internal.DefaultCSHealthEventProcessor
 import clickstream.health.internal.DefaultCSHealthEventRepository
 import clickstream.health.model.CSHealthEventConfig
 import clickstream.lifecycle.CSAppLifeCycle
+import clickstream.lifecycle.impl.DefaultCSAppLifeCycleObserver
 import clickstream.logger.CSLogger
 import clickstream.util.CSAppVersionSharedPref
 import clickstream.util.impl.DefaultCSAppVersionSharedPref
 import java.util.UUID
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 
 public object DefaultCSHealthGateway {
 
     public fun factory(
         context: Context,
-        appLifeCycle: CSAppLifeCycle,
-        dispatcher: CoroutineDispatcher,
         healthEventConfig: CSHealthEventConfig,
         csInfo: CSInfo,
         logger: CSLogger,
         healthEventLogger: CSHealthEventLoggerListener,
         appVersion: String,
-        appVersionPreference: CSAppVersionSharedPref = DefaultCSAppVersionSharedPref(context),
-        guIdGenerator: CSGuIdGenerator,
         timeStampGenerator: CSTimeStampGenerator,
         metaProvider: CSMetaProvider,
-        eventHealthListener: CSEventHealthListener
+        eventHealthListener: CSEventHealthListener,
+        guIdGenerator: CSGuIdGenerator = DefaultCSGuIdGenerator(),
+        appLifeCycle: CSAppLifeCycle = DefaultCSAppLifeCycleObserver(context),
+        dispatcher: CoroutineDispatcher = Dispatchers.Default,
+        appVersionPreference: CSAppVersionSharedPref = DefaultCSAppVersionSharedPref(context)
     ): CSHealthGateway {
 
         return object : CSHealthGateway {

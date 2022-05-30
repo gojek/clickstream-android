@@ -1,8 +1,8 @@
 package clickstream.config
 
 import android.content.Context
-import clickstream.CSDeviceInfo
-import clickstream.CSInfo
+import clickstream.api.CSDeviceInfo
+import clickstream.api.CSInfo
 import clickstream.config.timestamp.DefaultCSEventGeneratedTimestampListener
 import clickstream.connection.CSSocketConnectionListener
 import clickstream.connection.NoOpCSConnectionListener

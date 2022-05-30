@@ -2,19 +2,19 @@ package clickstream.internal.di.impl
 
 import android.app.Application
 import android.content.Context
-import clickstream.CSInfo
+import clickstream.api.CSInfo
 import clickstream.config.CSConfig
 import clickstream.config.CSEventSchedulerConfig
 import clickstream.config.CSRemoteConfig
 import clickstream.connection.CSSocketConnectionListener
+import clickstream.health.CSTimeStampGenerator
+import clickstream.health.DefaultCSTimeStampGenerator
+import clickstream.health.identity.CSGuIdGenerator
+import clickstream.health.identity.DefaultCSGuIdGenerator
 import clickstream.health.intermediate.CSEventHealthListener
-import clickstream.health.CSGuIdGenerator
-import clickstream.health.CSGuIdGeneratorImpl
 import clickstream.health.intermediate.CSHealthEventFactory
 import clickstream.health.intermediate.CSHealthEventProcessor
 import clickstream.health.intermediate.CSHealthEventRepository
-import clickstream.health.CSTimeStampGenerator
-import clickstream.health.DefaultCSTimeStampGenerator
 import clickstream.health.time.CSEventGeneratedTimestampListener
 import clickstream.internal.db.CSDatabase
 import clickstream.internal.di.CSServiceLocator
@@ -67,7 +67,7 @@ internal class DefaultCServiceLocator(
 ) : CSServiceLocator {
 
     private val guidGenerator: CSGuIdGenerator by lazy {
-        CSGuIdGeneratorImpl()
+        DefaultCSGuIdGenerator()
     }
 
     private val timeStampGenerator: CSTimeStampGenerator by lazy {

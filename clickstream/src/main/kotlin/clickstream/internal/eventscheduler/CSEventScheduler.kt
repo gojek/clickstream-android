@@ -1,15 +1,15 @@
 package clickstream.internal.eventscheduler
 
-import clickstream.CSInfo
+import clickstream.api.CSInfo
 import clickstream.config.CSEventSchedulerConfig
 import clickstream.extension.isValidMessage
-import clickstream.health.CSGuIdGenerator
 import clickstream.health.CSTimeStampGenerator
 import clickstream.health.constant.CSEventNamesConstant.ClickStreamEventBatchCreated
 import clickstream.health.constant.CSEventNamesConstant.ClickStreamEventBatchTriggerFailed
 import clickstream.health.constant.CSEventNamesConstant.ClickStreamEventCached
 import clickstream.health.constant.CSEventNamesConstant.ClickStreamInvalidMessage
 import clickstream.health.constant.CSEventTypesConstant
+import clickstream.health.identity.CSGuIdGenerator
 import clickstream.health.intermediate.CSEventHealthListener
 import clickstream.health.intermediate.CSHealthEventRepository
 import clickstream.health.model.CSHealthEventDTO
@@ -171,14 +171,14 @@ internal open class CSEventScheduler(
                         eventRepository.deleteEventDataByGuId(it.value)
                         logger.debug {
                             "CSEventScheduler#setupObservers - " +
-                            "Event Request sent successfully and deleted from DB: ${it.value}"
+                                    "Event Request sent successfully and deleted from DB: ${it.value}"
                         }
                     }
                     is CSResult.Failure -> {
                         eventRepository.resetOnGoingForGuid(it.value)
                         logger.debug {
                             "CSEventScheduler#setupObservers - " +
-                            "Event Request failed due to: ${it.exception.message}"
+                                    "Event Request failed due to: ${it.exception.message}"
                         }
                     }
                 }

@@ -96,11 +96,9 @@ object deps {
         const val okHttp = "com.squareup.okhttp3:okhttp:${versions.okHttp}"
         const val scarlet = "com.tinder.scarlet:scarlet:${versions.scarlet}"
         const val scarletOkHttpUtils = "com.tinder.scarlet:websocket-okhttp:${versions.scarlet}"
-        const val scarletCoroutineAdapter =
-            "com.tinder.scarlet:stream-adapter-coroutines:${versions.scarlet}"
+        const val scarletCoroutineAdapter = "com.tinder.scarlet:stream-adapter-coroutines:${versions.scarlet}"
         const val scarletLifeCycle = "com.tinder.scarlet:lifecycle-android:${versions.scarlet}"
-        const val scarletProtobuf =
-            "com.tinder.scarlet:message-adapter-protobuf:${versions.scarlet}"
+        const val scarletProtobuf = "com.tinder.scarlet:message-adapter-protobuf:${versions.scarlet}"
         const val scarletGson = "com.tinder.scarlet:message-adapter-gson:${versions.scarlet}"
 
         val list = listOf(

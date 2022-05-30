@@ -1,6 +1,6 @@
 package clickstream.health.internal
 
-import clickstream.CSInfo
+import clickstream.api.CSInfo
 import clickstream.health.intermediate.CSHealthEventFactory
 import clickstream.health.intermediate.CSHealthEventLoggerListener
 import clickstream.health.intermediate.CSHealthEventProcessor

@@ -1,11 +1,11 @@
 package clickstream.internal.eventscheduler
 
-import clickstream.CSInfo
+import clickstream.api.CSInfo
 import clickstream.config.CSEventSchedulerConfig
-import clickstream.health.CSGuIdGenerator
 import clickstream.health.CSTimeStampGenerator
 import clickstream.health.constant.CSEventNamesConstant.ClickStreamFlushOnBackground
 import clickstream.health.constant.CSEventTypesConstant
+import clickstream.health.identity.CSGuIdGenerator
 import clickstream.health.intermediate.CSEventHealthListener
 import clickstream.health.intermediate.CSHealthEventRepository
 import clickstream.health.model.CSHealthEventDTO

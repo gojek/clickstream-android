@@ -1,4 +1,4 @@
-package clickstream
+package clickstream.api
 
 /**
  * Fetches and returns device details.

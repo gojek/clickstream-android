@@ -1,6 +1,6 @@
 package clickstream.internal.networklayer
 
-import clickstream.CSInfo
+import clickstream.api.CSInfo
 import clickstream.connection.CSConnectionEvent.OnConnectionClosed
 import clickstream.connection.CSConnectionEvent.OnConnectionClosing
 import clickstream.connection.CSConnectionEvent.OnConnectionConnected

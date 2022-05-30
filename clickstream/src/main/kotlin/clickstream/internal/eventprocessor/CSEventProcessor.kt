@@ -1,6 +1,6 @@
 package clickstream.internal.eventprocessor
 
-import clickstream.CSInfo
+import clickstream.api.CSInfo
 import clickstream.config.CSEventProcessorConfig
 import clickstream.extension.protoName
 import clickstream.health.constant.CSEventNamesConstant

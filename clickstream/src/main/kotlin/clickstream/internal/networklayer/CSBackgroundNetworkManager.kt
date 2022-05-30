@@ -1,6 +1,6 @@
 package clickstream.internal.networklayer
 
-import clickstream.CSInfo
+import clickstream.api.CSInfo
 import clickstream.connection.CSSocketConnectionListener
 import clickstream.health.intermediate.CSHealthEventRepository
 import clickstream.lifecycle.CSAppLifeCycle

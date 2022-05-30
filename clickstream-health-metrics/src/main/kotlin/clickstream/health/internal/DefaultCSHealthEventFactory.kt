@@ -1,9 +1,9 @@
 package clickstream.health.internal
 
-import clickstream.CSMetaProvider
-import clickstream.health.CSGuIdGenerator
-import clickstream.health.intermediate.CSHealthEventFactory
+import clickstream.api.CSMetaProvider
 import clickstream.health.CSTimeStampGenerator
+import clickstream.health.identity.CSGuIdGenerator
+import clickstream.health.intermediate.CSHealthEventFactory
 import com.gojek.clickstream.internal.Health
 import com.gojek.clickstream.internal.HealthMeta
 

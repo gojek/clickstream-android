@@ -1,6 +1,6 @@
 package clickstream.internal.networklayer
 
-import clickstream.CSInfo
+import clickstream.api.CSInfo
 import clickstream.config.CSNetworkConfig
 import clickstream.extension.isHealthEvent
 import clickstream.health.CSTimeStampGenerator

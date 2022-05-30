@@ -1,4 +1,4 @@
-package clickstream
+package clickstream.api
 
 import com.gojek.clickstream.internal.HealthMeta.App
 import com.gojek.clickstream.internal.HealthMeta.Customer
