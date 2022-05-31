@@ -1,0 +1,37 @@
+public abstract interface class clickstream/lifecycle/CSAppLifeCycle {
+	public abstract fun addObserver (Lclickstream/lifecycle/CSAppLifeCycleObserver;)V
+}
+
+public abstract interface class clickstream/lifecycle/CSAppLifeCycleObserver {
+	public abstract fun onAppStart ()V
+	public abstract fun onAppStop ()V
+}
+
+public final class clickstream/lifecycle/CSBackgroundLifecycleManager : com/tinder/scarlet/Lifecycle {
+	public fun <init> ()V
+	public fun <init> (Lcom/tinder/scarlet/lifecycle/LifecycleRegistry;)V
+	public fun combineWith ([Lcom/tinder/scarlet/Lifecycle;)Lcom/tinder/scarlet/Lifecycle;
+	public final fun onStart ()V
+	public final fun onStop ()V
+	public fun subscribe (Lorg/reactivestreams/Subscriber;)V
+}
+
+public abstract class clickstream/lifecycle/CSLifeCycleManager : androidx/lifecycle/LifecycleObserver {
+	public fun <init> (Lclickstream/lifecycle/CSAppLifeCycle;)V
+	public final fun addObserver ()V
+	public abstract fun onStart ()V
+	public abstract fun onStop ()V
+}
+
+public final class clickstream/lifecycle/impl/DefaultCSAppLifeCycleObserver : clickstream/lifecycle/CSAppLifeCycle {
+	public fun <init> (Landroid/content/Context;)V
+	public fun addObserver (Lclickstream/lifecycle/CSAppLifeCycleObserver;)V
+}
+
+public final class com/gojek/android/clickstream/lifecycle/BuildConfig {
+	public static final field BUILD_TYPE Ljava/lang/String;
+	public static final field DEBUG Z
+	public static final field LIBRARY_PACKAGE_NAME Ljava/lang/String;
+	public fun <init> ()V
+}
+

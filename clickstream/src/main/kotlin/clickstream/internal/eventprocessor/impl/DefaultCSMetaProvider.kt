@@ -1,7 +1,8 @@
 package clickstream.internal.eventprocessor.impl
 
-import clickstream.internal.eventprocessor.CSMetaProvider
-import clickstream.model.CSInfo
+import clickstream.api.CSInfo
+import clickstream.api.CSLocationInfo
+import clickstream.api.CSMetaProvider
 import com.gojek.clickstream.internal.HealthMeta.App
 import com.gojek.clickstream.internal.HealthMeta.Customer
 import com.gojek.clickstream.internal.HealthMeta.Device
@@ -13,13 +14,13 @@ import com.gojek.clickstream.internal.HealthMeta.Session
  *
  * @param info contains data for location, device, customer, session
  */
-internal class DefaultCSMetaProvider(
+public class DefaultCSMetaProvider(
     private val info: CSInfo
 ) : CSMetaProvider {
 
     override suspend fun location(): Location =
         with(info.locationInfo) {
-            val currentLocation = this
+            val currentLocation = CSLocationInfo.Location(latitude, longitude)
             return@with Location.newBuilder().apply {
                 latitude = currentLocation.latitude
                 longitude = currentLocation.longitude
@@ -33,12 +34,12 @@ internal class DefaultCSMetaProvider(
     }
 
     override val customer: Customer by lazy {
-        with(info.customerInfo) {
+        with(info.userInfo) {
             Customer.newBuilder()
-                .setSignedUpCountry(this@with.signedUpCountry)
-                .setCurrentCountry(this@with.currentCountry)
-                .setIdentity(this@with.identity)
-                .setEmail(this@with.email)
+                .setSignedUpCountry(signedUpCountry)
+                .setCurrentCountry(currentCountry)
+                .setIdentity(identity)
+                .setEmail(email)
                 .build()
         }
     }

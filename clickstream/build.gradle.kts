@@ -1,6 +1,16 @@
 import plugin.AndroidLibraryConfigurationPlugin
 
 apply<AndroidLibraryConfigurationPlugin>()
+apply(from = "$rootDir/scripts/versioning.gradle")
+apply(from = "$rootDir/scripts/publish-artifact-task.gradle")
+
+ext {
+    set("PUBLISH_GROUP_ID", "com.gojek.clickstream")
+    set("PUBLISH_ARTIFACT_ID", "clickstream-android")
+    set("PUBLISH_VERSION", ext.get("gitVersionName"))
+}
+
+apply(from = "$rootDir/scripts/publish-module.gradle")
 
 plugins {
     id("com.android.library")
@@ -11,22 +21,27 @@ plugins {
 
 android {
     kotlinOptions {
-        jvmTarget = "11"
-        freeCompilerArgs = listOf("-Xexplicit-api=strict")
+        jvmTarget = "1.8"
+        freeCompilerArgs = listOf("-XXLanguage:+InlineClasses", "-Xexplicit-api=strict")
     }
-    defaultConfig{
+    defaultConfig {
         multiDexEnabled = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 }
 
 dependencies {
-    implementation(files("libs/proto-sdk-1.18.6.jar"))
+    // Clickstream
+    implementation(files("$rootDir/libs/proto-sdk-1.18.6.jar"))
+    api(projects.clickstreamLogger)
+    compileOnly(projects.clickstreamApi)
+    compileOnly(projects.clickstreamHealthMetricsApi)
+    compileOnly(projects.clickstreamLifecycle)
 
-    // Utils
-    deps.utils.list.forEach(::implementation)
+    // Common
+    deps.common.list.forEach(::implementation)
 
-    // Android Room
+    // Room
     deps.room.list.forEach(::implementation)
     kapt(deps.room.roomCompiler)
 
@@ -39,21 +54,13 @@ dependencies {
         exclude(group = "com.google.protobuf")
     }
 
-    // Common
-    deps.common.list.forEach(::implementation)
-
     // Unit Test
-    testImplementation(files("libs/proto-consumer-1.18.6.jar"))
-    deps.uniTest.list.forEach(::testImplementation)
+    deps.android.test.unitTest.list.forEach(::testImplementation)
+    testImplementation(files("$rootDir/libs/proto-consumer-1.18.6.jar"))
+    testImplementation(projects.clickstreamHealthMetrics)
+    testImplementation(projects.clickstreamApi)
+    testImplementation(projects.clickstreamHealthMetricsApi)
 
-    // Android Test
-    deps.androidTest.list.forEach(::androidTestImplementation)
+    // UI Test
+    deps.android.test.uiTest.list.forEach(::androidTestImplementation)
 }
-
-ext {
-    set("PUBLISH_GROUP_ID", "com.gojek.clickstream")
-    set("PUBLISH_VERSION", "0.0.3")
-    set("PUBLISH_ARTIFACT_ID", "clickstream-android")
-}
-
-apply(from = "$rootDir/scripts/publish-module.gradle")

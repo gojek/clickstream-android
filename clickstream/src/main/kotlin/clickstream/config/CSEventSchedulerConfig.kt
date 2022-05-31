@@ -19,7 +19,8 @@ public data class CSEventSchedulerConfig(
     val flushOnBackground: Boolean,
     val connectionTerminationTimerWaitTimeInMillis: Long,
     val backgroundTaskEnabled: Boolean,
-    val workRequestDelayInHr: Long
+    val workRequestDelayInHr: Long,
+    val utf8ValidatorEnabled: Boolean
 ) {
 
     public companion object {
@@ -30,6 +31,7 @@ public data class CSEventSchedulerConfig(
         private const val BACKGROUND_TASK_ENABLED: Boolean = false
         private const val CONNECTION_TERMINATION_TIMER_WAIT_TIME_IN_S: Long = 5
         private const val WORK_REQUEST_DELAY_TIME_IN_HR: Long = 1
+        private const val UTF8_VALIDATOR_ENABLED: Boolean = true
 
         /**
          * Returns the config with default values
@@ -38,7 +40,8 @@ public data class CSEventSchedulerConfig(
             DEFAULT_EVENTS_PER_BATCH, DEFAULT_BATCH_PERIOD,
             FORCED_FLUSH, SECONDS.toMillis(CONNECTION_TERMINATION_TIMER_WAIT_TIME_IN_S),
             BACKGROUND_TASK_ENABLED,
-            WORK_REQUEST_DELAY_TIME_IN_HR
+            WORK_REQUEST_DELAY_TIME_IN_HR,
+            UTF8_VALIDATOR_ENABLED
         )
     }
 }

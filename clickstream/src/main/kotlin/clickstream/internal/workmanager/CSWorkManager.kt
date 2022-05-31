@@ -2,9 +2,10 @@ package clickstream.internal.workmanager
 
 import android.content.Context
 import clickstream.config.CSEventSchedulerConfig
-import clickstream.internal.lifecycle.CSAppLifeCycle
-import clickstream.internal.lifecycle.CSBackgroundLifecycleManager
-import clickstream.internal.lifecycle.CSLifeCycleManager
+import clickstream.config.CSRemoteConfig
+import clickstream.lifecycle.CSAppLifeCycle
+import clickstream.lifecycle.CSBackgroundLifecycleManager
+import clickstream.lifecycle.CSLifeCycleManager
 import clickstream.logger.CSLogger
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
@@ -13,12 +14,13 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
  */
 @ExperimentalCoroutinesApi
 internal class CSWorkManager(
-    appLifeCycleObserver: CSAppLifeCycle,
+    appLifeCycle: CSAppLifeCycle,
     private val context: Context,
     private val eventSchedulerConfig: CSEventSchedulerConfig,
     private val logger: CSLogger,
-    private val backgroundLifecycleManager: CSBackgroundLifecycleManager
-) : CSLifeCycleManager(appLifeCycleObserver) {
+    private val backgroundLifecycleManager: CSBackgroundLifecycleManager,
+    private val remoteConfig: CSRemoteConfig
+) : CSLifeCycleManager(appLifeCycle) {
 
     init {
         logger.debug { "CSWorkManager#init" }
@@ -26,10 +28,14 @@ internal class CSWorkManager(
     }
 
     override fun onStart() {
-        logger.debug { "CSWorkManager#onStart - backgroundTaskEnabled ${eventSchedulerConfig.backgroundTaskEnabled}" }
+        logger.debug {
+            "CSWorkManager#onStart -" +
+            "backgroundTaskEnabled ${eventSchedulerConfig.backgroundTaskEnabled}, " +
+            "isForegroundEventFlushEnabled ${remoteConfig.isForegroundEventFlushEnabled}"
+        }
 
         backgroundLifecycleManager.onStop()
-        if (eventSchedulerConfig.backgroundTaskEnabled) {
+        if (remoteConfig.isForegroundEventFlushEnabled && eventSchedulerConfig.backgroundTaskEnabled) {
             setupFutureWork()
         }
     }

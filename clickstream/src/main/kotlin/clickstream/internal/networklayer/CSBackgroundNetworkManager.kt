@@ -1,7 +1,9 @@
 package clickstream.internal.networklayer
 
+import clickstream.api.CSInfo
 import clickstream.connection.CSSocketConnectionListener
-import clickstream.internal.lifecycle.CSAppLifeCycle
+import clickstream.health.intermediate.CSHealthEventRepository
+import clickstream.lifecycle.CSAppLifeCycle
 import clickstream.logger.CSLogger
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -20,16 +22,20 @@ import kotlinx.coroutines.cancel
  */
 @ExperimentalCoroutinesApi
 internal class CSBackgroundNetworkManager(
-    appLifeCycleObserver: CSAppLifeCycle,
+    appLifeCycle: CSAppLifeCycle,
     networkRepository: CSNetworkRepository,
     dispatcher: CoroutineDispatcher,
     logger: CSLogger,
+    healthEventRepository: CSHealthEventRepository,
+    info: CSInfo,
     connectionListener: CSSocketConnectionListener
 ) : CSNetworkManager(
-    appLifeCycleObserver,
+    appLifeCycle,
     networkRepository,
     dispatcher,
     logger,
+    healthEventRepository,
+    info,
     connectionListener
 ) {
 

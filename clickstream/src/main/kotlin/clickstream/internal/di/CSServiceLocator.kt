@@ -2,12 +2,18 @@ package clickstream.internal.di
 
 import androidx.annotation.GuardedBy
 import clickstream.config.CSEventSchedulerConfig
+import clickstream.health.intermediate.CSEventHealthListener
+import clickstream.health.intermediate.CSHealthEventFactory
+import clickstream.health.intermediate.CSHealthEventProcessor
+import clickstream.health.intermediate.CSHealthEventRepository
 import clickstream.internal.eventprocessor.CSEventProcessor
 import clickstream.internal.eventscheduler.CSBackgroundScheduler
 import clickstream.internal.eventscheduler.CSEventScheduler
 import clickstream.internal.networklayer.CSNetworkManager
 import clickstream.internal.workmanager.CSWorkManager
+import clickstream.lifecycle.CSAppLifeCycle
 import clickstream.logger.CSLogLevel
+import clickstream.logger.CSLogger
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
@@ -91,4 +97,15 @@ internal interface CSServiceLocator {
      * Types for LogLevel config during development or production.
      */
     val logLevel: CSLogLevel
+
+    /**
+     * Internal Logger
+     */
+    val logger: CSLogger
+
+    val eventHealthListener: CSEventHealthListener
+    val healthEventRepository: CSHealthEventRepository
+    val healthEventProcessor: CSHealthEventProcessor
+    val healthEventFactory: CSHealthEventFactory
+    val appLifeCycle: CSAppLifeCycle
 }

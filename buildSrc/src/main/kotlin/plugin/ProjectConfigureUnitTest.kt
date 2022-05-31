@@ -9,6 +9,6 @@ import org.gradle.kotlin.dsl.getByType
 internal fun Project.configureUnitTest() = this.extensions.getByType<BaseExtension>().run {
     dependencies {
         add("testImplementation", deps.android.test.junit)
-        add("testImplementation", deps.uniTest.mockito)
+        add("testImplementation", deps.android.test.mockito)
     }
 }

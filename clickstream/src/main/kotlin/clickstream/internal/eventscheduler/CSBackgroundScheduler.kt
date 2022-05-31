@@ -1,16 +1,22 @@
-@file:Suppress("LongParameterList")
-
 package clickstream.internal.eventscheduler
 
+import clickstream.api.CSInfo
 import clickstream.config.CSEventSchedulerConfig
-import clickstream.internal.lifecycle.CSAppLifeCycle
-import clickstream.internal.lifecycle.CSBackgroundLifecycleManager
+import clickstream.health.CSTimeStampGenerator
+import clickstream.health.constant.CSEventNamesConstant.ClickStreamFlushOnBackground
+import clickstream.health.constant.CSEventTypesConstant
+import clickstream.health.identity.CSGuIdGenerator
+import clickstream.health.intermediate.CSEventHealthListener
+import clickstream.health.intermediate.CSHealthEventRepository
+import clickstream.health.model.CSHealthEventDTO
+import clickstream.internal.di.CSServiceLocator
 import clickstream.internal.networklayer.CSBackgroundNetworkManager
 import clickstream.internal.utils.CSBatteryStatusObserver
-import clickstream.internal.utils.CSGuIdGenerator
 import clickstream.internal.utils.CSNetworkStatusObserver
-import clickstream.internal.utils.CSTimeStampGenerator
+import clickstream.lifecycle.CSAppLifeCycle
+import clickstream.lifecycle.CSBackgroundLifecycleManager
 import clickstream.logger.CSLogger
+import clickstream.model.CSEvent
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -28,28 +34,34 @@ private const val ONE_SEC: Long = 1000
  */
 @ExperimentalCoroutinesApi
 internal class CSBackgroundScheduler(
-    appLifeCycleObserver: CSAppLifeCycle,
+    appLifeCycle: CSAppLifeCycle,
     networkManager: CSBackgroundNetworkManager,
     dispatcher: CoroutineDispatcher,
     config: CSEventSchedulerConfig,
     eventRepository: CSEventRepository,
+    healthEventRepository: CSHealthEventRepository,
     logger: CSLogger,
     guIdGenerator: CSGuIdGenerator,
     timeStampGenerator: CSTimeStampGenerator,
     batteryStatusObserver: CSBatteryStatusObserver,
     networkStatusObserver: CSNetworkStatusObserver,
-    private val backgroundLifecycleManager: CSBackgroundLifecycleManager
+    private val backgroundLifecycleManager: CSBackgroundLifecycleManager,
+    private val info: CSInfo,
+    eventHealthListener: CSEventHealthListener
 ) : CSEventScheduler(
-    appLifeCycleObserver,
+    appLifeCycle,
     networkManager,
     dispatcher,
     config,
     eventRepository,
+    healthEventRepository,
     logger,
     guIdGenerator,
     timeStampGenerator,
     batteryStatusObserver,
-    networkStatusObserver
+    networkStatusObserver,
+    info,
+    eventHealthListener
 ) {
 
     override fun onStart() {
@@ -77,6 +89,8 @@ internal class CSBackgroundScheduler(
         waitForNetwork()
         flushAllEvents()
         waitForAck()
+        flushHealthEvents()
+        waitForAck()
         return eventRepository.getAllEvents().isEmpty()
     }
 
@@ -95,8 +109,38 @@ internal class CSBackgroundScheduler(
 
         val events = eventRepository.getAllEvents()
         if (events.isEmpty()) return
+        val reqId = forwardEvents(batch = events)
+        reqId?.let {
+            CSHealthEventDTO(
+                eventName = ClickStreamFlushOnBackground.value,
+                eventType = CSEventTypesConstant.AGGREGATE,
+                eventBatchId = it,
+                eventId = events.joinToString { event -> event.eventGuid },
+                appVersion = info.appInfo.appVersion
+            )
+        }?.let { healthEventRepository.insertHealthEvent(it) }
+    }
 
-        forwardEvents(batch = events)
+    private suspend fun flushHealthEvents() {
+        logger.debug { "CSBackgroundScheduler#flushHealthEvents" }
+
+        val healthEvents =
+            CSServiceLocator.getInstance().healthEventProcessor.getAggregateEventsBasedOnEventName()
+                .map { health ->
+                    CSEvent(
+                        guid = health.healthMeta.eventGuid,
+                        timestamp = health.eventTimestamp,
+                        message = health
+                    )
+                }
+                .map { CSEventData.create(it).first }
+
+        logger.debug { "CSBackgroundScheduler#flushHealthEvents - healthEvents size ${healthEvents.size}" }
+        logger.debug { "CSBackgroundScheduler#flushHealthEvents - healthEventsGuid ${healthEvents.map { it.eventGuid }}" }
+
+        if (healthEvents.isNotEmpty()) {
+            forwardEvents(healthEvents)
+        }
     }
 
     private suspend fun waitForAck() {

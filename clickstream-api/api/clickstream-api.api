@@ -1,0 +1,110 @@
+public final class clickstream/api/CSAppInfo {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lclickstream/api/CSAppInfo;
+	public static synthetic fun copy$default (Lclickstream/api/CSAppInfo;Ljava/lang/String;ILjava/lang/Object;)Lclickstream/api/CSAppInfo;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAppVersion ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class clickstream/api/CSDeviceInfo {
+	public abstract fun getDeviceHeight ()Ljava/lang/String;
+	public abstract fun getDeviceManufacturer ()Ljava/lang/String;
+	public abstract fun getDeviceModel ()Ljava/lang/String;
+	public abstract fun getDeviceWidth ()Ljava/lang/String;
+	public abstract fun getOperatingSystem ()Ljava/lang/String;
+	public abstract fun getSDKVersion ()Ljava/lang/String;
+}
+
+public final class clickstream/api/CSInfo {
+	public fun <init> (Lclickstream/api/CSAppInfo;Lclickstream/api/CSLocationInfo;Lclickstream/api/CSSessionInfo;Lclickstream/api/CSDeviceInfo;Lclickstream/api/CSUserInfo;)V
+	public final fun component1 ()Lclickstream/api/CSAppInfo;
+	public final fun component2 ()Lclickstream/api/CSLocationInfo;
+	public final fun component3 ()Lclickstream/api/CSSessionInfo;
+	public final fun component4 ()Lclickstream/api/CSDeviceInfo;
+	public final fun component5 ()Lclickstream/api/CSUserInfo;
+	public final fun copy (Lclickstream/api/CSAppInfo;Lclickstream/api/CSLocationInfo;Lclickstream/api/CSSessionInfo;Lclickstream/api/CSDeviceInfo;Lclickstream/api/CSUserInfo;)Lclickstream/api/CSInfo;
+	public static synthetic fun copy$default (Lclickstream/api/CSInfo;Lclickstream/api/CSAppInfo;Lclickstream/api/CSLocationInfo;Lclickstream/api/CSSessionInfo;Lclickstream/api/CSDeviceInfo;Lclickstream/api/CSUserInfo;ILjava/lang/Object;)Lclickstream/api/CSInfo;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAppInfo ()Lclickstream/api/CSAppInfo;
+	public final fun getDeviceInfo ()Lclickstream/api/CSDeviceInfo;
+	public final fun getLocationInfo ()Lclickstream/api/CSLocationInfo;
+	public final fun getSessionInfo ()Lclickstream/api/CSSessionInfo;
+	public final fun getUserInfo ()Lclickstream/api/CSUserInfo;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class clickstream/api/CSLocationInfo {
+	public fun <init> (DDLjava/util/Map;)V
+	public final fun component1 ()D
+	public final fun component2 ()D
+	public final fun component3 ()Ljava/util/Map;
+	public final fun copy (DDLjava/util/Map;)Lclickstream/api/CSLocationInfo;
+	public static synthetic fun copy$default (Lclickstream/api/CSLocationInfo;DDLjava/util/Map;ILjava/lang/Object;)Lclickstream/api/CSLocationInfo;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getLatitude ()D
+	public final fun getLongitude ()D
+	public final fun getS2Ids ()Ljava/util/Map;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class clickstream/api/CSLocationInfo$Location {
+	public fun <init> (DD)V
+	public final fun component1 ()D
+	public final fun component2 ()D
+	public final fun copy (DD)Lclickstream/api/CSLocationInfo$Location;
+	public static synthetic fun copy$default (Lclickstream/api/CSLocationInfo$Location;DDILjava/lang/Object;)Lclickstream/api/CSLocationInfo$Location;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getLatitude ()D
+	public final fun getLongitude ()D
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class clickstream/api/CSMetaProvider {
+	public abstract fun getApp ()Lcom/gojek/clickstream/internal/HealthMeta$App;
+	public abstract fun getCustomer ()Lcom/gojek/clickstream/internal/HealthMeta$Customer;
+	public abstract fun getDevice ()Lcom/gojek/clickstream/internal/HealthMeta$Device;
+	public abstract fun getSession ()Lcom/gojek/clickstream/internal/HealthMeta$Session;
+	public abstract fun location (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class clickstream/api/CSSessionInfo {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lclickstream/api/CSSessionInfo;
+	public static synthetic fun copy$default (Lclickstream/api/CSSessionInfo;Ljava/lang/String;ILjava/lang/Object;)Lclickstream/api/CSSessionInfo;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getSessionID ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class clickstream/api/CSUserInfo {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()I
+	public final fun component4 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;)Lclickstream/api/CSUserInfo;
+	public static synthetic fun copy$default (Lclickstream/api/CSUserInfo;Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;ILjava/lang/Object;)Lclickstream/api/CSUserInfo;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCurrentCountry ()Ljava/lang/String;
+	public final fun getEmail ()Ljava/lang/String;
+	public final fun getIdentity ()I
+	public final fun getSignedUpCountry ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/gojek/android/clickstream/api/BuildConfig {
+	public static final field BUILD_TYPE Ljava/lang/String;
+	public static final field DEBUG Z
+	public static final field LIBRARY_PACKAGE_NAME Ljava/lang/String;
+	public fun <init> ()V
+}
+

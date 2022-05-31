@@ -1,7 +1,7 @@
 package clickstream.connection
 
 /**
- * A interface that provides onEventConnectionChange.
+ * An interface that provides onEventConnectionChange.
  */
 public interface CSSocketConnectionListener {
 

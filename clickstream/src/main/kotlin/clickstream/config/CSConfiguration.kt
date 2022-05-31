@@ -1,13 +1,24 @@
 package clickstream.config
 
 import android.content.Context
-import clickstream.config.timestamp.CSEventGeneratedTimestampListener
+import clickstream.api.CSDeviceInfo
+import clickstream.api.CSInfo
 import clickstream.config.timestamp.DefaultCSEventGeneratedTimestampListener
 import clickstream.connection.CSSocketConnectionListener
 import clickstream.connection.NoOpCSConnectionListener
+import clickstream.health.intermediate.CSEventHealthListener
+import clickstream.health.intermediate.CSHealthEventFactory
+import clickstream.health.intermediate.CSHealthEventLoggerListener
+import clickstream.health.intermediate.CSHealthEventProcessor
+import clickstream.health.intermediate.CSHealthEventRepository
+import clickstream.health.CSHealthGateway
+import clickstream.health.time.CSEventGeneratedTimestampListener
+import clickstream.internal.NoOpCSEventHealthListener
+import clickstream.internal.analytics.impl.NoOpCSHealthEventLogger
 import clickstream.internal.di.CSServiceLocator
+import clickstream.lifecycle.CSAppLifeCycle
+import clickstream.lifecycle.impl.DefaultCSAppLifeCycleObserver
 import clickstream.logger.CSLogLevel
-import clickstream.model.CSInfo
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -16,6 +27,17 @@ import kotlinx.coroutines.Dispatchers
  * The [CSConfiguration] object used to customize [ClickStream] upon initialization.
  * [CSConfiguration] contains various parameters used to setup [ClickStream].
  * For example, it is possible to customize the [CoroutineScope] used by [CSServiceLocator]s here.
+ *
+ * @param context A [Context] object for configuration purposes. Internally, this class
+ *        will call [Context#getApplicationContext()], so you may safely pass in
+ *        any Context without risking a memory leak.
+ * @param dispatcher A [CoroutineDispatcher] object for threading related work.
+ * @param info An object that wraps [CSAppInfo], [CSLocationInfo], [CSUserInfo], [CSSessionInfo], [CSDeviceInfo]
+ * @param config An object which holds the configuration for processor, scheduler & network manager
+ * @param logLevel ClickStream Loglevel for debugging purposes.
+ * @param eventGeneratedTimeStamp An object which provide a plugin for exposes a timestamp where call side able to use
+ *        for provides NTP timestamp
+ * @param socketConnectionListener An interface that provides onEventConnectionChange.
  *
  * To set a custom Configuration for [ClickStream], **See** [ClickStream#initialize(Context, Configuration)].
  */
@@ -26,7 +48,13 @@ public class CSConfiguration private constructor(
     internal val config: CSConfig,
     internal val logLevel: CSLogLevel,
     internal val eventGeneratedTimeStamp: CSEventGeneratedTimestampListener,
-    internal val socketConnectionListener: CSSocketConnectionListener
+    internal val socketConnectionListener: CSSocketConnectionListener,
+    internal val remoteConfig: CSRemoteConfig,
+    internal val eventHealthListener: CSEventHealthListener,
+    internal val healthEventRepository: CSHealthEventRepository,
+    internal val healthEventProcessor: CSHealthEventProcessor,
+    internal val healthEventFactory: CSHealthEventFactory,
+    internal val appLifeCycle: CSAppLifeCycle
 ) {
     /**
      * A Builder for [CSConfiguration]'s.
@@ -43,7 +71,7 @@ public class CSConfiguration private constructor(
          * Specifies a [CSInfo] which will be used by [ClickStream] for all its
          * internal meta information, such as.
          *  - AppInfo
-         *  - UserInfo
+         *  - CustomerInfo
          *  - SessionInfo
          *  - LocationInfo
          *  - DeviceInfo
@@ -53,15 +81,21 @@ public class CSConfiguration private constructor(
         /**
          * Specifies a [CSConfig] which will be used by [ClickStream] for all its
          * internal meta information, such as.
-         *  - EventProcessor, to define Instant and Realtime events which respect to QoS0/1.
-         *  - EventScheduler, to define configuration properties for the EventScheduler to process the event data.
-         *  - NetworkConfig, to define endpoint and network configuration related things.
+         *  - EventProcessor, to define Instant and Realtime events.
+         *  - EventScheduler, for worker related meta.
+         *  - NetworkConfig, to define endpoint and timout related things.
+         *  - HealthConfig, to define verbosity and health related things.
          */
-        private val config: CSConfig
+        private val config: CSConfig,
+
+        private val appLifeCycle: CSAppLifeCycle,
+
+        private val healthGateway: CSHealthGateway 
     ) {
         private lateinit var dispatcher: CoroutineDispatcher
         private lateinit var eventGeneratedListener: CSEventGeneratedTimestampListener
         private lateinit var socketConnectionListener: CSSocketConnectionListener
+        private lateinit var remoteConfig: CSRemoteConfig
         private var logLevel: CSLogLevel = CSLogLevel.OFF
 
         /**
@@ -111,6 +145,17 @@ public class CSConfiguration private constructor(
             }
 
         /**
+         * Specifies a custom [CSRemoteConfig] for [ClickStream].
+         *
+         * @param remoteConfig A [CSRemoteConfig] for remote config.
+         * @return This [Builder] instance
+         */
+        public fun setRemoteConfig(remoteConfig: CSRemoteConfig): Builder =
+            apply {
+                this.remoteConfig = remoteConfig
+            }
+
+        /**
          * Builds a [CSConfiguration] object.
          *
          * @return A [CSConfiguration] object with this [Builder]'s parameters.
@@ -125,12 +170,21 @@ public class CSConfiguration private constructor(
             if (::socketConnectionListener.isInitialized.not()) {
                 socketConnectionListener = NoOpCSConnectionListener()
             }
+            if (::remoteConfig.isInitialized.not()) {
+                remoteConfig = NoOpCSRemoteConfig()
+            }
             return CSConfiguration(
                 context, dispatcher,
                 info, config,
                 logLevel,
                 eventGeneratedListener,
-                socketConnectionListener
+                socketConnectionListener,
+                remoteConfig,
+                healthGateway.eventHealthListener,
+                healthGateway.healthEventRepository,
+                healthGateway.healthEventProcessor,
+                healthGateway.healthEventFactory,
+                appLifeCycle
             )
         }
     }

@@ -1,0 +1,90 @@
+apply plugin: 'com.jfrog.artifactory'
+apply plugin: 'maven-publish'
+
+if (!project.hasProperty("artifactory")) return
+
+File secretPropsFile = project.rootProject.file('local.properties')
+if (secretPropsFile.exists()) {
+    Properties p = new Properties()
+    new FileInputStream(secretPropsFile).withCloseable { is -> p.load(is) }
+    p.each { name, value -> ext[name] = value }
+}
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            aar(MavenPublication) {
+                def projectGroupId = project.ext.get("PUBLISH_GROUP_ID") as String
+                def projectArtifactId = project.ext.get("PUBLISH_ARTIFACT_ID") as String
+                def projectVersionId = project.ext.get("PUBLISH_VERSION") as String
+
+                if (projectArtifactId != null && projectVersionId != null) {
+                    project.artifactoryPublish.skip = false
+                    project.tasks.artifactoryPublish.dependsOn("assembleRelease")
+                    project.tasks.artifactoryPublish.dependsOn("generatePomFileForAarPublication")
+                    println("$project.name will be published as $projectArtifactId : $projectVersionId")
+                } else {
+                    println("$project.name is missing publishing details")
+                }
+                groupId projectGroupId
+                artifactId projectArtifactId
+                version = projectVersionId
+                artifact(sourcesJar)
+                artifact("$buildDir/outputs/aar/${project.getName()}-release.aar")
+                pom.withXml {
+                    def dependencies = asNode().appendNode('dependencies')
+                    configurations.implementation.allDependencies.each {
+                        if (it.name != "unspecified" && it.version != "unspecified") {
+                            executeAppendNode(it, dependencies)
+                        }
+                    }
+                    configurations.api.allDependencies.each {
+                        if (it.name != "unspecified" && it.version != "unspecified") {
+                            executeAppendNode(it, dependencies)
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+private void executeAppendNode(Dependency it, dependencies) {
+    def group = it.group
+    def name = it.name
+    def version = it.version
+    if (it.group == "clickstream-android") {
+        group = groupId
+    }
+    def dependency = dependencies.appendNode('dependency')
+    dependency.appendNode('groupId', group)
+    dependency.appendNode('artifactId', name)
+    dependency.appendNode('version', version)
+}
+
+project.artifactoryPublish.skip = false
+
+artifactory {
+    publish {
+        println("artifactory repoKey: ${ext['repoKey']}")
+        println("artifactory username: ${ext['username']}")
+        println("artifactory password: ${ext['password']}")
+        contextUrl = ext['contextUrl']
+
+        repository {
+            repoKey = ext['repoKey']
+            username = ext['username']
+            password = ext['password']
+        }
+        defaults {
+            publications('aar')
+            publishArtifacts = true
+            publishPom = true
+        }
+    }
+}

@@ -1,8 +1,10 @@
 package clickstream.internal.networklayer
 
 import clickstream.config.CSNetworkConfig
+import clickstream.fake.fakeCSInfo
+import clickstream.health.CSTimeStampGenerator
+import clickstream.health.intermediate.CSHealthEventRepository
 import clickstream.internal.utils.CSFlowStreamAdapterFactory
-import clickstream.internal.utils.CSTimeStampGenerator
 import clickstream.logger.CSLogLevel.OFF
 import clickstream.logger.CSLogger
 import clickstream.utils.CoroutineTestRule
@@ -34,12 +36,12 @@ public class CSRetryableCallbackTest {
 
     @get:Rule
     public val mockWebServer: MockWebServer = MockWebServer()
-
     @get:Rule
     public val coroutineRule: CoroutineTestRule = CoroutineTestRule()
 
     private val serverUrlString by lazy { mockWebServer.url("/").toString() }
     private val timestamp = mock<CSTimeStampGenerator>()
+    private val health = mock<CSHealthEventRepository>()
 
     private val serverLifecycleRegistry = LifecycleRegistry()
     private lateinit var server: CSEventService
@@ -66,11 +68,15 @@ public class CSRetryableCallbackTest {
             dispatcher = coroutineRule.testDispatcher,
             timeStampGenerator = timestamp,
             logger = CSLogger(OFF),
+            healthEventRepository = health,
+            info = fakeCSInfo(),
             coroutineScope = coroutineRule.scope
         ) {
-            override fun onSuccess(guid: String) { /*No Op*/ }
+            override fun onSuccess(guid: String) { /*No Op*/
+            }
 
-            override fun onFailure(throwable: Throwable, guid: String) { /*No Op*/ }
+            override fun onFailure(throwable: Throwable, guid: String) { /*No Op*/
+            }
         }
     }
 
