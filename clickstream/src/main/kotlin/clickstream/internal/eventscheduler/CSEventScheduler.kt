@@ -1,23 +1,33 @@
-@file:Suppress("LongParameterList")
-
 package clickstream.internal.eventscheduler
 
+import clickstream.api.CSInfo
 import clickstream.config.CSEventSchedulerConfig
-import clickstream.internal.lifecycle.CSAppLifeCycle
-import clickstream.internal.lifecycle.CSLifeCycleManager
+import clickstream.extension.isValidMessage
+import clickstream.health.CSTimeStampGenerator
+import clickstream.health.constant.CSEventNamesConstant.ClickStreamEventBatchCreated
+import clickstream.health.constant.CSEventNamesConstant.ClickStreamEventBatchTriggerFailed
+import clickstream.health.constant.CSEventNamesConstant.ClickStreamEventCached
+import clickstream.health.constant.CSEventNamesConstant.ClickStreamInvalidMessage
+import clickstream.health.constant.CSEventTypesConstant
+import clickstream.health.identity.CSGuIdGenerator
+import clickstream.health.intermediate.CSEventHealthListener
+import clickstream.health.intermediate.CSHealthEventRepository
+import clickstream.health.model.CSHealthEventDTO
+import clickstream.internal.analytics.CSErrorReasons
 import clickstream.internal.networklayer.CSNetworkManager
 import clickstream.internal.utils.CSBatteryLevel
 import clickstream.internal.utils.CSBatteryStatusObserver
-import clickstream.internal.utils.CSGuIdGenerator
 import clickstream.internal.utils.CSNetworkStatusObserver
 import clickstream.internal.utils.CSResult
-import clickstream.internal.utils.CSTimeStampGenerator
 import clickstream.internal.utils.CSTimeStampMessageBuilder
 import clickstream.internal.utils.flowableTicker
+import clickstream.lifecycle.CSAppLifeCycle
+import clickstream.lifecycle.CSLifeCycleManager
 import clickstream.logger.CSLogger
 import clickstream.model.CSEvent
 import com.gojek.clickstream.de.EventRequest
 import com.gojek.clickstream.internal.Health
+import com.google.protobuf.MessageLite
 import java.util.concurrent.CopyOnWriteArrayList
 import kotlinx.coroutines.CompletableJob
 import kotlinx.coroutines.CoroutineDispatcher
@@ -37,28 +47,32 @@ import kotlinx.coroutines.launch
  * It caches the events delivered to it. Based on the provided configuration, it processes
  * the events into batch at regular intervals
  *
- * @param eventRepository to cache the data
- * @param networkManager to send the analytic data to server
- * @param config configuration of how the scheduler should process the events
- * @param dispatcher CoroutineDispatcher on which the events are observed
- * @param logger to create logs
- * @param guIdGenerator used for generating a random ID
- * @param timeStampGenerator used for generating current time stamp
- * @param batteryStatusObserver obbserves the battery status
+ * @param eventRepository - To cache the data
+ * @param networkManager - to send the analytic data to server
+ * @param config - config how the scheduler should process the events
+ * @param dispatcher - CoroutineDispatcher on which the events are observed
+ * @param logger - To create logs
+ * @param healthEventRepository - Used for logging health events
+ * @param guIdGenerator - Used for generating a random ID
+ * @param timeStampGenerator - Used for generating current time stamp
+ * @param batteryStatusObserver - observes the battery status
  */
 @ExperimentalCoroutinesApi
 internal open class CSEventScheduler(
-    appLifeCycleObserver: CSAppLifeCycle,
+    appLifeCycle: CSAppLifeCycle,
     protected val networkManager: CSNetworkManager,
     protected val dispatcher: CoroutineDispatcher,
     protected val config: CSEventSchedulerConfig,
     protected val eventRepository: CSEventRepository,
+    protected val healthEventRepository: CSHealthEventRepository,
     protected val logger: CSLogger,
     private val guIdGenerator: CSGuIdGenerator,
     private val timeStampGenerator: CSTimeStampGenerator,
     private val batteryStatusObserver: CSBatteryStatusObserver,
-    private val networkStatusObserver: CSNetworkStatusObserver
-) : CSLifeCycleManager(appLifeCycleObserver) {
+    private val networkStatusObserver: CSNetworkStatusObserver,
+    private val info: CSInfo,
+    private val eventHealthListener: CSEventHealthListener
+) : CSLifeCycleManager(appLifeCycle) {
 
     protected var job: CompletableJob = SupervisorJob()
     protected var coroutineScope: CoroutineScope = CoroutineScope(job + dispatcher)
@@ -93,9 +107,23 @@ internal open class CSEventScheduler(
      */
     public suspend fun scheduleEvent(event: CSEvent) {
         logger.debug { "CSEventScheduler#scheduleEvent" }
+        if (validateMessage(event.message).not()) {
+            logger.debug { "CSEventScheduler#scheduleEvent - message not valid" }
+            return
+        }
 
-        val eventData = CSEventData.create(event)
+        val (eventData, eventHealthData) = CSEventData.create(event)
+        eventHealthListener.onEventCreated(eventHealthData)
         eventRepository.insertEventData(eventData)
+
+        logHealthEvent(
+            CSHealthEventDTO(
+                eventName = ClickStreamEventCached.value,
+                eventType = CSEventTypesConstant.AGGREGATE,
+                eventId = eventData.eventGuid,
+                appVersion = info.appInfo.appVersion
+            )
+        )
     }
 
     /**
@@ -109,8 +137,13 @@ internal open class CSEventScheduler(
 
         coroutineScope.launch(handler) {
             ensureActive()
+            if (validateMessage(event.message).not()) {
+                logger.debug { "CSEventScheduler#sendInstantEvent - message not valid" }
+                return@launch
+            }
 
-            val eventData = CSEventData.create(event)
+            val (eventData, eventHealthData) = CSEventData.create(event)
+            eventHealthListener.onEventCreated(eventHealthData)
             val eventRequest =
                 transformToEventRequest(eventData = listOf(eventData))
             networkManager.processInstantEvent(eventRequest)
@@ -138,14 +171,14 @@ internal open class CSEventScheduler(
                         eventRepository.deleteEventDataByGuId(it.value)
                         logger.debug {
                             "CSEventScheduler#setupObservers - " +
-                            "Event Request sent successfully and deleted from DB: ${it.value}"
+                                    "Event Request sent successfully and deleted from DB: ${it.value}"
                         }
                     }
                     is CSResult.Failure -> {
                         eventRepository.resetOnGoingForGuid(it.value)
                         logger.debug {
                             "CSEventScheduler#setupObservers - " +
-                            "Event Request failed due to: ${it.exception.message}"
+                                    "Event Request failed due to: ${it.exception.message}"
                         }
                     }
                 }
@@ -210,6 +243,15 @@ internal open class CSEventScheduler(
                 "CSEventScheduler#forwardEvents#batch - " +
                 "messageName : ${batch[0].messageName}"
             }
+            logHealthEvent(
+                CSHealthEventDTO(
+                    eventName = ClickStreamEventBatchCreated.value,
+                    eventType = CSEventTypesConstant.AGGREGATE,
+                    eventBatchId = eventRequest.reqGuid,
+                    eventId = batch.joinToString { it.eventGuid },
+                    appVersion = info.appInfo.appVersion
+                )
+            )
         }
 
         networkManager.processEvent(eventRequest = eventRequest)
@@ -242,6 +284,12 @@ internal open class CSEventScheduler(
         eventRepository.insertEventDataList(updatedList)
     }
 
+    private suspend fun logHealthEvent(event: CSHealthEventDTO) {
+        logger.debug { "CSEventScheduler#logHealthEvent" }
+
+        healthEventRepository.insertHealthEvent(event)
+    }
+
     private fun resetOnGoingData() {
         logger.debug { "CSEventScheduler#resetOnGoingData" }
 
@@ -253,15 +301,56 @@ internal open class CSEventScheduler(
         }
     }
 
-    private fun isSocketConnected(): String? {
+    private suspend fun validateMessage(message: MessageLite): Boolean {
+        logger.debug { "CSEventScheduler#validateMessage" }
+
+        val isValid = config.utf8ValidatorEnabled && message.isValidMessage()
+        if (isValid.not()) {
+            logHealthEvent(
+                CSHealthEventDTO(
+                    eventName = ClickStreamInvalidMessage.value,
+                    eventType = CSEventTypesConstant.AGGREGATE,
+                    error = message.toByteString().toString(),
+                    appVersion = info.appInfo.appVersion
+                )
+            )
+        }
+        return isValid
+    }
+
+    private suspend fun isSocketConnected(): String? {
+        logHealthEvent(
+            CSHealthEventDTO(
+                eventName = ClickStreamEventBatchTriggerFailed.value,
+                eventType = CSEventTypesConstant.AGGREGATE,
+                error = CSErrorReasons.SOCKET_NOT_OPEN,
+                appVersion = info.appInfo.appVersion
+            )
+        )
         return null
     }
 
-    private fun isNetworkAvailable(): String? {
+    private suspend fun isNetworkAvailable(): String? {
+        logHealthEvent(
+            CSHealthEventDTO(
+                eventName = ClickStreamEventBatchTriggerFailed.value,
+                eventType = CSEventTypesConstant.AGGREGATE,
+                error = CSErrorReasons.NETWORK_UNAVAILABLE,
+                appVersion = info.appInfo.appVersion
+            )
+        )
         return null
     }
 
-    private fun isBatteryLow(): String? {
+    private suspend fun isBatteryLow(): String? {
+        logHealthEvent(
+            CSHealthEventDTO(
+                eventName = ClickStreamEventBatchTriggerFailed.value,
+                eventType = CSEventTypesConstant.AGGREGATE,
+                error = CSErrorReasons.LOW_BATTERY,
+                appVersion = info.appInfo.appVersion
+            )
+        )
         return null
     }
 }

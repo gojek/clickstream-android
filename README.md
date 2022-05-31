@@ -9,6 +9,10 @@
 
 #### A Modern, Fast, and Lightweight Android Ingestion Library
 
+![CI](https://github.com/gojek/clickstream-android/actions/workflows/build/badge.svg)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.gojek.android/clickstream/badge.svg)](https://search.maven.org/artifact/com.gojek.android/clickstream)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
 Clickstream is an event agnostic, real-time data ingestion platform. Clickstream allows apps to maintain a long-running connection to send data in real-time.
 
 The word “Clickstream” is a trail of digital breadcrumbs left by users as they click their way through a website or mobile app. It is loaded with valuable customer information for businesses and its analysis and usage has emerged as a powerful data source.
@@ -67,7 +71,7 @@ Once you’ve added the dependencies and synchronized your Gradle project, the n
 
 ### Initialization
 
-Initialization of the Clickstream can be done on the background thread or main-thread, 
+Initialization of the Clickstream can be done on the background thread or main-thread,
 Invocation should be done on the Application class. So that the initialization happens only once.
 
 To create a Clickstream instance you can do the following setup:

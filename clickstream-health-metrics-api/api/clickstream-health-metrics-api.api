@@ -1,0 +1,222 @@
+public abstract interface class clickstream/health/CSHealthGateway {
+	public abstract fun getEventHealthListener ()Lclickstream/health/intermediate/CSEventHealthListener;
+	public abstract fun getHealthEventFactory ()Lclickstream/health/intermediate/CSHealthEventFactory;
+	public abstract fun getHealthEventProcessor ()Lclickstream/health/intermediate/CSHealthEventProcessor;
+	public abstract fun getHealthEventRepository ()Lclickstream/health/intermediate/CSHealthEventRepository;
+}
+
+public abstract interface class clickstream/health/CSTimeStampGenerator {
+	public abstract fun getTimeStamp ()J
+}
+
+public final class clickstream/health/DefaultCSTimeStampGenerator : clickstream/health/CSTimeStampGenerator {
+	public fun <init> (Lclickstream/health/time/CSEventGeneratedTimestampListener;)V
+	public fun getTimeStamp ()J
+}
+
+public final class clickstream/health/constant/CSEventDestinationConstant {
+	public static final field CS_DESTINATION Ljava/lang/String;
+	public static final field CT_DESTINATION Ljava/lang/String;
+	public static final field INSTANCE Lclickstream/health/constant/CSEventDestinationConstant;
+}
+
+public final class clickstream/health/constant/CSEventNamesConstant : java/lang/Enum {
+	public static final field ClickStreamBackgroundServiceCompleted Lclickstream/health/constant/CSEventNamesConstant;
+	public static final field ClickStreamBatchSent Lclickstream/health/constant/CSEventNamesConstant;
+	public static final field ClickStreamBatchSize Lclickstream/health/constant/CSEventNamesConstant;
+	public static final field ClickStreamBatchWriteFailed Lclickstream/health/constant/CSEventNamesConstant;
+	public static final field ClickStreamConnectionFailed Lclickstream/health/constant/CSEventNamesConstant;
+	public static final field ClickStreamEventBatchAck Lclickstream/health/constant/CSEventNamesConstant;
+	public static final field ClickStreamEventBatchCreated Lclickstream/health/constant/CSEventNamesConstant;
+	public static final field ClickStreamEventBatchErrorResponse Lclickstream/health/constant/CSEventNamesConstant;
+	public static final field ClickStreamEventBatchLatency Lclickstream/health/constant/CSEventNamesConstant;
+	public static final field ClickStreamEventBatchTimeout Lclickstream/health/constant/CSEventNamesConstant;
+	public static final field ClickStreamEventBatchTriggerFailed Lclickstream/health/constant/CSEventNamesConstant;
+	public static final field ClickStreamEventBatchWaitTime Lclickstream/health/constant/CSEventNamesConstant;
+	public static final field ClickStreamEventCached Lclickstream/health/constant/CSEventNamesConstant;
+	public static final field ClickStreamEventObjectCreated Lclickstream/health/constant/CSEventNamesConstant;
+	public static final field ClickStreamEventReceived Lclickstream/health/constant/CSEventNamesConstant;
+	public static final field ClickStreamEventWaitTime Lclickstream/health/constant/CSEventNamesConstant;
+	public static final field ClickStreamFailedInit Lclickstream/health/constant/CSEventNamesConstant;
+	public static final field ClickStreamFlushOnBackground Lclickstream/health/constant/CSEventNamesConstant;
+	public static final field ClickStreamInvalidMessage Lclickstream/health/constant/CSEventNamesConstant;
+	public final fun getValue ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lclickstream/health/constant/CSEventNamesConstant;
+	public static fun values ()[Lclickstream/health/constant/CSEventNamesConstant;
+}
+
+public final class clickstream/health/constant/CSEventTypesConstant {
+	public static final field AGGREGATE Ljava/lang/String;
+	public static final field BUCKET Ljava/lang/String;
+	public static final field INSTANCE Lclickstream/health/constant/CSEventTypesConstant;
+	public static final field INSTANT Ljava/lang/String;
+}
+
+public final class clickstream/health/constant/CSHealthEventConstant {
+	public static final field HEALTH_APP_VERSION Ljava/lang/String;
+	public static final field HEALTH_BATCH_SIZE Ljava/lang/String;
+	public static final field HEALTH_BUCKET_TYPE Ljava/lang/String;
+	public static final field HEALTH_ERROR Ljava/lang/String;
+	public static final field HEALTH_EVENT_BATCH_ID Ljava/lang/String;
+	public static final field HEALTH_EVENT_COUNT Ljava/lang/String;
+	public static final field HEALTH_EVENT_ID Ljava/lang/String;
+	public static final field HEALTH_EVENT_NAME Ljava/lang/String;
+	public static final field HEALTH_EVENT_TIMESTAMP Ljava/lang/String;
+	public static final field HEALTH_EVENT_TYPE Ljava/lang/String;
+	public static final field HEALTH_ID Ljava/lang/String;
+	public static final field HEALTH_NETWORK_TYPE Ljava/lang/String;
+	public static final field HEALTH_SESSION_ID Ljava/lang/String;
+	public static final field HEALTH_START_TIME Ljava/lang/String;
+	public static final field HEALTH_STOP_TIME Ljava/lang/String;
+	public static final field INSTANCE Lclickstream/health/constant/CSHealthEventConstant;
+}
+
+public final class clickstream/health/constant/CSHealthKeysConstant {
+	public static final field APP_VERSION Ljava/lang/String;
+	public static final field BUCKET Ljava/lang/String;
+	public static final field COUNT Ljava/lang/String;
+	public static final field EVENTS Ljava/lang/String;
+	public static final field EVENT_BATCHES Ljava/lang/String;
+	public static final field EVENT_BATCH_ID Ljava/lang/String;
+	public static final field EVENT_ID Ljava/lang/String;
+	public static final field EVENT_NAME Ljava/lang/String;
+	public static final field EVENT_TYPE Ljava/lang/String;
+	public static final field INSTANCE Lclickstream/health/constant/CSHealthKeysConstant;
+	public static final field REASON Ljava/lang/String;
+	public static final field SESSION_ID Ljava/lang/String;
+	public static final field TIMESTAMP Ljava/lang/String;
+	public static final field TIMESTAMP_LIST Ljava/lang/String;
+}
+
+public abstract interface class clickstream/health/identity/CSGuIdGenerator {
+	public abstract fun getId ()Ljava/lang/String;
+}
+
+public final class clickstream/health/identity/DefaultCSGuIdGenerator : clickstream/health/identity/CSGuIdGenerator {
+	public fun <init> ()V
+	public fun getId ()Ljava/lang/String;
+}
+
+public abstract interface class clickstream/health/intermediate/CSEventHealthListener {
+	public abstract fun onEventCreated (Lclickstream/health/model/CSEventHealth;)V
+}
+
+public abstract interface class clickstream/health/intermediate/CSHealthEventFactory {
+	public abstract fun create (Lcom/gojek/clickstream/internal/Health;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public abstract interface class clickstream/health/intermediate/CSHealthEventLoggerListener {
+	public abstract fun logEvent (Ljava/lang/String;Ljava/util/HashMap;)V
+}
+
+public abstract interface class clickstream/health/intermediate/CSHealthEventProcessor {
+	public abstract fun getAggregateEventsBasedOnEventName (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public abstract interface class clickstream/health/intermediate/CSHealthEventRepository {
+	public abstract fun deleteHealthEvents (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun deleteHealthEventsBySessionId (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun getAggregateEvents (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun getBucketEvents (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun getInstantEvents (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun insertHealthEvent (Lclickstream/health/model/CSHealthEventDTO;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun insertHealthEventList (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class clickstream/health/model/CSEventHealth {
+	public fun <init> (Ljava/lang/String;JILjava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()J
+	public final fun component3 ()I
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;JILjava/lang/String;Ljava/lang/String;)Lclickstream/health/model/CSEventHealth;
+	public static synthetic fun copy$default (Lclickstream/health/model/CSEventHealth;Ljava/lang/String;JILjava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lclickstream/health/model/CSEventHealth;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getEventGuid ()Ljava/lang/String;
+	public final fun getEventName ()Ljava/lang/String;
+	public final fun getEventTimeStamp ()J
+	public final fun getMessageName ()Ljava/lang/String;
+	public final fun getMessageSerializedSizeInBytes ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class clickstream/health/model/CSHealthEventConfig {
+	public static final field Companion Lclickstream/health/model/CSHealthEventConfig$Companion;
+	public static final field MAX_VERBOSITY_LEVEL Ljava/lang/String;
+	public fun <init> (Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/List;
+	public final fun component3 ()Ljava/util/List;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/lang/String;)Lclickstream/health/model/CSHealthEventConfig;
+	public static synthetic fun copy$default (Lclickstream/health/model/CSHealthEventConfig;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/lang/String;ILjava/lang/Object;)Lclickstream/health/model/CSHealthEventConfig;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDestination ()Ljava/util/List;
+	public final fun getMinTrackedVersion ()Ljava/lang/String;
+	public final fun getRandomUserIdRemainder ()Ljava/util/List;
+	public final fun getVerbosityLevel ()Ljava/lang/String;
+	public fun hashCode ()I
+	public final fun isEnabled (Ljava/lang/String;I)Z
+	public final fun isTrackedViaClickstream (Ljava/lang/String;)Z
+	public final fun isVerboseLoggingEnabled ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class clickstream/health/model/CSHealthEventConfig$Companion {
+	public final fun default ()Lclickstream/health/model/CSHealthEventConfig;
+}
+
+public final class clickstream/health/model/CSHealthEventDTO {
+	public fun <init> (ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;JJLjava/lang/String;JLjava/lang/String;)V
+	public synthetic fun <init> (ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;JJLjava/lang/String;JLjava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()I
+	public final fun component10 ()Ljava/lang/String;
+	public final fun component11 ()J
+	public final fun component12 ()J
+	public final fun component13 ()Ljava/lang/String;
+	public final fun component14 ()J
+	public final fun component15 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun component6 ()Ljava/lang/String;
+	public final fun component7 ()Ljava/lang/String;
+	public final fun component8 ()Ljava/lang/String;
+	public final fun component9 ()I
+	public final fun copy (ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;JJLjava/lang/String;JLjava/lang/String;)Lclickstream/health/model/CSHealthEventDTO;
+	public static synthetic fun copy$default (Lclickstream/health/model/CSHealthEventDTO;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;JJLjava/lang/String;JLjava/lang/String;ILjava/lang/Object;)Lclickstream/health/model/CSHealthEventDTO;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun eventData ()Ljava/util/HashMap;
+	public final fun getAppVersion ()Ljava/lang/String;
+	public final fun getBatchSize ()J
+	public final fun getBucketType ()Ljava/lang/String;
+	public final fun getCount ()I
+	public final fun getError ()Ljava/lang/String;
+	public final fun getEventBatchId ()Ljava/lang/String;
+	public final fun getEventId ()Ljava/lang/String;
+	public final fun getEventName ()Ljava/lang/String;
+	public final fun getEventType ()Ljava/lang/String;
+	public final fun getHealthEventID ()I
+	public final fun getNetworkType ()Ljava/lang/String;
+	public final fun getSessionId ()Ljava/lang/String;
+	public final fun getStartTime ()J
+	public final fun getStopTime ()J
+	public final fun getTimestamp ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class clickstream/health/time/CSEventGeneratedTimestampListener {
+	public abstract fun now ()J
+}
+
+public final class com/gojek/android/clickstream/health/metrics/api/BuildConfig {
+	public static final field BUILD_TYPE Ljava/lang/String;
+	public static final field DEBUG Z
+	public static final field LIBRARY_PACKAGE_NAME Ljava/lang/String;
+	public fun <init> ()V
+}
+

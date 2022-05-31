@@ -1,7 +1,7 @@
 package clickstream.fake
 
-import clickstream.model.CSEvent
 import clickstream.internal.utils.CSTimeStampMessageBuilder
+import clickstream.model.CSEvent
 import com.gojek.clickstream.common.Customer
 import com.gojek.clickstream.common.Device
 import com.gojek.clickstream.common.Location
@@ -22,7 +22,6 @@ public fun defaultEventWrapperData(): CSEvent {
             val objectID = UUID.randomUUID().toString()
             eventGuid = objectID
             eventTimestamp = CSTimeStampMessageBuilder.build(System.currentTimeMillis())
-
             location = Location.getDefaultInstance()
             device = Device.getDefaultInstance()
             customer = Customer.getDefaultInstance()

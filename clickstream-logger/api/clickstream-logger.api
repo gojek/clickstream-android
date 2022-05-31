@@ -1,0 +1,36 @@
+public final class clickstream/logger/CSLogConstant {
+	public static final field BATCH_ACK_FAILURE_TAG Ljava/lang/String;
+	public static final field BATCH_ACK_SUCCESS_TAG Ljava/lang/String;
+	public static final field BATCH_REQUEST_ACK_TIMEOUT_TAG Ljava/lang/String;
+	public static final field BATCH_SENT_TAG Ljava/lang/String;
+	public static final field CLICK_STREAM_LOG_TAG Ljava/lang/String;
+	public static final field EVENT_BATCH_GUID_KEY Ljava/lang/String;
+	public static final field EVENT_GUID_LIST_KEY Ljava/lang/String;
+	public static final field EVENT_RETRY_COUNT Ljava/lang/String;
+	public static final field FAILED_TO_INIT_TAG Ljava/lang/String;
+	public static final field INSTANCE Lclickstream/logger/CSLogConstant;
+}
+
+public final class clickstream/logger/CSLogLevel : java/lang/Enum {
+	public static final field DEBUG Lclickstream/logger/CSLogLevel;
+	public static final field INFO Lclickstream/logger/CSLogLevel;
+	public static final field OFF Lclickstream/logger/CSLogLevel;
+	public final fun getValue ()I
+	public static fun valueOf (Ljava/lang/String;)Lclickstream/logger/CSLogLevel;
+	public static fun values ()[Lclickstream/logger/CSLogLevel;
+}
+
+public final class clickstream/logger/CSLogger {
+	public fun <init> (Lclickstream/logger/CSLogLevel;)V
+	public final fun debug (Lkotlin/jvm/functions/Function0;)V
+	public final fun debug (Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;)V
+	public final fun debug (Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;)V
+}
+
+public final class com/gojek/android/clickstream/logger/BuildConfig {
+	public static final field BUILD_TYPE Ljava/lang/String;
+	public static final field DEBUG Z
+	public static final field LIBRARY_PACKAGE_NAME Ljava/lang/String;
+	public fun <init> ()V
+}
+

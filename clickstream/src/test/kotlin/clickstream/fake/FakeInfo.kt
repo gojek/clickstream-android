@@ -1,11 +1,11 @@
 package clickstream.fake
 
-import clickstream.config.CSDeviceInfo
-import clickstream.model.CSAppInfo
-import clickstream.model.CSInfo
-import clickstream.model.CSLocationInfo
-import clickstream.model.CSSessionInfo
-import clickstream.model.CSUserInfo
+import clickstream.api.CSAppInfo
+import clickstream.api.CSDeviceInfo
+import clickstream.api.CSInfo
+import clickstream.api.CSLocationInfo
+import clickstream.api.CSSessionInfo
+import clickstream.api.CSUserInfo
 
 internal fun fakeInfo(): CSInfo {
     return CSInfo(
@@ -13,7 +13,7 @@ internal fun fakeInfo(): CSInfo {
         locationInfo = fakeLocationInfo(),
         sessionInfo = fakeSessionInfo(),
         deviceInfo = fakeDeviceInfo(),
-        customerInfo = fakeCustomerInfo()
+        userInfo = fakeUserInfo()
     )
 }
 
@@ -31,10 +31,10 @@ internal fun fakeLocationInfo(
     return CSLocationInfo(userLatitude, userLongitude, s2Ids)
 }
 
-internal fun fakeCustomerInfo(
+internal fun fakeUserInfo(
     currentCountry: String = "ID",
     signedUpCountry: String = "ID",
-    identity: Int = 1,
+    identity: Int = 12345,
     email: String = "test@gmail.com"
 ): CSUserInfo {
     return CSUserInfo(currentCountry, signedUpCountry, identity, email)

@@ -1,6 +1,6 @@
 package clickstream.fake
 
-import clickstream.model.CSLocationInfo
+import clickstream.api.CSLocationInfo
 
 internal val fakeLocationInfo = CSLocationInfo(
     longitude = 10.00,

@@ -1,10 +1,16 @@
 package clickstream.internal.eventprocessor
 
-import clickstream.config.CSEventClassification
-import clickstream.extension.eventName
+import clickstream.api.CSInfo
+import clickstream.config.CSEventProcessorConfig
+import clickstream.extension.protoName
+import clickstream.health.constant.CSEventNamesConstant
+import clickstream.health.constant.CSEventTypesConstant
+import clickstream.health.intermediate.CSHealthEventRepository
+import clickstream.health.model.CSHealthEventDTO
 import clickstream.internal.eventscheduler.CSEventScheduler
 import clickstream.logger.CSLogger
 import clickstream.model.CSEvent
+import java.util.Locale
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
@@ -15,13 +21,16 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
  * @param eventScheduler used for scheduling events
  * @param dispatcher used for dispatching events serially
  * @param logger used for logging
+ * @param healthEventRepository used for tracking health events
  */
 @ExperimentalCoroutinesApi
 internal class CSEventProcessor(
-    private val config: CSEventClassification,
+    private val config: CSEventProcessorConfig,
     private val eventScheduler: CSEventScheduler,
     private val dispatcher: CoroutineDispatcher,
-    private val logger: CSLogger
+    private val logger: CSLogger,
+    private val healthEventRepository: CSHealthEventRepository,
+    private val info: CSInfo
 ) {
 
     /**
@@ -31,18 +40,31 @@ internal class CSEventProcessor(
      */
     suspend fun trackEvent(event: CSEvent) {
         logger.debug { "CSEventProcessor#trackEvent" }
-
-        val eventName = event.message.eventName()
+        recordHealthEvent(
+            eventName = CSEventNamesConstant.ClickStreamEventReceived.value,
+            eventId = event.guid.plus("_")
+                .plus(event.message::class.simpleName.orEmpty().toLowerCase(Locale.getDefault()))
+        )
+        recordHealthEvent(
+            eventName = CSEventNamesConstant.ClickStreamEventObjectCreated.value,
+            eventId = event.guid
+        )
+        val eventName = event.message.protoName()
         when {
-            config.realtimeEvents.contains(eventName) -> {
-                eventScheduler.scheduleEvent(event)
-            }
-            config.instantEvent.contains(eventName) -> {
-                eventScheduler.sendInstantEvent(event)
-            }
-            else -> {
-                eventScheduler.scheduleEvent(event)
-            }
+            config.realtimeEvents.contains(eventName) -> eventScheduler.scheduleEvent(event)
+            config.instantEvent.contains(eventName) -> eventScheduler.sendInstantEvent(event)
+            else -> eventScheduler.scheduleEvent(event)
         }
+    }
+
+    private suspend fun recordHealthEvent(eventName: String, eventId: String) {
+        healthEventRepository.insertHealthEvent(
+            CSHealthEventDTO(
+                eventName = eventName,
+                eventType = CSEventTypesConstant.AGGREGATE,
+                eventId = eventId,
+                appVersion = info.appInfo.appVersion
+            )
+        )
     }
 }

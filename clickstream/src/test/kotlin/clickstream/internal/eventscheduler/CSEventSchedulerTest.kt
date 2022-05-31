@@ -3,14 +3,16 @@ package clickstream.internal.eventscheduler
 import clickstream.config.CSEventSchedulerConfig
 import clickstream.fake.FakeEventBatchDao
 import clickstream.fake.defaultEventWrapperData
+import clickstream.fake.fakeInfo
+import clickstream.health.CSTimeStampGenerator
+import clickstream.health.identity.CSGuIdGenerator
+import clickstream.health.intermediate.CSHealthEventRepository
 import clickstream.internal.eventscheduler.impl.DefaultCSEventRepository
-import clickstream.internal.lifecycle.CSAppLifeCycle
 import clickstream.internal.networklayer.CSNetworkManager
 import clickstream.internal.utils.CSBatteryLevel
 import clickstream.internal.utils.CSBatteryStatusObserver
-import clickstream.internal.utils.CSGuIdGenerator
 import clickstream.internal.utils.CSNetworkStatusObserver
-import clickstream.internal.utils.CSTimeStampGenerator
+import clickstream.lifecycle.CSAppLifeCycle
 import clickstream.logger.CSLogger
 import java.util.UUID
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -41,12 +43,14 @@ public class CSEventSchedulerTest {
         flushOnBackground = false,
         connectionTerminationTimerWaitTimeInMillis = 5,
         backgroundTaskEnabled = false,
-        workRequestDelayInHr = 1
+        workRequestDelayInHr = 1,
+        utf8ValidatorEnabled = true
     )
 
     private val networkManager = mock<CSNetworkManager>()
     private val batteryStatusObserver = mock<CSBatteryStatusObserver>()
     private val networkStatusObserver = mock<CSNetworkStatusObserver>()
+    private val healthEventRepository = mock<CSHealthEventRepository>()
     private val logger = mock<CSLogger>()
     private val guIdGenerator = mock<CSGuIdGenerator>()
     private val timeStampGenerator = mock<CSTimeStampGenerator>()
@@ -57,16 +61,19 @@ public class CSEventSchedulerTest {
     @Before
     public fun setup() {
         scheduler = CSEventScheduler(
-            appLifeCycleObserver = appLifeCycle,
+            appLifeCycle = appLifeCycle,
             networkManager = networkManager,
             eventRepository = eventRepository,
             timeStampGenerator = timeStampGenerator,
             guIdGenerator = guIdGenerator,
             logger = logger,
+            healthEventRepository = healthEventRepository,
             dispatcher = dispatcher,
             batteryStatusObserver = batteryStatusObserver,
             networkStatusObserver = networkStatusObserver,
-            config = config
+            config = config,
+            info = fakeInfo(),
+            eventHealthListener = mock()
         )
         scheduler.onStart()
     }

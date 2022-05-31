@@ -15,8 +15,8 @@ docker pull odpf/raccoon
 
 4. Start `odpf/raccoon` in the docker GUI
 5. If you using macbook with apple chip, before running the docker-run, do change the
-`docker-compose.yml` and add `platform: linux/x86_64` on each section
-   
+   `docker-compose.yml` and add `platform: linux/x86_64` on each section
+
 ```
 services:
   zookeeper:
@@ -34,6 +34,5 @@ services:
 ```
  make docker-run
 ```
-
 
 

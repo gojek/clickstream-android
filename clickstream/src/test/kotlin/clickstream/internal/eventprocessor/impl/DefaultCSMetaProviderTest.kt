@@ -1,12 +1,12 @@
 package clickstream.internal.eventprocessor.impl
 
-import clickstream.config.CSDeviceInfo
+import clickstream.api.CSDeviceInfo
+import clickstream.api.CSMetaProvider
 import clickstream.fake.fakeAppInfo
 import clickstream.fake.fakeCSInfo
 import clickstream.fake.fakeCSSessionInfo
-import clickstream.fake.fakeCustomerInfo
 import clickstream.fake.fakeLocationInfo
-import clickstream.internal.eventprocessor.CSMetaProvider
+import clickstream.fake.fakeUserInfo
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -60,7 +60,7 @@ public class DefaultCSMetaProviderTest {
     @Test
     public fun `Given an event When common attributes are fetched Then customer info must be returned`() {
         val customer = metaProvider.customer
-        assertEquals(customer.currentCountry, fakeCustomerInfo.currentCountry)
+        assertEquals(customer.currentCountry, fakeUserInfo().currentCountry)
     }
 
     @Test

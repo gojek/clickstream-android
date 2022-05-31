@@ -1,13 +1,13 @@
 package clickstream.fake
 
-import clickstream.config.CSDeviceInfo
-import clickstream.model.CSInfo
+import clickstream.api.CSDeviceInfo
+import clickstream.api.CSInfo
 
 internal fun fakeCSInfo(
     deviceInfo: CSDeviceInfo? = null
 ) = CSInfo(
     deviceInfo = deviceInfo ?: fakeDeviceInfo(),
-    customerInfo = fakeCustomerInfo,
+    userInfo = fakeUserInfo(),
     locationInfo = fakeLocationInfo,
     appInfo = fakeAppInfo,
     sessionInfo = fakeCSSessionInfo

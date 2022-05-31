@@ -97,7 +97,7 @@ public class ClickStreamConnectionTest {
                 )
                 .build()
         )
-        val eventData: CSEventData = CSEventData.create(event)
+        val (eventData, eventHealthData) = CSEventData.create(event)
         return transformToEventRequest(eventData = listOf(eventData))
     }
 

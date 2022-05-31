@@ -8,21 +8,32 @@ import clickstream.internal.di.CSServiceLocator
 import clickstream.internal.di.impl.DefaultCServiceLocator
 import clickstream.internal.eventprocessor.CSEventProcessor
 import clickstream.internal.workmanager.CSWorkManager
+import clickstream.logger.CSLogger
 import clickstream.model.CSEvent
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 
 @ExperimentalCoroutinesApi
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 internal class DefaultClickStream private constructor(
     private val processor: CSEventProcessor,
     private val service: CSWorkManager,
+    private val logger: CSLogger,
     dispatcher: CoroutineDispatcher
 ) : ClickStream {
 
-    private val scope = CoroutineScope(SupervisorJob() + dispatcher)
+    private val handler: CoroutineExceptionHandler by lazy {
+        CoroutineExceptionHandler { _, throwable ->
+            logger.debug { throwable.message.toString() }
+        }
+    }
+    private val scope: CoroutineScope by lazy {
+        CoroutineScope(SupervisorJob() + dispatcher + handler)
+    }
 
     override fun trackEvent(event: CSEvent, expedited: Boolean) {
         scope.launch {
@@ -44,6 +55,7 @@ internal class DefaultClickStream private constructor(
          * Retrieves the singleton instance of [DefaultClickStream].
          *
          * @return The singleton instance of [ClickStream].
+         *
          * @hide
          */
         @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
@@ -74,11 +86,11 @@ internal class DefaultClickStream private constructor(
                 if (sInstance != null) {
                     throw IllegalStateException(
                         "ClickStream is already initialized. " +
-                                "If you want to re-initialize ClickStream with new CSConfiguration, " +
-                                "please call ClickStream#release first. " +
-                                "See ClickStream#initialize(Context, CSConfiguration) or " +
-                                "the class level. " +
-                                "KotlinDoc for more information."
+                        "If you want to re-initialize ClickStream with new CSConfiguration, " +
+                        "please call ClickStream#release first. " +
+                        "See ClickStream#initialize(Context, CSConfiguration) or " +
+                        "the class level. " +
+                        "KotlinDoc for more information."
                     )
                 }
 
@@ -91,7 +103,13 @@ internal class DefaultClickStream private constructor(
                         logLevel = configuration.logLevel,
                         dispatcher = configuration.dispatcher,
                         eventGeneratedTimestampListener = configuration.eventGeneratedTimeStamp,
-                        socketConnectionListener = configuration.socketConnectionListener
+                        socketConnectionListener = configuration.socketConnectionListener,
+                        remoteConfig = configuration.remoteConfig,
+                        eventHealthListener = configuration.eventHealthListener,
+                        healthEventRepository = configuration.healthEventRepository,
+                        healthEventProcessor = configuration.healthEventProcessor,
+                        healthEventFactory = configuration.healthEventFactory,
+                        appLifeCycle = configuration.appLifeCycle
                     )
 
                     CSServiceLocator.setServiceLocator(serviceLocator)
@@ -99,6 +117,7 @@ internal class DefaultClickStream private constructor(
                     sInstance = DefaultClickStream(
                         processor = serviceLocator.eventProcessor,
                         service = serviceLocator.workManager,
+                        logger = serviceLocator.logger,
                         dispatcher = configuration.dispatcher
                     )
                 }

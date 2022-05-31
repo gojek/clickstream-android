@@ -1,5 +1,5 @@
 package clickstream.fake
 
-import clickstream.model.CSSessionInfo
+import clickstream.api.CSSessionInfo
 
 internal val fakeCSSessionInfo = CSSessionInfo(sessionID = "QWER-123-DFGH")

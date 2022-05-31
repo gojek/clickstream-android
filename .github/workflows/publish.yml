@@ -22,8 +22,22 @@ jobs:
           cache: gradle
       - name: Release build
         run: ./gradlew :clickstream:assembleRelease
+          :clickstream-api:assembleRelease
+          :clickstream-logger:assembleRelease
+          :clickstream-lifecycle:assembleRelease
+          :clickstream-util:assembleRelease
+          :clickstream-health-metrics:assembleRelease
+          :clickstream-health-metrics-noop:assembleRelease
+          :clickstream-health-metrics-api:assembleRelease
       - name: Publish to MavenCentral
-        run: ./gradlew :clickstream:publishReleasePublicationToSonatypeRepository --max-workers 1 closeAndReleaseSonatypeStagingRepository
+        run: ./gradlew :clickstream:publishReleasePublicationToSonatypeRepository
+          :clickstream-api:publishReleasePublicationToSonatypeRepository
+          :clickstream-logger:publishReleasePublicationToSonatypeRepository
+          :clickstream-lifecycle:publishReleasePublicationToSonatypeRepository
+          :clickstream-util:publishReleasePublicationToSonatypeRepository
+          :clickstream-health-metrics:publishReleasePublicationToSonatypeRepository
+          :clickstream-health-metrics-noop:publishReleasePublicationToSonatypeRepository
+          :clickstream-health-metrics-api:publishReleasePublicationToSonatypeRepository --max-workers 1 closeAndReleaseSonatypeStagingRepository
         env:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
