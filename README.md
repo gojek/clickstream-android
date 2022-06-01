@@ -57,7 +57,13 @@ buildscript {
 ```kotlin
 dependencies {
     val version = "x.y.z"
+    // Required
     implementation 'com.gojek.clickstream:clickstream-android:[latest_version]'
+    implementation 'com.gojek.clickstream:clickstream-lifecycle:[latest_version]'
+    implementation 'com.gojek.clickstream:clickstream-health-metrics-noop:[latest_version]'
+    
+    // Optional
+    implementation 'com.gojek.clickstream:clickstream-health-metrics:[latest_version]'
 }
 ```
 
@@ -94,7 +100,9 @@ class App : Application() {
                     customerInfo = customerInfo,
                     sessionInfo = sessionInfo
                 ),
-                config = getBuildConfig(config)
+                config = getBuildConfig(config),
+                appLifeCycle = DefaultCSAppLifeCycleObserver(context),
+                healthGateway = DefaultOpCSHealthGateway.factory(/*args*/)
             ).apply {
                 setLogLevel(DEBUG)
                 setCSSocketConnectionListener(connectionListener())
