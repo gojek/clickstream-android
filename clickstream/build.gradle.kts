@@ -34,9 +34,13 @@ dependencies {
     // Clickstream
     implementation(files("$rootDir/libs/proto-sdk-1.18.6.jar"))
     api(projects.clickstreamLogger)
+    api(projects.clickstreamHealthMetricsNoop)
     compileOnly(projects.clickstreamApi)
     compileOnly(projects.clickstreamHealthMetricsApi)
     compileOnly(projects.clickstreamLifecycle)
+
+    // Proto
+    api(deps.utils.protoLite)
 
     // Common
     deps.common.list.forEach(::implementation)

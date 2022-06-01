@@ -15,23 +15,24 @@ import clickstream.health.internal.DefaultCSHealthEventFactory
 import clickstream.health.internal.DefaultCSHealthEventProcessor
 import clickstream.health.internal.DefaultCSHealthEventRepository
 import clickstream.health.model.CSHealthEventConfig
+import clickstream.health.time.CSTimeStampGenerator
 import clickstream.lifecycle.CSAppLifeCycle
 import clickstream.logger.CSLogger
 import clickstream.util.CSAppVersionSharedPref
 import clickstream.util.impl.DefaultCSAppVersionSharedPref
-import java.util.UUID
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
 public object DefaultCSHealthGateway {
 
     public fun factory(
+        appVersion: String,
+        sessionId: String,
         context: Context,
         healthEventConfig: CSHealthEventConfig,
         csInfo: CSInfo,
         logger: CSLogger,
         healthEventLogger: CSHealthEventLoggerListener,
-        appVersion: String,
         timeStampGenerator: CSTimeStampGenerator,
         metaProvider: CSMetaProvider,
         eventHealthListener: CSEventHealthListener,
@@ -45,7 +46,7 @@ public object DefaultCSHealthGateway {
             override val eventHealthListener: CSEventHealthListener = eventHealthListener
             override val healthEventRepository: CSHealthEventRepository by lazy {
                 DefaultCSHealthEventRepository(
-                    sessionId = UUID.randomUUID().toString(),
+                    sessionId = sessionId,
                     healthEventDao = CSHealthDatabase.getInstance(context).healthEventDao(),
                     info = csInfo
                 )

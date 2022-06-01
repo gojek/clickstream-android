@@ -1,6 +1,4 @@
-package clickstream.health
-
-import clickstream.health.time.CSEventGeneratedTimestampListener
+package clickstream.health.time
 
 public interface CSTimeStampGenerator {
     public fun getTimeStamp(): Long

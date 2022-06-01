@@ -2,7 +2,7 @@ package clickstream.health.internal
 
 import androidx.annotation.RestrictTo
 import clickstream.api.CSMetaProvider
-import clickstream.health.CSTimeStampGenerator
+import clickstream.health.time.CSTimeStampGenerator
 import clickstream.health.identity.CSGuIdGenerator
 import clickstream.health.intermediate.CSHealthEventFactory
 import com.gojek.clickstream.internal.Health

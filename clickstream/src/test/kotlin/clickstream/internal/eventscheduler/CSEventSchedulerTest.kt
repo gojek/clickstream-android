@@ -4,7 +4,7 @@ import clickstream.config.CSEventSchedulerConfig
 import clickstream.fake.FakeEventBatchDao
 import clickstream.fake.defaultEventWrapperData
 import clickstream.fake.fakeInfo
-import clickstream.health.CSTimeStampGenerator
+import clickstream.health.time.CSTimeStampGenerator
 import clickstream.health.identity.CSGuIdGenerator
 import clickstream.health.intermediate.CSHealthEventRepository
 import clickstream.internal.eventscheduler.impl.DefaultCSEventRepository

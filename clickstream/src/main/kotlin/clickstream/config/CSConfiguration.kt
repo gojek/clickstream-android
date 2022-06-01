@@ -12,6 +12,7 @@ import clickstream.health.intermediate.CSHealthEventLoggerListener
 import clickstream.health.intermediate.CSHealthEventProcessor
 import clickstream.health.intermediate.CSHealthEventRepository
 import clickstream.health.CSHealthGateway
+import clickstream.health.NoOpCSHealthGateway
 import clickstream.health.time.CSEventGeneratedTimestampListener
 import clickstream.internal.NoOpCSEventHealthListener
 import clickstream.internal.analytics.impl.NoOpCSHealthEventLogger
@@ -88,14 +89,17 @@ public class CSConfiguration private constructor(
          */
         private val config: CSConfig,
 
-        private val appLifeCycle: CSAppLifeCycle,
-
-        private val healthGateway: CSHealthGateway 
+        /**
+         * Specify Clicstream lifecycle, this is needed in order to send events
+         * to the backend.
+         */
+        private val appLifeCycle: CSAppLifeCycle
     ) {
         private lateinit var dispatcher: CoroutineDispatcher
         private lateinit var eventGeneratedListener: CSEventGeneratedTimestampListener
         private lateinit var socketConnectionListener: CSSocketConnectionListener
         private lateinit var remoteConfig: CSRemoteConfig
+        private lateinit var healthGateway: CSHealthGateway
         private var logLevel: CSLogLevel = CSLogLevel.OFF
 
         /**
@@ -156,6 +160,17 @@ public class CSConfiguration private constructor(
             }
 
         /**
+         * Specify implementation of [CSHealthGateway], by default it would use
+         * [NoOpCSHealthGateway]
+         *
+         * @return This [Builder] instance
+         */
+        public fun setHealthGateway(healthGateway: CSHealthGateway): Builder =
+            apply {
+                this.healthGateway = healthGateway
+            }
+
+        /**
          * Builds a [CSConfiguration] object.
          *
          * @return A [CSConfiguration] object with this [Builder]'s parameters.
@@ -172,6 +187,9 @@ public class CSConfiguration private constructor(
             }
             if (::remoteConfig.isInitialized.not()) {
                 remoteConfig = NoOpCSRemoteConfig()
+            }
+            if(::healthGateway.isInitialized.not()) {
+                healthGateway = NoOpCSHealthGateway.factory()
             }
             return CSConfiguration(
                 context, dispatcher,

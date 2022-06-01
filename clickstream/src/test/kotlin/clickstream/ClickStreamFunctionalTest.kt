@@ -69,8 +69,7 @@ public class ClickStreamFunctionalTest {
                 info = csInfo,
                 config = createCSConfig(),
                 appLifeCycle = appLifecycle,
-                healthGateway = fakeHealthGateway
-            ).setDispatcher(coroutineRule.testDispatcher).build()
+            ).setDispatcher(coroutineRule.testDispatcher).setHealthGateway(fakeHealthGateway).build()
         )
 
         sut = ClickStream.getInstance()
@@ -98,9 +97,8 @@ public class ClickStreamFunctionalTest {
                 context = app,
                 info = csInfo,
                 config = createCSConfig(),
-                appLifeCycle = appLifecycle,
-                healthGateway = fakeHealthGateway
-            ).setDispatcher(coroutineRule.testDispatcher).build()
+                appLifeCycle = appLifecycle
+            ).setDispatcher(coroutineRule.testDispatcher).setHealthGateway(fakeHealthGateway).build()
         )
         sut = ClickStream.getInstance()
 

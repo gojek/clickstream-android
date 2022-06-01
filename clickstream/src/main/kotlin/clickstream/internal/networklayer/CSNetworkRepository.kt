@@ -3,7 +3,7 @@ package clickstream.internal.networklayer
 import clickstream.api.CSInfo
 import clickstream.config.CSNetworkConfig
 import clickstream.health.intermediate.CSHealthEventRepository
-import clickstream.health.CSTimeStampGenerator
+import clickstream.health.time.CSTimeStampGenerator
 import clickstream.internal.utils.CSCallback
 import clickstream.logger.CSLogger
 import com.gojek.clickstream.de.EventRequest

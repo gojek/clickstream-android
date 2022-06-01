@@ -2,7 +2,7 @@ package clickstream.internal.networklayer
 
 import clickstream.config.CSNetworkConfig
 import clickstream.fake.fakeCSInfo
-import clickstream.health.CSTimeStampGenerator
+import clickstream.health.time.CSTimeStampGenerator
 import clickstream.health.intermediate.CSHealthEventRepository
 import clickstream.internal.utils.CSFlowStreamAdapterFactory
 import clickstream.logger.CSLogLevel.OFF

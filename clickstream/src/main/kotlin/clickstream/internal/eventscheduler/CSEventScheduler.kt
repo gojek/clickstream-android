@@ -3,7 +3,6 @@ package clickstream.internal.eventscheduler
 import clickstream.api.CSInfo
 import clickstream.config.CSEventSchedulerConfig
 import clickstream.extension.isValidMessage
-import clickstream.health.CSTimeStampGenerator
 import clickstream.health.constant.CSEventNamesConstant.ClickStreamEventBatchCreated
 import clickstream.health.constant.CSEventNamesConstant.ClickStreamEventBatchTriggerFailed
 import clickstream.health.constant.CSEventNamesConstant.ClickStreamEventCached
@@ -13,6 +12,7 @@ import clickstream.health.identity.CSGuIdGenerator
 import clickstream.health.intermediate.CSEventHealthListener
 import clickstream.health.intermediate.CSHealthEventRepository
 import clickstream.health.model.CSHealthEventDTO
+import clickstream.health.time.CSTimeStampGenerator
 import clickstream.internal.analytics.CSErrorReasons
 import clickstream.internal.networklayer.CSNetworkManager
 import clickstream.internal.utils.CSBatteryLevel
@@ -236,12 +236,12 @@ internal open class CSEventScheduler(
         if (batch.isNotEmpty() && batch[0].messageName != Health::class.qualifiedName.orEmpty()) {
             logger.debug {
                 "CSEventScheduler#forwardEvents#batch - " +
-                "eventBatchId : ${eventRequest.reqGuid}, " +
-                "eventId : ${batch.joinToString { it.eventGuid }}"
+                        "eventBatchId : ${eventRequest.reqGuid}, " +
+                        "eventId : ${batch.joinToString { it.eventGuid }}"
             }
             logger.debug {
                 "CSEventScheduler#forwardEvents#batch - " +
-                "messageName : ${batch[0].messageName}"
+                        "messageName : ${batch[0].messageName}"
             }
             logHealthEvent(
                 CSHealthEventDTO(

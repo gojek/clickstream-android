@@ -60,7 +60,6 @@ dependencies {
     // Required
     implementation 'com.gojek.clickstream:clickstream-android:[latest_version]'
     implementation 'com.gojek.clickstream:clickstream-lifecycle:[latest_version]'
-    implementation 'com.gojek.clickstream:clickstream-health-metrics-noop:[latest_version]'
     
     // Optional
     implementation 'com.gojek.clickstream:clickstream-health-metrics:[latest_version]'
@@ -105,6 +104,7 @@ class App : Application() {
                 healthGateway = DefaultOpCSHealthGateway.factory(/*args*/)
             ).apply {
                 setLogLevel(DEBUG)
+                /**/ 
                 setCSSocketConnectionListener(connectionListener())
             }.build())
     }
