@@ -126,7 +126,6 @@ object deps {
     object workManager {
         const val workRuntimeKtx = "androidx.work:work-runtime-ktx:${versions.workManagerVersion}"
         const val workTesting = "androidx.work:work-testing:${versions.workManagerVersion}"
-
     }
 
     object utils {

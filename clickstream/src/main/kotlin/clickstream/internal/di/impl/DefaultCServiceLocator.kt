@@ -7,8 +7,6 @@ import clickstream.config.CSConfig
 import clickstream.config.CSEventSchedulerConfig
 import clickstream.config.CSRemoteConfig
 import clickstream.connection.CSSocketConnectionListener
-import clickstream.health.CSTimeStampGenerator
-import clickstream.health.DefaultCSTimeStampGenerator
 import clickstream.health.identity.CSGuIdGenerator
 import clickstream.health.identity.DefaultCSGuIdGenerator
 import clickstream.health.intermediate.CSEventHealthListener
@@ -16,6 +14,8 @@ import clickstream.health.intermediate.CSHealthEventFactory
 import clickstream.health.intermediate.CSHealthEventProcessor
 import clickstream.health.intermediate.CSHealthEventRepository
 import clickstream.health.time.CSEventGeneratedTimestampListener
+import clickstream.health.time.CSTimeStampGenerator
+import clickstream.health.time.DefaultCSTimeStampGenerator
 import clickstream.internal.db.CSDatabase
 import clickstream.internal.di.CSServiceLocator
 import clickstream.internal.eventprocessor.CSEventProcessor
