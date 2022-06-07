@@ -16,6 +16,7 @@ import clickstream.health.intermediate.CSHealthEventRepository
 import clickstream.health.time.CSEventGeneratedTimestampListener
 import clickstream.health.time.CSTimeStampGenerator
 import clickstream.health.time.DefaultCSTimeStampGenerator
+import clickstream.interceptor.EventInterceptor
 import clickstream.internal.db.CSDatabase
 import clickstream.internal.di.CSServiceLocator
 import clickstream.internal.eventprocessor.CSEventProcessor
@@ -63,7 +64,8 @@ internal class DefaultCServiceLocator(
     override val healthEventRepository: CSHealthEventRepository,
     override val healthEventProcessor: CSHealthEventProcessor,
     override val healthEventFactory: CSHealthEventFactory,
-    override val appLifeCycle: CSAppLifeCycle
+    override val appLifeCycle: CSAppLifeCycle,
+    override val listOfEventInterceptor: List<EventInterceptor>
 ) : CSServiceLocator {
 
     private val guidGenerator: CSGuIdGenerator by lazy {
@@ -170,7 +172,8 @@ internal class DefaultCServiceLocator(
             batteryStatusObserver = batteryStatusObserver,
             networkStatusObserver = networkStatusObserver,
             info = info,
-            eventHealthListener = eventHealthListener
+            eventHealthListener = eventHealthListener,
+            listOfEventInterceptor = listOfEventInterceptor
         )
     }
 
@@ -211,7 +214,8 @@ internal class DefaultCServiceLocator(
             batteryStatusObserver = batteryStatusObserver,
             networkStatusObserver = networkStatusObserver,
             info = info,
-            eventHealthListener = eventHealthListener
+            eventHealthListener = eventHealthListener,
+            listOfInterceptor = listOfEventInterceptor
         )
     }
 

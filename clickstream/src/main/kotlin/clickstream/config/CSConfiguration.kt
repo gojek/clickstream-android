@@ -14,6 +14,7 @@ import clickstream.health.intermediate.CSHealthEventRepository
 import clickstream.health.CSHealthGateway
 import clickstream.health.NoOpCSHealthGateway
 import clickstream.health.time.CSEventGeneratedTimestampListener
+import clickstream.interceptor.EventInterceptor
 import clickstream.internal.NoOpCSEventHealthListener
 import clickstream.internal.analytics.impl.NoOpCSHealthEventLogger
 import clickstream.internal.di.CSServiceLocator
@@ -55,7 +56,8 @@ public class CSConfiguration private constructor(
     internal val healthEventRepository: CSHealthEventRepository,
     internal val healthEventProcessor: CSHealthEventProcessor,
     internal val healthEventFactory: CSHealthEventFactory,
-    internal val appLifeCycle: CSAppLifeCycle
+    internal val appLifeCycle: CSAppLifeCycle,
+    internal val listOfEventInterceptor: List<EventInterceptor> = listOf(),
 ) {
     /**
      * A Builder for [CSConfiguration]'s.
@@ -101,6 +103,7 @@ public class CSConfiguration private constructor(
         private lateinit var remoteConfig: CSRemoteConfig
         private lateinit var healthGateway: CSHealthGateway
         private var logLevel: CSLogLevel = CSLogLevel.OFF
+        private val listOfEventInterceptor = mutableListOf<EventInterceptor>()
 
         /**
          * Specifies a custom [CoroutineDispatcher] for [ClickStream].
@@ -171,10 +174,12 @@ public class CSConfiguration private constructor(
             }
 
         /**
-         * Builds a [CSConfiguration] object.
-         *
-         * @return A [CSConfiguration] object with this [Builder]'s parameters.
+         * @return This [Builder] instance
          */
+        public fun addInterceptor(interceptor: EventInterceptor): Builder = apply {
+            this.listOfEventInterceptor.add(interceptor)
+        }
+
         public fun build(): CSConfiguration {
             if (::dispatcher.isInitialized.not()) {
                 dispatcher = Dispatchers.Default
@@ -188,7 +193,7 @@ public class CSConfiguration private constructor(
             if (::remoteConfig.isInitialized.not()) {
                 remoteConfig = NoOpCSRemoteConfig()
             }
-            if(::healthGateway.isInitialized.not()) {
+            if (::healthGateway.isInitialized.not()) {
                 healthGateway = NoOpCSHealthGateway.factory()
             }
             return CSConfiguration(
@@ -202,7 +207,8 @@ public class CSConfiguration private constructor(
                 healthGateway.healthEventRepository,
                 healthGateway.healthEventProcessor,
                 healthGateway.healthEventFactory,
-                appLifeCycle
+                appLifeCycle,
+                listOfEventInterceptor
             )
         }
     }

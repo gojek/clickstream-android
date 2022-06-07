@@ -13,6 +13,7 @@ import clickstream.health.intermediate.CSEventHealthListener
 import clickstream.health.intermediate.CSHealthEventRepository
 import clickstream.health.model.CSHealthEventDTO
 import clickstream.health.time.CSTimeStampGenerator
+import clickstream.interceptor.EventInterceptor
 import clickstream.internal.analytics.CSErrorReasons
 import clickstream.internal.networklayer.CSNetworkManager
 import clickstream.internal.utils.CSBatteryLevel
@@ -71,7 +72,8 @@ internal open class CSEventScheduler(
     private val batteryStatusObserver: CSBatteryStatusObserver,
     private val networkStatusObserver: CSNetworkStatusObserver,
     private val info: CSInfo,
-    private val eventHealthListener: CSEventHealthListener
+    private val eventHealthListener: CSEventHealthListener,
+    private val listOfEventInterceptor: List<EventInterceptor>
 ) : CSLifeCycleManager(appLifeCycle) {
 
     protected var job: CompletableJob = SupervisorJob()
@@ -115,6 +117,7 @@ internal open class CSEventScheduler(
         val (eventData, eventHealthData) = CSEventData.create(event)
         eventHealthListener.onEventCreated(eventHealthData)
         eventRepository.insertEventData(eventData)
+        dispatchEventToInterceptor(eventData)
 
         logHealthEvent(
             CSHealthEventDTO(
@@ -144,9 +147,16 @@ internal open class CSEventScheduler(
 
             val (eventData, eventHealthData) = CSEventData.create(event)
             eventHealthListener.onEventCreated(eventHealthData)
+            dispatchEventToInterceptor(eventData)
             val eventRequest =
                 transformToEventRequest(eventData = listOf(eventData))
             networkManager.processInstantEvent(eventRequest)
+        }
+    }
+
+    private fun dispatchEventToInterceptor(csEventData: CSEventData){
+        listOfEventInterceptor.forEach {
+            it.onIntercept(csEventData)
         }
     }
 
