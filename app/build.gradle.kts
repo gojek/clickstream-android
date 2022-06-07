@@ -14,7 +14,6 @@ android {
         targetSdk = 32
         versionCode = 1
         versionName = "1.0"
-        consumerProguardFiles("$rootDir/proguard/proguard-rules.pro")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -90,7 +89,6 @@ dependencies {
     implementation(deps.Dagger.hiltAndroid)
     kapt(deps.Dagger.hiltCompiler)
     kapt(deps.Dagger.hiltAndroidCompiler)
-
     implementation(deps.utils.gson)
     implementation(deps.networkLibs.okHttp)
 

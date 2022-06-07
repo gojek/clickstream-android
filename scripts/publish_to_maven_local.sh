@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
-./gradlew :clickstream:assembleRelease && ./gradlew :clickstream:publishToMavenLocal &&
-./gradlew :clickstream-api:assembleRelease && ./gradlew :clickstream-api:publishToMavenLocal &&
-./gradlew :clickstream-logger:assembleRelease && ./gradlew :clickstream-logger:publishToMavenLocal &&
-./gradlew :clickstream-lifecycle:assembleRelease && ./gradlew :clickstream-lifecycle:publishToMavenLocal &&
-./gradlew :clickstream-util:assembleRelease && ./gradlew :clickstream-util:publishToMavenLocal &&
-./gradlew :clickstream-health-metrics:assembleRelease && ./gradlew :clickstream-health-metrics:publishToMavenLocal &&
-./gradlew :clickstream-health-metrics-noop:assembleRelease && ./gradlew :clickstream-health-metrics-noop:publishToMavenLocal &&
-./gradlew :clickstream-health-metrics-api:assembleRelease && ./gradlew :clickstream-health-metrics-api:publishToMavenLocal
+./gradlew :clickstream:assembleRelease -PisLocal && ./gradlew :clickstream:publishToMavenLocal -PisLocal &&
+./gradlew :clickstream-api:assembleRelease -PisLocal && ./gradlew :clickstream-api:publishToMavenLocal -PisLocal &&
+./gradlew :clickstream-logger:assembleRelease -PisLocal && ./gradlew :clickstream-logger:publishToMavenLocal -PisLocal &&
+./gradlew :clickstream-lifecycle:assembleRelease -PisLocal && ./gradlew :clickstream-lifecycle:publishToMavenLocal -PisLocal &&
+./gradlew :clickstream-util:assembleRelease -PisLocal && ./gradlew :clickstream-util:publishToMavenLocal -PisLocal &&
+./gradlew :clickstream-health-metrics:assembleRelease -PisLocal && ./gradlew :clickstream-health-metrics:publishToMavenLocal -PisLocal &&
+./gradlew :clickstream-health-metrics-noop:assembleRelease -PisLocal && ./gradlew :clickstream-health-metrics-noop:publishToMavenLocal -PisLocal &&
+./gradlew :clickstream-health-metrics-api:assembleRelease -PisLocal && ./gradlew :clickstream-health-metrics-api:publishToMavenLocal -PisLocal

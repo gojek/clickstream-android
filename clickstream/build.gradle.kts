@@ -10,7 +10,9 @@ ext {
     set("PUBLISH_VERSION", ext.get("gitVersionName"))
 }
 
-apply(from = "$rootDir/scripts/publish-module.gradle")
+if(!project.hasProperty("isLocal")) {
+    apply(from = "$rootDir/scripts/publish-module.gradle")
+}
 
 plugins {
     id("com.android.library")
