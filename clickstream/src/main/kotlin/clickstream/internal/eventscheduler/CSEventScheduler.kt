@@ -14,6 +14,8 @@ import clickstream.health.intermediate.CSHealthEventRepository
 import clickstream.health.model.CSHealthEventDTO
 import clickstream.health.time.CSTimeStampGenerator
 import clickstream.interceptor.EventInterceptor
+import clickstream.interceptor.EventState
+import clickstream.interceptor.InterceptedEvent
 import clickstream.internal.analytics.CSErrorReasons
 import clickstream.internal.networklayer.CSNetworkManager
 import clickstream.internal.utils.CSBatteryLevel
@@ -117,7 +119,7 @@ internal open class CSEventScheduler(
         val (eventData, eventHealthData) = CSEventData.create(event)
         eventHealthListener.onEventCreated(eventHealthData)
         eventRepository.insertEventData(eventData)
-        dispatchEventToInterceptor(eventData)
+        dispatchEventToInterceptor(listOf(eventData), EventState.SCHEDULED)
 
         logHealthEvent(
             CSHealthEventDTO(
@@ -147,16 +149,16 @@ internal open class CSEventScheduler(
 
             val (eventData, eventHealthData) = CSEventData.create(event)
             eventHealthListener.onEventCreated(eventHealthData)
-            dispatchEventToInterceptor(eventData)
+            dispatchEventToInterceptor(listOf(eventData), EventState.REGISTERED)
             val eventRequest =
                 transformToEventRequest(eventData = listOf(eventData))
             networkManager.processInstantEvent(eventRequest)
         }
     }
 
-    private fun dispatchEventToInterceptor(csEventData: CSEventData){
+    private fun dispatchEventToInterceptor(listOfEvent: List<CSEventData>, state: EventState) {
         listOfEventInterceptor.forEach {
-            it.onIntercept(csEventData)
+            it.onIntercept(InterceptedEvent(listOfEvent, state))
         }
     }
 
@@ -178,6 +180,8 @@ internal open class CSEventScheduler(
             networkManager.eventGuidFlow.collect {
                 when (it) {
                     is CSResult.Success -> {
+                        val currentRequestIdEvents = eventRepository.getEventsOnGuId(it.value)
+                        dispatchEventToInterceptor(currentRequestIdEvents, EventState.REGISTERED)
                         eventRepository.deleteEventDataByGuId(it.value)
                         logger.debug {
                             "CSEventScheduler#setupObservers - " +
@@ -240,7 +244,7 @@ internal open class CSEventScheduler(
         if (!networkManager.isAvailable()) {
             return isSocketConnected()
         }
-
+        dispatchEventToInterceptor(batch,EventState.DISPATCHED)
         val eventRequest =
             transformToEventRequest(eventData = batch)
         if (batch.isNotEmpty() && batch[0].messageName != Health::class.qualifiedName.orEmpty()) {

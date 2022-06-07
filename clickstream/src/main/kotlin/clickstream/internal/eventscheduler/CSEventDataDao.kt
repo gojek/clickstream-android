@@ -87,4 +87,8 @@ internal interface CSEventDataDao {
      */
     @Query("DELETE FROM EventData WHERE eventRequestGuid = :eventBatchGuId")
     suspend fun deleteByGuId(eventBatchGuId: String)
+
+
+    @Query("SELECT * FROM EventData WHERE eventRequestGuid =:guid")
+    suspend fun loadEventByRequestId(guid: String): List<CSEventData>
 }

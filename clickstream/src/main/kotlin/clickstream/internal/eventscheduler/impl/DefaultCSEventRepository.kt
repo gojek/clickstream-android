@@ -41,4 +41,8 @@ internal class DefaultCSEventRepository(
     override suspend fun deleteEventDataByGuId(eventBatchGuId: String) {
         eventDataDao.deleteByGuId(eventBatchGuId = eventBatchGuId)
     }
+
+    override suspend fun getEventsOnGuId(eventBatchGuId: String): List<CSEventData> {
+        return eventDataDao.loadEventByRequestId(eventBatchGuId)
+    }
 }

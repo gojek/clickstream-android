@@ -1,7 +1,7 @@
 package clickstream.interceptor
 
 public enum class EventState {
-    CACHED,
+    SCHEDULED,
     DISPATCHED,
-    ACKNOWLEDGED,
+    REGISTERED,
 }
