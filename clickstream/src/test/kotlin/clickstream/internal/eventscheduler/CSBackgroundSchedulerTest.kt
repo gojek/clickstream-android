@@ -76,7 +76,8 @@ public class CSBackgroundSchedulerTest {
             eventRepository = eventRepository,
             networkStatusObserver = networkStatusObserver,
             info = fakeInfo(),
-            eventHealthListener = mock()
+            eventHealthListener = mock(),
+            listOfInterceptor = emptyList()
         )
     }
 
