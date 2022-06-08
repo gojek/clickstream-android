@@ -17,7 +17,7 @@ buildscript {
 
     dependencies {
         classpath("com.android.tools.build:gradle:7.0.4")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.0")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.32")
         classpath("com.google.protobuf:protobuf-gradle-plugin:0.8.14")
         classpath("org.jetbrains.kotlinx:binary-compatibility-validator:0.8.0")
         classpath("com.google.dagger:hilt-android-gradle-plugin:2.41")

@@ -42,4 +42,6 @@ internal interface CSEventRepository {
      * A function to remove event data based on the ID given
      */
     suspend fun deleteEventDataByGuId(eventBatchGuId: String)
+
+    suspend fun getEventsOnGuId(eventBatchGuId: String) : List<CSEventData>
 }

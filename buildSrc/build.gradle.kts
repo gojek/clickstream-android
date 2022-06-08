@@ -17,7 +17,7 @@ plugins {
 
 dependencies {
     implementation("com.android.tools.build:gradle:7.0.4")
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.0")
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.32")
     implementation("com.github.node-gradle:gradle-node-plugin:2.2.0")
     implementation("org.codehaus.groovy:groovy:3.0.9")
     implementation("io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.15.0")
