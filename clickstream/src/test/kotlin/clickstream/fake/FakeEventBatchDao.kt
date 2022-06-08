@@ -46,6 +46,10 @@ public class FakeEventBatchDao(
         items.removeIf { it.eventRequestGuid == eventBatchGuId }
     }
 
+    override suspend fun loadEventByRequestId(guid: String): List<CSEventData> {
+        return items.filter { it.eventRequestGuid == guid }
+    }
+
     override suspend fun setOnGoingEvent(guid: String, ongoing: Boolean) {
         val newList = items.map { it.copy(isOnGoing = ongoing) }.toList()
         items.clear()
