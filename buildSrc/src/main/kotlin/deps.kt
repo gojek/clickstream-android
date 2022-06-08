@@ -4,13 +4,13 @@ object versions {
     internal const val jacoco = "0.8.4"
     internal const val detekt = "1.1.1"
 
-    internal const val kotlin = "1.6.0"
+    internal const val kotlin = "1.4.32"
     internal const val coroutines = "1.4.3"
 
     internal const val scarlet = "0.1.10"
     internal const val okHttp = "3.12.1"
 
-    internal const val room = "2.4.0"
+    internal const val room = "2.2.3"
     internal const val lifecycle = "2.2.0"
 
     internal const val workManagerVersion = "2.3.4"
