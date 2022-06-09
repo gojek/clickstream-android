@@ -4,7 +4,9 @@ import com.gojek.clickstream.de.Event
 import com.gojek.clickstream.internal.Health
 import com.google.protobuf.Internal.isValidUtf8
 import com.google.protobuf.MessageLite
+import org.json.JSONObject
 import java.lang.reflect.Field
+import java.lang.reflect.Method
 import java.util.Locale
 
 /**
@@ -32,7 +34,8 @@ public fun MessageLite.isValidMessage(): Boolean {
             isNestedType(field) -> {
                 field.isAccessible = true
                 val messageLite = field.get(this) as? MessageLite
-                isValidMessage = if (messageLite != null) isValidMessage && messageLite.isValidMessage() else isValidMessage
+                isValidMessage =
+                    if (messageLite != null) isValidMessage && messageLite.isValidMessage() else isValidMessage
             }
             isStringType(field) -> {
                 field.isAccessible = true
@@ -74,3 +77,51 @@ public fun MessageLite.eventName(): String? {
         declaredField.get(this) as String
     }.getOrNull()
 }
+
+/**
+ * Converts [MessageLite] to [JSONObject] using reflection.
+ * */
+public fun MessageLite.toJson(): JSONObject {
+
+    fun isValidMethod(method: Method) =
+        method.parameterTypes.isEmpty() && method.name.split(".").last().run {
+            startsWith("get") && !equals("getDefaultInstance") && !contains("Byte")
+        }
+
+    fun getPropertyNameFromMethod(methodName: String) = methodName.split(".").last()
+        .substring(3).substringBefore("(")
+
+    fun getAllPropertyValueAndName(messageLite: MessageLite): List<Property> {
+        val declaredMethods = messageLite.javaClass.declaredMethods
+        val validMethods = declaredMethods.filter { isValidMethod(it) }
+        return validMethods.map {
+            Property(
+                getPropertyNameFromMethod(it.name),
+                it.invoke(messageLite)
+            )
+        }
+    }
+
+    fun getJson(messageLite: MessageLite, json: JSONObject): JSONObject {
+        val listOfProperty = getAllPropertyValueAndName(messageLite)
+        listOfProperty.forEach { property ->
+            val value = when (property.value) {
+                is MessageLite -> getJson(property.value, JSONObject())
+                is List<*> -> property.value.map { ev ->
+                    (ev as? MessageLite)?.run {
+                        getJson(
+                            this,
+                            JSONObject()
+                        )
+                    } ?: this
+                }
+                else -> property.value
+            }
+            json.put(property.name, value)
+        }
+        return json
+    }
+    return getJson(this, JSONObject())
+}
+
+private data class Property(val name: String, val value: Any?)
