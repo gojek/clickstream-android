@@ -3,7 +3,7 @@ package clickstream.interceptor
 import clickstream.internal.eventscheduler.CSEventData
 import com.google.protobuf.MessageLite
 
-public sealed class InterceptedEvent(public vararg val events: CSEventData) {
+public open class InterceptedEvent(public vararg val events: CSEventData) {
 
     public class Instant(public val event: CSEventData, public val messageLite: MessageLite) :
         InterceptedEvent(event)
