@@ -10,3 +10,4 @@ include ':clickstream-health-metrics-api'
 include ':clickstream-health-metrics-noop'
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+include ':clickstream-event-visualiser'
