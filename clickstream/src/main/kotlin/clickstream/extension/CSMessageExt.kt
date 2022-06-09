@@ -95,6 +95,7 @@ public fun MessageLite.toJson(): JSONObject {
         val declaredMethods = messageLite.javaClass.declaredMethods
         val validMethods = declaredMethods.filter { isValidMethod(it) }
         return validMethods.map {
+            it.isAccessible = true
             Property(
                 getPropertyNameFromMethod(it.name),
                 it.invoke(messageLite)
