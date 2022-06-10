@@ -215,7 +215,7 @@ internal class DefaultCServiceLocator(
             networkStatusObserver = networkStatusObserver,
             info = info,
             eventHealthListener = eventHealthListener,
-            listOfInterceptor = eventInterceptors
+            eventInterceptors = eventInterceptors
         )
     }
 

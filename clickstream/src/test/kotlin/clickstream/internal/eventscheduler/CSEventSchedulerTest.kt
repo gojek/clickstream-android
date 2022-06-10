@@ -74,7 +74,7 @@ public class CSEventSchedulerTest {
             config = config,
             info = fakeInfo(),
             eventHealthListener = mock(),
-            listOfEventInterceptor = emptyList()
+            eventInterceptors = emptyList()
         )
         scheduler.onStart()
     }
