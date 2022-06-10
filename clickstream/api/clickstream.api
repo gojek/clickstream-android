@@ -297,13 +297,13 @@ public final class clickstream/internal/eventscheduler/CSEventData$Companion {
 
 public final class clickstream/internal/eventscheduler/CSEventDataDao_Impl : clickstream/internal/eventscheduler/CSEventDataDao {
 	public fun <init> (Landroidx/room/RoomDatabase;)V
-	public fun deleteByGuId (Ljava/lang/String;)V
-	public fun getAll ()Ljava/util/List;
-	public fun insert (Lclickstream/internal/eventscheduler/CSEventData;)V
-	public fun insertAll (Ljava/util/List;)V
+	public fun deleteByGuId (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getAll (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun insert (Lclickstream/internal/eventscheduler/CSEventData;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun insertAll (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun loadAll ()Lkotlinx/coroutines/flow/Flow;
-	public fun loadOnGoingEvents ()Ljava/util/List;
-	public fun setOnGoingEvent (Ljava/lang/String;Z)V
+	public fun loadOnGoingEvents (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun setOnGoingEvent (Ljava/lang/String;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public final class clickstream/model/CSEvent {
