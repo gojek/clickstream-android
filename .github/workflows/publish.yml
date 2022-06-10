@@ -29,7 +29,8 @@ jobs:
           :clickstream-health-metrics:assembleRelease
           :clickstream-health-metrics-noop:assembleRelease
           :clickstream-health-metrics-api:assembleRelease
-          :clickstream-event-interceptor:assemble
+          :clickstream-event-listener:assemble
+          :clickstream-event-listener:javadocJar
           :clickstream-event-visualiser:assembleRelease
           :clickstream-event-visualiser-noop:assembleRelease
           :clickstream-event-visualiser-ui:assembleRelease
@@ -42,7 +43,7 @@ jobs:
           :clickstream-health-metrics:publishReleasePublicationToSonatypeRepository
           :clickstream-health-metrics-noop:publishReleasePublicationToSonatypeRepository
           :clickstream-health-metrics-api:publishReleasePublicationToSonatypeRepository
-          :clickstream-event-interceptor:publishReleasePublicationToSonatypeRepository
+          :clickstream-event-listener:publishReleasePublicationToSonatypeRepository
           :clickstream-event-visualiser:publishReleasePublicationToSonatypeRepository
           :clickstream-event-visualiser-noop:publishReleasePublicationToSonatypeRepository
           :clickstream-event-visualiser-ui:publishReleasePublicationToSonatypeRepository

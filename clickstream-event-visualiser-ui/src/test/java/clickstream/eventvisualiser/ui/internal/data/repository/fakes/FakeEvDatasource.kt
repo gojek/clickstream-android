@@ -4,7 +4,7 @@ import clickstream.eventvisualiser.ui.internal.data.datasource.CSEvDatasource
 import clickstream.eventvisualiser.ui.internal.data.model.CSEvEvent
 import clickstream.eventvisualiser.ui.internal.data.model.CSEvState
 import clickstream.eventvisualiser.CSEVEventObserver
-import clickstream.interceptor.CSInterceptedEvent
+import clickstream.listener.CSEventModel
 import kotlinx.coroutines.*
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -15,7 +15,7 @@ internal class FakeEvDatasource(private val evObserver: CSEVEventObserver) : CSE
     private val eventDataMap = ConcurrentHashMap<String, CopyOnWriteArrayList<CSEvEvent>>()
     private var coroutineScope = CoroutineScope(SupervisorJob())
 
-    private val eventCallback: (List<CSInterceptedEvent>) -> Unit = {
+    private val eventCallback: (List<CSEventModel>) -> Unit = {
         coroutineScope.launch { addInterceptedEvent(it) }
     }
 
@@ -64,11 +64,11 @@ internal class FakeEvDatasource(private val evObserver: CSEVEventObserver) : CSE
         eventDataMap.clear()
     }
 
-    private suspend fun addInterceptedEvent(eventList: List<CSInterceptedEvent>) =
+    private suspend fun addInterceptedEvent(eventList: List<CSEventModel>) =
         withContext(Dispatchers.Default) {
             eventList.forEach {
                 when (it) {
-                    is CSInterceptedEvent.Instant -> addNewValueInCurrentList(
+                    is CSEventModel.Instant -> addNewValueInCurrentList(
                         CSEvEvent(
                             eventName = it.eventName ?: "Empty event",
                             eventId = it.eventId,
@@ -79,7 +79,7 @@ internal class FakeEvDatasource(private val evObserver: CSEVEventObserver) : CSE
                     )
 
 
-                    is CSInterceptedEvent.Scheduled ->
+                    is CSEventModel.Scheduled ->
                         addNewValueInCurrentList(
                             CSEvEvent(
                                 eventName = it.eventName ?: "Empty event",
@@ -90,12 +90,12 @@ internal class FakeEvDatasource(private val evObserver: CSEVEventObserver) : CSE
                             )
                         )
 
-                    is CSInterceptedEvent.Acknowledged -> changeEventStatusInCurrentList(
+                    is CSEventModel.Acknowledged -> changeEventStatusInCurrentList(
                         it,
                         CSEvState.ACKNOWLEDGED
                     )
 
-                    is CSInterceptedEvent.Dispatched -> changeEventStatusInCurrentList(
+                    is CSEventModel.Dispatched -> changeEventStatusInCurrentList(
                         it,
                         CSEvState.DISPATCHED
                     )
@@ -115,13 +115,13 @@ internal class FakeEvDatasource(private val evObserver: CSEVEventObserver) : CSE
     }
 
     private fun changeEventStatusInCurrentList(
-        csInterceptedEvent: CSInterceptedEvent,
+        csEventModel: CSEventModel,
         newState: CSEvState
     ) {
         eventDataMap.forEach {
             it.value.run {
                 val currentPosition = indexOfFirst {
-                    csInterceptedEvent.eventId == it.eventId
+                    csEventModel.eventId == it.eventId
                 }
                 if (currentPosition != -1) {
                     set(currentPosition, get(currentPosition).copy(state = newState))

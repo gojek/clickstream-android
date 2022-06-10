@@ -6,7 +6,7 @@ import clickstream.health.intermediate.CSEventHealthListener
 import clickstream.health.intermediate.CSHealthEventFactory
 import clickstream.health.intermediate.CSHealthEventProcessor
 import clickstream.health.intermediate.CSHealthEventRepository
-import clickstream.interceptor.CSEventInterceptor
+import clickstream.listener.CSEventListener
 import clickstream.internal.eventprocessor.CSEventProcessor
 import clickstream.internal.eventscheduler.CSBackgroundScheduler
 import clickstream.internal.eventscheduler.CSEventScheduler
@@ -43,7 +43,7 @@ internal interface CSServiceLocator {
                     if (sInstance == null) {
                         requireNotNull(sInstance) {
                             "Service Locator should be created and set by using " +
-                            "[setServiceLocator] function."
+                                    "[setServiceLocator] function."
                         }
                     }
                 }
@@ -109,5 +109,9 @@ internal interface CSServiceLocator {
     val healthEventProcessor: CSHealthEventProcessor
     val healthEventFactory: CSHealthEventFactory
     val appLifeCycle: CSAppLifeCycle
-    val eventInterceptors : List<CSEventInterceptor>
+
+    /**
+     * A list of [CSEventListener]s that observe any changes in events from [CSEventScheduler] class.
+     * */
+    val eventListeners: List<CSEventListener>
 }

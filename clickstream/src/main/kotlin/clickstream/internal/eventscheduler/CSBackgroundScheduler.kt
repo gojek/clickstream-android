@@ -9,7 +9,7 @@ import clickstream.health.intermediate.CSEventHealthListener
 import clickstream.health.intermediate.CSHealthEventRepository
 import clickstream.health.model.CSHealthEventDTO
 import clickstream.health.time.CSTimeStampGenerator
-import clickstream.interceptor.CSEventInterceptor
+import clickstream.listener.CSEventListener
 import clickstream.internal.di.CSServiceLocator
 import clickstream.internal.networklayer.CSBackgroundNetworkManager
 import clickstream.internal.utils.CSBatteryStatusObserver
@@ -49,7 +49,7 @@ internal class CSBackgroundScheduler(
     private val backgroundLifecycleManager: CSBackgroundLifecycleManager,
     private val info: CSInfo,
     eventHealthListener: CSEventHealthListener,
-    eventInterceptors: List<CSEventInterceptor>
+    eventListeners: List<CSEventListener>
 ) : CSEventScheduler(
     appLifeCycle,
     networkManager,
@@ -64,7 +64,7 @@ internal class CSBackgroundScheduler(
     networkStatusObserver,
     info,
     eventHealthListener,
-    eventInterceptors
+    eventListeners
 ) {
 
     override fun onStart() {

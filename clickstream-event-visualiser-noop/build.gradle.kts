@@ -33,5 +33,5 @@ android {
 }
 
 dependencies {
-    compileOnly(projects.clickstreamEventInterceptor)
+    compileOnly(projects.clickstreamEventListener)
 }

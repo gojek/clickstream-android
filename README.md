@@ -232,7 +232,7 @@ dependencies {
 }
 ```
 ### Initialising
-1. In your Application class, add `CSEventVisualiserInterceptor` to Clickstream.
+1. In your Application class, add `CSEventVisualiserListener` to Clickstream.
 2. Call `CSEventVisualiserUI.initialise(this)` to initialise Event visualiser.
 ```kotlin
 class App : Application() {
@@ -240,7 +240,7 @@ class App : Application() {
     private fun initClickStream() {
         ClickStream.initialize(/**/).apply {
                 /**/
-                addInterceptor(CSEventVisualiserInterceptor.getInstance())
+                addEventListener(CSEventVisualiserListener.getInstance())
             }.build()
         CSEventVisualiserUI.initialise(this)
     }
@@ -250,12 +250,12 @@ class App : Application() {
 ### Usage
 1. Call `CSEventVisualiserUI.getInstance().show()`to show a floating window and start recording all the events from clickstream.
 <p align="center">
-<img src="https://github.com/gojek/clickstream-android/blob/task/clickstream-ev-ui/docs/assets/ev_window.jpg" width="300"/>
+<img src="https://github.com/gojek/clickstream-android/blob/main/docs/assets/ev_window.jpg" width="300"/>
 </p>
 
 2. Click on Settings icon (top-left corner) to show a bottom sheet with all the actions that you can take with event visualiser.
 <p align="center">
-<img src="https://github.com/gojek/clickstream-android/blob/task/clickstream-ev-ui/docs/assets/ev_actions.jpg" width="300"/>
+<img src="https://github.com/gojek/clickstream-android/blob/main/docs/assets/ev_actions.jpg" width="300"/>
 </p>
 
 - START CAPTURING (Starts event recording in event visualiser)
@@ -271,9 +271,9 @@ class App : Application() {
    * Acknowledged - Events are acknowledged by racoon.
 
 <p align="center">
-<img src="https://github.com/gojek/clickstream-android/blob/task/clickstream-ev-ui/docs/assets/ev_home.jpg" width="300"/>
-<img src="https://github.com/gojek/clickstream-android/blob/task/clickstream-ev-ui/docs/assets/ev_event_list.jpg" width="300"/>
-<img src="https://github.com/gojek/clickstream-android/blob/task/clickstream-ev-ui/docs/assets/ev_event_detail.jpg" width="300"/>
+<img src="https://github.com/gojek/clickstream-android/blob/main/docs/assets/ev_home.jpg" width="300"/>
+<img src="https://github.com/gojek/clickstream-android/blob/main/docs/assets/ev_event_list.jpg" width="300"/>
+<img src="https://github.com/gojekfarm/clickstream-android/blob/main/docs/assets/ev_event_detail.jpg" width="300"/>
 </p>
 
 ### Excluding Event visualiser from release builds
