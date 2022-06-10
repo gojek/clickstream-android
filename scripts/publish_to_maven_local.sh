@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
-./gradlew :clickstream:assembleRelease -PisLocal && ./gradlew :clickstream:publishToMavenLocal -PisLocal &&
-./gradlew :clickstream-api:assembleRelease -PisLocal && ./gradlew :clickstream-api:publishToMavenLocal -PisLocal &&
-./gradlew :clickstream-logger:assembleRelease -PisLocal && ./gradlew :clickstream-logger:publishToMavenLocal -PisLocal &&
-./gradlew :clickstream-lifecycle:assembleRelease -PisLocal && ./gradlew :clickstream-lifecycle:publishToMavenLocal -PisLocal &&
-./gradlew :clickstream-util:assembleRelease -PisLocal && ./gradlew :clickstream-util:publishToMavenLocal -PisLocal &&
-./gradlew :clickstream-health-metrics:assembleRelease -PisLocal && ./gradlew :clickstream-health-metrics:publishToMavenLocal -PisLocal &&
-./gradlew :clickstream-health-metrics-noop:assembleRelease -PisLocal && ./gradlew :clickstream-health-metrics-noop:publishToMavenLocal -PisLocal &&
-./gradlew :clickstream-health-metrics-api:assembleRelease -PisLocal && ./gradlew :clickstream-health-metrics-api:publishToMavenLocal -PisLocal
+./gradlew :clickstream:assembleRelease -PisLocal -Partifactory && ./gradlew :clickstream:publishToMavenLocal -PisLocal -Partifactory &&
+./gradlew :clickstream-api:assembleRelease -PisLocal -Partifactory && ./gradlew :clickstream-api:publishToMavenLocal -PisLocal -Partifactory &&
+./gradlew :clickstream-logger:assembleRelease -PisLocal -Partifactory && ./gradlew :clickstream-logger:publishToMavenLocal -PisLocal -Partifactory &&
+./gradlew :clickstream-lifecycle:assembleRelease -PisLocal -Partifactory && ./gradlew :clickstream-lifecycle:publishToMavenLocal -PisLocal -Partifactory &&
+./gradlew :clickstream-util:assembleRelease -PisLocal -Partifactory && ./gradlew :clickstream-util:publishToMavenLocal -PisLocal -Partifactory &&
+./gradlew :clickstream-health-metrics:assembleRelease -PisLocal -Partifactory && ./gradlew :clickstream-health-metrics:publishToMavenLocal -PisLocal -Partifactory &&
+./gradlew :clickstream-health-metrics-noop:assembleRelease -PisLocal -Partifactory && ./gradlew :clickstream-health-metrics-noop:publishToMavenLocal -PisLocal -Partifactory &&
+./gradlew :clickstream-health-metrics-api:assembleRelease -PisLocal -Partifactory && ./gradlew :clickstream-health-metrics-api:publishToMavenLocal -PisLocal -Partifactory

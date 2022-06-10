@@ -27,7 +27,7 @@ internal interface CSHealthEventDao {
      * @param healthEvent - Event Data to be stored
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(healthEvent: CSHealthEvent)
+    fun insert(healthEvent: CSHealthEvent)
 
     /**
      * A function [insertAll] that accommodate an action to save a [List] of [CSHealthEvent] object.
@@ -38,7 +38,7 @@ internal interface CSHealthEventDao {
      * @param healthEventList - List of Event Data to be stored
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(healthEventList: List<CSHealthEvent>)
+    fun insertAll(healthEventList: List<CSHealthEvent>)
 
     /**
      * A function [getEventByType] that retrieves all events based on the event type.
@@ -48,14 +48,14 @@ internal interface CSHealthEventDao {
      *
      */
     @Query("SELECT * FROM HealthStats WHERE eventType = :eventType")
-    suspend fun getEventByType(eventType: String): List<CSHealthEvent>
+    fun getEventByType(eventType: String): List<CSHealthEvent>
 
     /**
      * A function [getBucketEventByEventBatchId] that accommodate an action to get list of [CSHealthEvent] objects
      * by given event name and batch ID.
      */
     @Query("SELECT * FROM HealthStats WHERE eventType = 'bucket' and eventName = :eventName and eventBatchId = :eventBatchId")
-    suspend fun getBucketEventByEventBatchId(
+    fun getBucketEventByEventBatchId(
         eventName: String,
         eventBatchId: String
     ): List<CSHealthEvent>
@@ -65,7 +65,7 @@ internal interface CSHealthEventDao {
      * by given event name and event ID.
      */
     @Query("SELECT * FROM HealthStats WHERE eventType = 'bucket' and eventName = :eventName and eventId in (:eventId)")
-    suspend fun getBucketEventsByEventIdList(
+    fun getBucketEventsByEventIdList(
         eventName: String,
         eventId: List<String>
     ): List<CSHealthEvent>
@@ -80,7 +80,7 @@ internal interface CSHealthEventDao {
      * @param sessionId - The sessionId for group of health events
      */
     @Query("DELETE FROM HealthStats WHERE sessionId = :sessionId and stopTime >= startTime")
-    suspend fun deleteBySessionId(sessionId: String)
+    fun deleteBySessionId(sessionId: String)
 
     /**
      *  function [deleteHealthEvent] that accommodate an action to delete of [CSHealthEvent] objects.
@@ -89,5 +89,5 @@ internal interface CSHealthEventDao {
      * Thread switching must be handled by the caller side
      */
     @Delete
-    suspend fun deleteHealthEvent(events: List<CSHealthEvent>)
+    fun deleteHealthEvent(events: List<CSHealthEvent>)
 }
