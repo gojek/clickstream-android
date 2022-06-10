@@ -10,7 +10,7 @@ ext {
     set("PUBLISH_VERSION", ext.get("gitVersionName"))
 }
 
-if(!project.hasProperty("isLocal")) {
+if (!project.hasProperty("isLocal")) {
     apply(from = "$rootDir/scripts/publish-module.gradle")
 }
 
@@ -40,6 +40,7 @@ dependencies {
     compileOnly(projects.clickstreamApi)
     compileOnly(projects.clickstreamHealthMetricsApi)
     compileOnly(projects.clickstreamLifecycle)
+    api(projects.clickstreamEventInterceptor)
 
     // Proto
     api(deps.utils.protoLite)

@@ -1,5 +1,6 @@
 package com.clickstream.app.main
 
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle.State.STARTED
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import clickstream.eventvisualiser.ui.CSEventVisualiserUI
 import com.clickstream.app.databinding.FragmentMainBinding
 import com.clickstream.app.main.MainIntent.InputIntent
 import com.clickstream.app.main.MainIntent.InputIntent.AgeInputIntent.Companion.setupAgeInputFlow
@@ -19,7 +21,9 @@ import com.clickstream.app.main.MainIntent.InputIntent.PhoneInputIntent.Companio
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import reactivecircus.flowbinding.android.view.clicks
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
@@ -45,11 +49,19 @@ class MainFragment : Fragment() {
 
         registerObserver()
         vm.processIntents(flows())
+        vm.processIntents(binding.sendEvent.clicks().map { MainIntent.SendIntent })
+        showEventVisualiser()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun showEventVisualiser() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CSEventVisualiserUI.getInstance().show()
+        }
     }
 
     private fun registerObserver() {

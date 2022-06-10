@@ -60,7 +60,7 @@ dependencies {
     // Required
     implementation 'com.gojek.clickstream:clickstream-android:[latest_version]'
     implementation 'com.gojek.clickstream:clickstream-lifecycle:[latest_version]'
-    
+
     // Optional
     implementation 'com.gojek.clickstream:clickstream-health-metrics:[latest_version]'
 }
@@ -218,6 +218,83 @@ In order to running the sample app, please follow this instruction
 | ------ | ------ |
 | <img src="https://github.com/gojekfarm/clickstream-android/blob/main/docs/assets/clickstream_sample_1.jpg" width="300"/> | <img src="https://github.com/gojekfarm/clickstream-android/blob/main/docs/assets/clickstream_sample_2.jpg" width="300"/> |
 
+## Event Visualiser
+
+Event visualiser is an android tool to visualise the client events being sent to Clickstream.
+
+### Adding dependency
+Add following to your module's `build.gradle`.
+```kotlin
+dependencies {
+    val latest_version = "x.y.z"
+    implementation("com.gojek.clickstream:clickstream-event-visualiser:$latest_version")
+    implementation("com.gojek.clickstream:clickstream-event-visualiser-ui:$latest_version")
+}
+```
+### Initialising
+1. In your Application class, add `CSEventVisualiserInterceptor` to Clickstream.
+2. Call `CSEventVisualiserUI.initialise(this)` to initialise Event visualiser.
+```kotlin
+class App : Application() {
+    /**/
+    private fun initClickStream() {
+        ClickStream.initialize(/**/).apply {
+                /**/
+                addInterceptor(CSEventVisualiserInterceptor.getInstance())
+            }.build()
+        CSEventVisualiserUI.initialise(this)
+    }
+}
+```
+
+### Usage
+1. Call `CSEventVisualiserUI.getInstance().show()`to show a floating window and start recording all the events from clickstream.
+<p align="center">
+<img src="https://github.com/gojek/clickstream-android/blob/task/clickstream-ev-ui/docs/assets/ev_window.jpg" width="300"/>
+</p>
+
+2. Click on Settings icon (top-left corner) to show a bottom sheet with all the actions that you can take with event visualiser.
+<p align="center">
+<img src="https://github.com/gojek/clickstream-android/blob/task/clickstream-ev-ui/docs/assets/ev_actions.jpg" width="300"/>
+</p>
+
+- START CAPTURING (Starts event recording in event visualiser)
+- STOP CAPTURING (Stops event recording in event visualiser)
+- CLEAR DATA (Clears the current data in event visualiser)
+- CLOSE (Closes the event visualiser window)
+
+3. Clicking on the window will land to event home screen where all unique events are listed. You can click on any event to check event details.
+
+4. Events can have the following states -
+   * Scheduled - Events are scheduled (cached locally) by clickstream.
+   * Dispatched - Events are sent to racoon.
+   * Acknowledged - Events are acknowledged by racoon.
+
+<p align="center">
+<img src="https://github.com/gojek/clickstream-android/blob/task/clickstream-ev-ui/docs/assets/ev_home.jpg" width="300"/>
+<img src="https://github.com/gojek/clickstream-android/blob/task/clickstream-ev-ui/docs/assets/ev_event_list.jpg" width="300"/>
+<img src="https://github.com/gojek/clickstream-android/blob/task/clickstream-ev-ui/docs/assets/ev_event_detail.jpg" width="300"/>
+</p>
+
+### Excluding Event visualiser from release builds
+Since Event visualiser is a debug tool that will be used by developers and testing teams only, it should ideally **NOT** be bundled with release builds.  
+For this purpose there are light-weight, alternative NoOp (No Operation) dependencies.
+
+#### Configuring NoOp dependency
+
+```kotlin
+dependencies {
+    val latest_version = "x.y.z"
+    // Use main dependency for debug build types
+    debugImplementation("com.gojek.clickstream:clickstream-event-visualiser:$latest_version")
+    debugImplementation("com.gojek.clickstream:clickstream-event-visualiser-ui:$latest_version")
+
+    // Use NoOp dependency for release build types
+    releaseImplementation("com.gojek.clickstream:clickstream-event-visualiser-noop:$latest_version")
+    releaseImplementation("com.gojek.clickstream:clickstream-event-visualiser-ui-noop:$latest_version")
+
+}
+```
 
 License
 --------

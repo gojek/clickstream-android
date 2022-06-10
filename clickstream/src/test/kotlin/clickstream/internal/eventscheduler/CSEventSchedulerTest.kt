@@ -73,7 +73,8 @@ public class CSEventSchedulerTest {
             networkStatusObserver = networkStatusObserver,
             config = config,
             info = fakeInfo(),
-            eventHealthListener = mock()
+            eventHealthListener = mock(),
+            cSEventInterceptors = emptyList()
         )
         scheduler.onStart()
     }

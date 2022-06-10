@@ -6,6 +6,7 @@ import clickstream.health.intermediate.CSEventHealthListener
 import clickstream.health.intermediate.CSHealthEventFactory
 import clickstream.health.intermediate.CSHealthEventProcessor
 import clickstream.health.intermediate.CSHealthEventRepository
+import clickstream.interceptor.CSEventInterceptor
 import clickstream.internal.eventprocessor.CSEventProcessor
 import clickstream.internal.eventscheduler.CSBackgroundScheduler
 import clickstream.internal.eventscheduler.CSEventScheduler
@@ -108,4 +109,5 @@ internal interface CSServiceLocator {
     val healthEventProcessor: CSHealthEventProcessor
     val healthEventFactory: CSHealthEventFactory
     val appLifeCycle: CSAppLifeCycle
+    val eventInterceptors : List<CSEventInterceptor>
 }

@@ -5,6 +5,8 @@ import clickstream.ClickStream
 import clickstream.config.CSConfiguration
 import clickstream.connection.CSConnectionEvent
 import clickstream.connection.CSSocketConnectionListener
+import clickstream.eventvisualiser.CSEventVisualiserInterceptor
+import clickstream.eventvisualiser.ui.CSEventVisualiserUI
 import clickstream.lifecycle.impl.DefaultCSAppLifeCycleObserver
 import clickstream.logger.CSLogLevel
 import com.clickstream.app.config.AccountId
@@ -36,10 +38,13 @@ class App : Application() {
                 ),
                 appLifeCycle = DefaultCSAppLifeCycleObserver(this)
             )
-            .applyLogLevel()
-            .applySocketConnectionListener()
-            .build()
+                .applyLogLevel()
+                .addCSEVInterceptor()
+                .applySocketConnectionListener()
+                .build()
         )
+
+        CSEventVisualiserUI.initialise(this)
     }
 
     private fun CSConfiguration.Builder.applyLogLevel(): CSConfiguration.Builder {
@@ -47,11 +52,16 @@ class App : Application() {
         return this
     }
 
+    private fun CSConfiguration.Builder.addCSEVInterceptor(): CSConfiguration.Builder {
+        addInterceptor(CSEventVisualiserInterceptor.getInstance())
+        return this
+    }
+
     private fun CSConfiguration.Builder.applySocketConnectionListener(): CSConfiguration.Builder {
         setSocketConnectionListener(object : CSSocketConnectionListener {
             override fun onEventChanged(event: CSConnectionEvent) {
-                when(event) {
-                    is CSConnectionEvent.OnConnectionClosed -> printMessage { "OnConnectionClosed due to ${event.shutdownReason}"}
+                when (event) {
+                    is CSConnectionEvent.OnConnectionClosed -> printMessage { "OnConnectionClosed due to ${event.shutdownReason}" }
                     is CSConnectionEvent.OnConnectionClosing -> printMessage { "OnConnectionClosing due to ${event.shutdownReason}" }
                     is CSConnectionEvent.OnConnectionConnected -> printMessage { "Connected" }
                     is CSConnectionEvent.OnConnectionConnecting -> printMessage { "Connecting" }

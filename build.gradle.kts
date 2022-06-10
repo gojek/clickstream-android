@@ -23,6 +23,7 @@ buildscript {
         classpath("com.google.dagger:hilt-android-gradle-plugin:2.41")
         classpath("io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.15.0")
         classpath("io.github.gradle-nexus:publish-plugin:1.1.0")
+        classpath("androidx.navigation:navigation-safe-args-gradle-plugin:2.4.2")
 
         // for internal artifact
         classpath("org.jfrog.buildinfo:build-info-extractor-gradle:4.11.0")
@@ -59,6 +60,8 @@ val clean by tasks.creating(Delete::class) {
     delete("${rootDir}/clickstream-health-metrics/build")
     delete("${rootDir}/clickstream-health-metrics-api/build")
     delete("${rootDir}/clickstream-health-metrics-noop/build")
+    delete("${rootDir}/clickstream-event-interceptor/build")
+    delete("${rootDir}/clickstream-event-visualiser/build")
     delete("${rootDir}/report")
 }
 

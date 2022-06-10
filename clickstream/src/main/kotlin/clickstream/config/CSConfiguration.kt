@@ -8,18 +8,15 @@ import clickstream.connection.CSSocketConnectionListener
 import clickstream.connection.NoOpCSConnectionListener
 import clickstream.health.intermediate.CSEventHealthListener
 import clickstream.health.intermediate.CSHealthEventFactory
-import clickstream.health.intermediate.CSHealthEventLoggerListener
 import clickstream.health.intermediate.CSHealthEventProcessor
 import clickstream.health.intermediate.CSHealthEventRepository
 import clickstream.health.CSHealthGateway
 import clickstream.health.NoOpCSHealthGateway
 import clickstream.health.time.CSEventGeneratedTimestampListener
-import clickstream.internal.NoOpCSEventHealthListener
-import clickstream.internal.analytics.impl.NoOpCSHealthEventLogger
 import clickstream.internal.di.CSServiceLocator
 import clickstream.lifecycle.CSAppLifeCycle
-import clickstream.lifecycle.impl.DefaultCSAppLifeCycleObserver
 import clickstream.logger.CSLogLevel
+import clickstream.interceptor.CSEventInterceptor
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -55,7 +52,8 @@ public class CSConfiguration private constructor(
     internal val healthEventRepository: CSHealthEventRepository,
     internal val healthEventProcessor: CSHealthEventProcessor,
     internal val healthEventFactory: CSHealthEventFactory,
-    internal val appLifeCycle: CSAppLifeCycle
+    internal val appLifeCycle: CSAppLifeCycle,
+    internal val cSEventInterceptors: List<CSEventInterceptor> = listOf(),
 ) {
     /**
      * A Builder for [CSConfiguration]'s.
@@ -101,6 +99,7 @@ public class CSConfiguration private constructor(
         private lateinit var remoteConfig: CSRemoteConfig
         private lateinit var healthGateway: CSHealthGateway
         private var logLevel: CSLogLevel = CSLogLevel.OFF
+        private val cSEventInterceptors = mutableListOf<CSEventInterceptor>()
 
         /**
          * Specifies a custom [CoroutineDispatcher] for [ClickStream].
@@ -171,10 +170,14 @@ public class CSConfiguration private constructor(
             }
 
         /**
-         * Builds a [CSConfiguration] object.
+         * Add any [CSEventInterceptor] to intercept clickstream events.
          *
-         * @return A [CSConfiguration] object with this [Builder]'s parameters.
+         * @return This [Builder] instance
          */
+        public fun addInterceptor(interceptor: CSEventInterceptor): Builder = apply {
+            this.cSEventInterceptors.add(interceptor)
+        }
+
         public fun build(): CSConfiguration {
             if (::dispatcher.isInitialized.not()) {
                 dispatcher = Dispatchers.Default
@@ -188,7 +191,7 @@ public class CSConfiguration private constructor(
             if (::remoteConfig.isInitialized.not()) {
                 remoteConfig = NoOpCSRemoteConfig()
             }
-            if(::healthGateway.isInitialized.not()) {
+            if (::healthGateway.isInitialized.not()) {
                 healthGateway = NoOpCSHealthGateway.factory()
             }
             return CSConfiguration(
@@ -202,7 +205,8 @@ public class CSConfiguration private constructor(
                 healthGateway.healthEventRepository,
                 healthGateway.healthEventProcessor,
                 healthGateway.healthEventFactory,
-                appLifeCycle
+                appLifeCycle,
+                cSEventInterceptors
             )
         }
     }

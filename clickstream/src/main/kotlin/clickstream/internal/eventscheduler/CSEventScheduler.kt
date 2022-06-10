@@ -2,7 +2,7 @@ package clickstream.internal.eventscheduler
 
 import clickstream.api.CSInfo
 import clickstream.config.CSEventSchedulerConfig
-import clickstream.extension.isValidMessage
+import clickstream.extension.*
 import clickstream.health.constant.CSEventNamesConstant.ClickStreamEventBatchCreated
 import clickstream.health.constant.CSEventNamesConstant.ClickStreamEventBatchTriggerFailed
 import clickstream.health.constant.CSEventNamesConstant.ClickStreamEventCached
@@ -25,6 +25,8 @@ import clickstream.lifecycle.CSAppLifeCycle
 import clickstream.lifecycle.CSLifeCycleManager
 import clickstream.logger.CSLogger
 import clickstream.model.CSEvent
+import clickstream.interceptor.CSEventInterceptor
+import clickstream.interceptor.CSInterceptedEvent
 import com.gojek.clickstream.de.EventRequest
 import com.gojek.clickstream.internal.Health
 import com.google.protobuf.MessageLite
@@ -71,7 +73,8 @@ internal open class CSEventScheduler(
     private val batteryStatusObserver: CSBatteryStatusObserver,
     private val networkStatusObserver: CSNetworkStatusObserver,
     private val info: CSInfo,
-    private val eventHealthListener: CSEventHealthListener
+    private val eventHealthListener: CSEventHealthListener,
+    private val cSEventInterceptors: List<CSEventInterceptor>
 ) : CSLifeCycleManager(appLifeCycle) {
 
     protected var job: CompletableJob = SupervisorJob()
@@ -115,6 +118,17 @@ internal open class CSEventScheduler(
         val (eventData, eventHealthData) = CSEventData.create(event)
         eventHealthListener.onEventCreated(eventHealthData)
         eventRepository.insertEventData(eventData)
+        dispatchEventToInterceptor {
+            listOf(
+                CSInterceptedEvent.Scheduled(
+                    eventId = eventData.eventGuid,
+                    eventName = getEventName(event.message),
+                    productName = event.message.protoName(),
+                    properties = event.message.toFlatMap(),
+                    timeStamp = eventData.eventTimeStamp
+                )
+            )
+        }
 
         logHealthEvent(
             CSHealthEventDTO(
@@ -144,9 +158,31 @@ internal open class CSEventScheduler(
 
             val (eventData, eventHealthData) = CSEventData.create(event)
             eventHealthListener.onEventCreated(eventHealthData)
+            dispatchEventToInterceptor {
+                listOf(
+                    CSInterceptedEvent.Instant(
+                        eventId = eventData.eventGuid,
+                        eventName = getEventName(event.message),
+                        productName = event.message.protoName(),
+                        properties = event.message.toFlatMap(),
+                        timeStamp = eventData.eventTimeStamp
+                    )
+                )
+            }
             val eventRequest =
                 transformToEventRequest(eventData = listOf(eventData))
             networkManager.processInstantEvent(eventRequest)
+        }
+    }
+
+    private fun dispatchEventToInterceptor(evaluator: () -> List<CSInterceptedEvent>) {
+        if (cSEventInterceptors.isEmpty()) {
+            return
+        }
+        coroutineScope.launch {
+            cSEventInterceptors.forEach {
+                it.onIntercept(evaluator())
+            }
         }
     }
 
@@ -168,6 +204,7 @@ internal open class CSEventScheduler(
             networkManager.eventGuidFlow.collect {
                 when (it) {
                     is CSResult.Success -> {
+                        dispatchSuccessEventToInterceptor(it.value)
                         eventRepository.deleteEventDataByGuId(it.value)
                         logger.debug {
                             "CSEventScheduler#setupObservers - " +
@@ -182,6 +219,23 @@ internal open class CSEventScheduler(
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private suspend fun dispatchSuccessEventToInterceptor(requestId: String) {
+        if (cSEventInterceptors.isEmpty()) {
+            return
+        }
+        val currentRequestIdEvents = eventRepository.getEventsOnGuId(requestId)
+        dispatchEventToInterceptor {
+            currentRequestIdEvents.map { csEvent ->
+                CSInterceptedEvent.Acknowledged(
+                    eventId = csEvent.eventGuid,
+                    eventName = getEventName(csEvent.event()),
+                    productName = csEvent.event().protoName(),
+                    timeStamp = csEvent.eventTimeStamp
+                )
             }
         }
     }
@@ -230,7 +284,16 @@ internal open class CSEventScheduler(
         if (!networkManager.isAvailable()) {
             return isSocketConnected()
         }
-
+        dispatchEventToInterceptor {
+            batch.map { csEvent ->
+                CSInterceptedEvent.Dispatched(
+                    eventId = csEvent.eventGuid,
+                    eventName = getEventName(csEvent.event()),
+                    productName = csEvent.event().protoName(),
+                    timeStamp = csEvent.eventTimeStamp
+                )
+            }
+        }
         val eventRequest =
             transformToEventRequest(eventData = batch)
         if (batch.isNotEmpty() && batch[0].messageName != Health::class.qualifiedName.orEmpty()) {
@@ -316,6 +379,13 @@ internal open class CSEventScheduler(
             )
         }
         return isValid
+    }
+
+    private fun getEventName(message: MessageLite): String? {
+        val eventName = message.eventName()
+        return if (eventName.isNullOrEmpty()) {
+            message.toString()
+        } else eventName
     }
 
     private suspend fun isSocketConnected(): String? {

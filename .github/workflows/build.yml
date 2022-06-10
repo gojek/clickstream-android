@@ -35,6 +35,10 @@ jobs:
           :clickstream-health-metrics:testReleaseUnitTest
           :clickstream-health-metrics-noop:testReleaseUnitTest
           :clickstream-health-metrics-api:testReleaseUnitTest
+          :clickstream-event-visualiser:testReleaseUnitTest
+          :clickstream-event-visualiser-noop:testReleaseUnitTest
+          :clickstream-event-visualiser-ui:testReleaseUnitTest
+          :clickstream-event-visualiser-ui-noop:testReleaseUnitTest
           :app:testReleaseUnitTest
 
   build:
@@ -58,44 +62,87 @@ jobs:
         :clickstream-health-metrics:assembleRelease
         :clickstream-health-metrics-noop:assembleRelease
         :clickstream-health-metrics-api:assembleRelease
+        :clickstream-event-interceptor:assemble
+        :clickstream-event-visualiser:assembleRelease
+        :clickstream-event-visualiser-noop:assembleRelease
+        :clickstream-event-visualiser-ui:assembleRelease
+        :clickstream-event-visualiser-ui-noop:assembleRelease
         :app:assembleRelease
+
     - name: Archive clickstream aar
       uses: actions/upload-artifact@v2
       with:
         name: clickstream
         path: clickstream/build/outputs/aar/**.aar
+
     - name: Archive clickstream-api aar
       uses: actions/upload-artifact@v2
       with:
         name: clickstream-api
         path: clickstream-api/build/outputs/aar/**.aar
+
     - name: Archive clickstream-logger aar
       uses: actions/upload-artifact@v2
       with:
         name: clickstream-logger
         path: clickstream-logger/build/outputs/aar/**.aar
+
     - name: Archive clickstream-lifecycle aar
       uses: actions/upload-artifact@v2
       with:
         name: clickstream-lifecycle
         path: clickstream-lifecycle/build/outputs/aar/**.aar
+
     - name: Archive clickstream-util aar
       uses: actions/upload-artifact@v2
       with:
         name: clickstream-util
         path: clickstream-util/build/outputs/aar/**.aar
+
     - name: Archive clickstream-health-metrics aar
       uses: actions/upload-artifact@v2
       with:
         name: clickstream-health-metrics
         path: clickstream-health-metrics/build/outputs/aar/**.aar
+
     - name: Archive clickstream-health-metrics-noop aar
       uses: actions/upload-artifact@v2
       with:
         name: clickstream-health-metrics-noop
         path: clickstream-health-metrics-noop/build/outputs/aar/**.aar
+
     - name: Archive clickstream-health-metrics-api aar
       uses: actions/upload-artifact@v2
       with:
         name: clickstream-health-metrics-api
         path: clickstream-health-metrics-api/build/outputs/aar/**.aar
+
+    - name: Archive clickstream-event-interceptor jar
+      uses: actions/upload-artifact@v2
+      with:
+        name: clickstream-event-interceptor
+        path: clickstream-event-interceptor/build/libs/**.jar
+
+    - name: Archive clickstream-event-visualiser aar
+      uses: actions/upload-artifact@v2
+      with:
+        name: clickstream-event-visualiser
+        path: clickstream-event-visualiser/build/outputs/aar/**.aar
+
+    - name: Archive clickstream-event-visualiser-noop aar
+      uses: actions/upload-artifact@v2
+      with:
+        name: clickstream-event-visualiser-noop
+        path: clickstream-event-visualiser-noop/build/outputs/aar/**.aar
+
+    - name: Archive clickstream-event-visualiser-ui aar
+      uses: actions/upload-artifact@v2
+      with:
+        name: clickstream-event-visualiser-ui
+        path: clickstream-event-visualiser-ui/build/outputs/aar/**.aar
+
+    - name: Archive clickstream-event-visualiser-ui-noop aar
+      uses: actions/upload-artifact@v2
+      with:
+        name: clickstream-event-visualiser-ui-noop
+        path: clickstream-event-visualiser-ui-noop/build/outputs/aar/**.aar
