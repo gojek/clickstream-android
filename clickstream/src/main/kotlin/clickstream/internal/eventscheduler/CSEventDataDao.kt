@@ -22,7 +22,7 @@ internal interface CSEventDataDao {
      * @param eventData - Event Data to be stored
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(eventData: CSEventData)
+    fun insert(eventData: CSEventData)
 
     /**
      * A function [insertAll] that accommodate an action to save a [List] of [T] object to persistence of choice.
@@ -33,7 +33,7 @@ internal interface CSEventDataDao {
      * @param eventDataList - List of Event Data to be stored
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(eventDataList: List<CSEventData>)
+    fun insertAll(eventDataList: List<CSEventData>)
 
     /**
      * A function [loadAll] that accommodate an action to retrieve all of [T] object from persistence of choice.
@@ -53,7 +53,7 @@ internal interface CSEventDataDao {
      *
      */
     @Query("SELECT * FROM EventData ORDER BY eventTimeStamp DESC")
-    suspend fun getAll(): List<CSEventData>
+    fun getAll(): List<CSEventData>
 
     /**
      * A suspended function [loadOnGoingEvents] that accommodate an action to
@@ -64,7 +64,7 @@ internal interface CSEventDataDao {
      *
      */
     @Query("SELECT * FROM EventData WHERE isOnGoing = 1 ORDER BY eventTimeStamp DESC")
-    suspend fun loadOnGoingEvents(): List<CSEventData>
+    fun loadOnGoingEvents(): List<CSEventData>
 
     /**
      * A suspended function [setOnGoingEvent] that accommodate an action to
@@ -74,7 +74,7 @@ internal interface CSEventDataDao {
      * Thread switching must be handled by the caller side. e.g wrapped in form of [IO]
      */
     @Query("UPDATE EventData SET isOnGoing=:ongoing WHERE eventRequestGuid =:guid ")
-    suspend fun setOnGoingEvent(guid: String, ongoing: Boolean)
+    fun setOnGoingEvent(guid: String, ongoing: Boolean)
 
     /**
      * A function [deleteBy] that accommodate an action to delete of [T] object from persistence of choice
@@ -86,5 +86,5 @@ internal interface CSEventDataDao {
      * @param eventBatchGuId - The Batch for group of events
      */
     @Query("DELETE FROM EventData WHERE eventRequestGuid = :eventBatchGuId")
-    suspend fun deleteByGuId(eventBatchGuId: String)
+    fun deleteByGuId(eventBatchGuId: String)
 }
