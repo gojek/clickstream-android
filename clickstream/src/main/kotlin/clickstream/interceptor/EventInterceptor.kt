@@ -1,5 +1,13 @@
 package clickstream.interceptor
 
+/**
+ * Observes and intercepts all events going out from clickstream.
+ *
+ */
 public interface EventInterceptor {
-    public fun onIntercept(interceptedEventBatch: InterceptedEvent)
+    /**
+     *
+     * @param event
+     */
+    public fun onIntercept(event: InterceptedEvent)
 }

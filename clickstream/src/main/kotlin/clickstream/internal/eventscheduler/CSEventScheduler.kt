@@ -74,7 +74,7 @@ internal open class CSEventScheduler(
     private val networkStatusObserver: CSNetworkStatusObserver,
     private val info: CSInfo,
     private val eventHealthListener: CSEventHealthListener,
-    private val listOfEventInterceptor: List<EventInterceptor>
+    private val eventInterceptors: List<EventInterceptor>
 ) : CSLifeCycleManager(appLifeCycle) {
 
     protected var job: CompletableJob = SupervisorJob()
@@ -156,7 +156,7 @@ internal open class CSEventScheduler(
     }
 
     private fun dispatchEventToInterceptor(interceptedEvent: InterceptedEvent) {
-        listOfEventInterceptor.forEach {
+        eventInterceptors.forEach {
             it.onIntercept(interceptedEvent)
         }
     }
@@ -181,7 +181,7 @@ internal open class CSEventScheduler(
                     is CSResult.Success -> {
                         val currentRequestIdEvents = eventRepository.getEventsOnGuId(it.value)
                         dispatchEventToInterceptor(
-                            InterceptedEvent.Registered(
+                            InterceptedEvent.Acknowledged(
                                 currentRequestIdEvents
                             )
                         )

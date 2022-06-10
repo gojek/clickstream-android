@@ -8,18 +8,14 @@ import clickstream.connection.CSSocketConnectionListener
 import clickstream.connection.NoOpCSConnectionListener
 import clickstream.health.intermediate.CSEventHealthListener
 import clickstream.health.intermediate.CSHealthEventFactory
-import clickstream.health.intermediate.CSHealthEventLoggerListener
 import clickstream.health.intermediate.CSHealthEventProcessor
 import clickstream.health.intermediate.CSHealthEventRepository
 import clickstream.health.CSHealthGateway
 import clickstream.health.NoOpCSHealthGateway
 import clickstream.health.time.CSEventGeneratedTimestampListener
 import clickstream.interceptor.EventInterceptor
-import clickstream.internal.NoOpCSEventHealthListener
-import clickstream.internal.analytics.impl.NoOpCSHealthEventLogger
 import clickstream.internal.di.CSServiceLocator
 import clickstream.lifecycle.CSAppLifeCycle
-import clickstream.lifecycle.impl.DefaultCSAppLifeCycleObserver
 import clickstream.logger.CSLogLevel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -57,7 +53,7 @@ public class CSConfiguration private constructor(
     internal val healthEventProcessor: CSHealthEventProcessor,
     internal val healthEventFactory: CSHealthEventFactory,
     internal val appLifeCycle: CSAppLifeCycle,
-    internal val listOfEventInterceptor: List<EventInterceptor> = listOf(),
+    internal val eventInterceptors: List<EventInterceptor> = listOf(),
 ) {
     /**
      * A Builder for [CSConfiguration]'s.
@@ -103,7 +99,7 @@ public class CSConfiguration private constructor(
         private lateinit var remoteConfig: CSRemoteConfig
         private lateinit var healthGateway: CSHealthGateway
         private var logLevel: CSLogLevel = CSLogLevel.OFF
-        private val listOfEventInterceptor = mutableListOf<EventInterceptor>()
+        private val eventInterceptors = mutableListOf<EventInterceptor>()
 
         /**
          * Specifies a custom [CoroutineDispatcher] for [ClickStream].
@@ -174,10 +170,12 @@ public class CSConfiguration private constructor(
             }
 
         /**
+         * Add any [EventInterceptor] to intercept clickstream events.
+         *
          * @return This [Builder] instance
          */
         public fun addInterceptor(interceptor: EventInterceptor): Builder = apply {
-            this.listOfEventInterceptor.add(interceptor)
+            this.eventInterceptors.add(interceptor)
         }
 
         public fun build(): CSConfiguration {
@@ -208,7 +206,7 @@ public class CSConfiguration private constructor(
                 healthGateway.healthEventProcessor,
                 healthGateway.healthEventFactory,
                 appLifeCycle,
-                listOfEventInterceptor
+                eventInterceptors
             )
         }
     }
