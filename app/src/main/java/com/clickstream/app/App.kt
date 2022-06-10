@@ -5,7 +5,7 @@ import clickstream.ClickStream
 import clickstream.config.CSConfiguration
 import clickstream.connection.CSConnectionEvent
 import clickstream.connection.CSSocketConnectionListener
-import clickstream.eventvisualiser.CSEventVisualiserInterceptor
+import clickstream.eventvisualiser.CSEventVisualiserListener
 import clickstream.eventvisualiser.ui.CSEventVisualiserUI
 import clickstream.lifecycle.impl.DefaultCSAppLifeCycleObserver
 import clickstream.logger.CSLogLevel
@@ -39,7 +39,7 @@ class App : Application() {
                 appLifeCycle = DefaultCSAppLifeCycleObserver(this)
             )
                 .applyLogLevel()
-                .addCSEVInterceptor()
+                .addEventListener()
                 .applySocketConnectionListener()
                 .build()
         )
@@ -52,8 +52,8 @@ class App : Application() {
         return this
     }
 
-    private fun CSConfiguration.Builder.addCSEVInterceptor(): CSConfiguration.Builder {
-        addInterceptor(CSEventVisualiserInterceptor.getInstance())
+    private fun CSConfiguration.Builder.addEventListener(): CSConfiguration.Builder {
+        addEventListener(CSEventVisualiserListener.getInstance())
         return this
     }
 

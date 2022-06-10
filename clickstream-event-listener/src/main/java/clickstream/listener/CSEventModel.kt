@@ -1,4 +1,4 @@
-package clickstream.interceptor
+package clickstream.listener
 
 /**
  * Intercepted event from clickstream with different states.
@@ -11,7 +11,7 @@ package clickstream.interceptor
  * @property timeStamp
  * @constructor Create empty Intercepted event
  */
-public sealed class CSInterceptedEvent(
+public sealed class CSEventModel(
     public open val eventId: String,
     public open val eventName: String?,
     public open val productName: String,
@@ -33,7 +33,7 @@ public sealed class CSInterceptedEvent(
         override val productName: String,
         override val timeStamp: Long,
         public val properties: Map<String, Any?>
-    ) : CSInterceptedEvent(eventId, eventName, productName, timeStamp)
+    ) : CSEventModel(eventId, eventName, productName, timeStamp)
 
     /**
      * Scheduled
@@ -51,7 +51,7 @@ public sealed class CSInterceptedEvent(
         override val productName: String,
         override val timeStamp: Long,
         public val properties: Map<String, Any?>
-    ) : CSInterceptedEvent(eventId, eventName, productName, timeStamp)
+    ) : CSEventModel(eventId, eventName, productName, timeStamp)
 
     /**
      * Dispatched
@@ -67,7 +67,7 @@ public sealed class CSInterceptedEvent(
         override val eventName: String?,
         override val productName: String,
         override val timeStamp: Long,
-    ) : CSInterceptedEvent(eventId, eventName, productName, timeStamp)
+    ) : CSEventModel(eventId, eventName, productName, timeStamp)
 
     /**
      * Acknowledged
@@ -83,6 +83,6 @@ public sealed class CSInterceptedEvent(
         override val eventName: String?,
         override val productName: String,
         override val timeStamp: Long,
-    ) : CSInterceptedEvent(eventId, eventName, productName, timeStamp)
+    ) : CSEventModel(eventId, eventName, productName, timeStamp)
 
 }

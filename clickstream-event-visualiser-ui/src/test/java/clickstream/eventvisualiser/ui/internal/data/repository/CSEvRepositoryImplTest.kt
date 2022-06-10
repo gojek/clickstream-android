@@ -6,10 +6,9 @@ import clickstream.eventvisualiser.ui.internal.data.model.CSEvState
 import clickstream.eventvisualiser.ui.internal.data.repository.fakes.FakeEvDatasource
 import clickstream.eventvisualiser.ui.internal.data.repository.fakes.FakeEvEventObserver
 import clickstream.eventvisualiser.ui.internal.data.repository.fakes.FakeEvEventRepository
-import clickstream.interceptor.CSInterceptedEvent
+import clickstream.listener.CSEventModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
@@ -148,7 +147,7 @@ internal class CSEvRepositoryImplTest {
     ) {
         csObserver.onEventChanged(
             listOf(
-                CSInterceptedEvent.Scheduled(
+                CSEventModel.Scheduled(
                     eventName = eventName,
                     eventId = eventId,
                     productName = productName,
@@ -162,7 +161,7 @@ internal class CSEvRepositoryImplTest {
     private fun emitAckEvents(eventName: String, eventId: String) {
         csObserver.onEventChanged(
             listOf(
-                CSInterceptedEvent.Acknowledged(
+                CSEventModel.Acknowledged(
                     eventName = eventName,
                     eventId = eventId,
                     productName = "Product$eventId",

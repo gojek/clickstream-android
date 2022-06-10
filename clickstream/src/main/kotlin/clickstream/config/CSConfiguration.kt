@@ -16,7 +16,7 @@ import clickstream.health.time.CSEventGeneratedTimestampListener
 import clickstream.internal.di.CSServiceLocator
 import clickstream.lifecycle.CSAppLifeCycle
 import clickstream.logger.CSLogLevel
-import clickstream.interceptor.CSEventInterceptor
+import clickstream.listener.CSEventListener
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -53,7 +53,7 @@ public class CSConfiguration private constructor(
     internal val healthEventProcessor: CSHealthEventProcessor,
     internal val healthEventFactory: CSHealthEventFactory,
     internal val appLifeCycle: CSAppLifeCycle,
-    internal val cSEventInterceptors: List<CSEventInterceptor> = listOf(),
+    internal val eventListeners: List<CSEventListener> = listOf(),
 ) {
     /**
      * A Builder for [CSConfiguration]'s.
@@ -99,7 +99,7 @@ public class CSConfiguration private constructor(
         private lateinit var remoteConfig: CSRemoteConfig
         private lateinit var healthGateway: CSHealthGateway
         private var logLevel: CSLogLevel = CSLogLevel.OFF
-        private val cSEventInterceptors = mutableListOf<CSEventInterceptor>()
+        private val eventListeners = mutableListOf<CSEventListener>()
 
         /**
          * Specifies a custom [CoroutineDispatcher] for [ClickStream].
@@ -170,12 +170,12 @@ public class CSConfiguration private constructor(
             }
 
         /**
-         * Add any [CSEventInterceptor] to intercept clickstream events.
+         * Add any [CSEventListener] to intercept clickstream events.
          *
          * @return This [Builder] instance
          */
-        public fun addInterceptor(interceptor: CSEventInterceptor): Builder = apply {
-            this.cSEventInterceptors.add(interceptor)
+        public fun addEventListener(listener: CSEventListener): Builder = apply {
+            this.eventListeners.add(listener)
         }
 
         public fun build(): CSConfiguration {
@@ -206,7 +206,7 @@ public class CSConfiguration private constructor(
                 healthGateway.healthEventProcessor,
                 healthGateway.healthEventFactory,
                 appLifeCycle,
-                cSEventInterceptors
+                eventListeners
             )
         }
     }

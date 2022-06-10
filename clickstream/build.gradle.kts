@@ -40,7 +40,7 @@ dependencies {
     compileOnly(projects.clickstreamApi)
     compileOnly(projects.clickstreamHealthMetricsApi)
     compileOnly(projects.clickstreamLifecycle)
-    api(projects.clickstreamEventInterceptor)
+    api(projects.clickstreamEventListener)
 
     // Proto
     api(deps.utils.protoLite)

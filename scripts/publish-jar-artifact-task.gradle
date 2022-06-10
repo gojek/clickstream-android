@@ -1,5 +1,6 @@
 apply plugin: 'com.jfrog.artifactory'
 apply plugin: 'maven-publish'
+apply plugin: 'java'
 
 if (!project.hasProperty("artifactory")) return
 
@@ -10,6 +11,11 @@ if (secretPropsFile.exists()) {
     p.each { name, value -> ext[name] = value }
 }
 
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
+    archiveClassifier = "sources"
+}
+
 afterEvaluate {
     publishing {
         publications {
@@ -18,18 +24,16 @@ afterEvaluate {
                 def projectArtifactId = project.ext.get("PUBLISH_ARTIFACT_ID") as String
                 def projectVersionId = project.ext.get("PUBLISH_VERSION") as String
 
-                if (projectArtifactId != null && projectVersionId != null) {
-                    project.artifactoryPublish.skip = false
-                    project.tasks.artifactoryPublish.dependsOn("assemble")
-                    project.tasks.artifactoryPublish.dependsOn("generatePomFileForMavenJavaPublication")
-                    println("$project.name will be published as $projectArtifactId : $projectVersionId")
-                } else {
-                    println("$project.name is missing publishing details")
-                }
+                project.artifactoryPublish.skip = false
+                project.tasks.artifactoryPublish.dependsOn("assemble")
+                project.tasks.artifactoryPublish.dependsOn("generatePomFileForJarPublication")
+
+                println("$project.name will be published as $projectArtifactId : $projectVersionId")
+
                 groupId projectGroupId
                 artifactId projectArtifactId
                 version = projectVersionId
-                artifact("$buildDir/libs/${project.getName()}-${projectVersionId}.jar")
+                artifact("$buildDir/libs/${project.getName()}.jar")
                 pom.withXml {
                     def dependencies = asNode().appendNode('dependencies')
                     configurations.implementation.allDependencies.each {
@@ -81,4 +85,9 @@ artifactory {
             publishPom = true
         }
     }
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 }

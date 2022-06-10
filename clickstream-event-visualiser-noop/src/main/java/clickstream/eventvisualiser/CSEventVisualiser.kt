@@ -1,22 +1,22 @@
 package clickstream.eventvisualiser
 
-import clickstream.interceptor.CSInterceptedEvent
+import clickstream.listener.CSEventModel
 
 /**
- * An Implementation of [CSEVEventObserver] that is used by [CSEventVisualiserInterceptor] singleton.
+ * An Implementation of [CSEVEventObserver] that is used by [CSEventVisualiserListener] singleton.
  *
  * */
 public object CSEventVisualiser : CSEVEventObserver {
 
-    public override fun addObserver(observer: (List<CSInterceptedEvent>) -> Unit) {
+    public override fun addObserver(observer: (List<CSEventModel>) -> Unit) {
         /*NoOp*/
     }
 
-    public override fun removeObserver(observer: (List<CSInterceptedEvent>) -> Unit) {
+    public override fun removeObserver(observer: (List<CSEventModel>) -> Unit) {
         /*NoOp*/
     }
 
-    override fun onEventChanged(events: List<CSInterceptedEvent>) {
+    override fun onEventChanged(events: List<CSEventModel>) {
         /*NoOp*/
     }
 }

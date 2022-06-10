@@ -62,7 +62,7 @@ jobs:
         :clickstream-health-metrics:assembleRelease
         :clickstream-health-metrics-noop:assembleRelease
         :clickstream-health-metrics-api:assembleRelease
-        :clickstream-event-interceptor:assemble
+        :clickstream-event-listener:assemble
         :clickstream-event-visualiser:assembleRelease
         :clickstream-event-visualiser-noop:assembleRelease
         :clickstream-event-visualiser-ui:assembleRelease
@@ -117,11 +117,11 @@ jobs:
         name: clickstream-health-metrics-api
         path: clickstream-health-metrics-api/build/outputs/aar/**.aar
 
-    - name: Archive clickstream-event-interceptor jar
+    - name: Archive clickstream-event-listener jar
       uses: actions/upload-artifact@v2
       with:
-        name: clickstream-event-interceptor
-        path: clickstream-event-interceptor/build/libs/**.jar
+        name: clickstream-event-listener
+        path: clickstream-event-listener/build/libs/**.jar
 
     - name: Archive clickstream-event-visualiser aar
       uses: actions/upload-artifact@v2

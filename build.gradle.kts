@@ -60,8 +60,11 @@ val clean by tasks.creating(Delete::class) {
     delete("${rootDir}/clickstream-health-metrics/build")
     delete("${rootDir}/clickstream-health-metrics-api/build")
     delete("${rootDir}/clickstream-health-metrics-noop/build")
-    delete("${rootDir}/clickstream-event-interceptor/build")
+    delete("${rootDir}/clickstream-event-listener/build")
     delete("${rootDir}/clickstream-event-visualiser/build")
+    delete("${rootDir}/clickstream-event-visualiser-noop/build")
+    delete("${rootDir}/clickstream-event-visualiser-ui/build")
+    delete("${rootDir}/clickstream-event-visualiser-ui-noop/build")
     delete("${rootDir}/report")
 }
 

@@ -55,7 +55,7 @@ dependencies {
     implementation(deps.navigation.ui)
 
     //clickstream
-    implementation(projects.clickstreamEventInterceptor)
+    implementation(projects.clickstreamEventListener)
     implementation(projects.clickstreamEventVisualiser)
 
     //viewmodel and lifecycle
@@ -65,5 +65,5 @@ dependencies {
 
     deps.android.test.unitTest.list.forEach(::testImplementation)
     testImplementation(projects.clickstreamEventVisualiser)
-    testImplementation(projects.clickstreamEventInterceptor)
+    testImplementation(projects.clickstreamEventListener)
 }
