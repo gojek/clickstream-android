@@ -49,7 +49,7 @@ internal class CSBackgroundScheduler(
     private val backgroundLifecycleManager: CSBackgroundLifecycleManager,
     private val info: CSInfo,
     eventHealthListener: CSEventHealthListener,
-    listOfInterceptor: List<EventInterceptor>
+    eventInterceptors: List<EventInterceptor>
 ) : CSEventScheduler(
     appLifeCycle,
     networkManager,
@@ -64,7 +64,7 @@ internal class CSBackgroundScheduler(
     networkStatusObserver,
     info,
     eventHealthListener,
-    listOfInterceptor
+    eventInterceptors
 ) {
 
     override fun onStart() {
