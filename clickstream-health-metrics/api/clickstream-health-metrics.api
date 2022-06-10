@@ -62,13 +62,13 @@ public final class clickstream/health/internal/CSHealthEvent$Companion {
 
 public final class clickstream/health/internal/CSHealthEventDao_Impl : clickstream/health/internal/CSHealthEventDao {
 	public fun <init> (Landroidx/room/RoomDatabase;)V
-	public fun deleteBySessionId (Ljava/lang/String;)V
-	public fun deleteHealthEvent (Ljava/util/List;)V
-	public fun getBucketEventByEventBatchId (Ljava/lang/String;Ljava/lang/String;)Ljava/util/List;
-	public fun getBucketEventsByEventIdList (Ljava/lang/String;Ljava/util/List;)Ljava/util/List;
-	public fun getEventByType (Ljava/lang/String;)Ljava/util/List;
-	public fun insert (Lclickstream/health/internal/CSHealthEvent;)V
-	public fun insertAll (Ljava/util/List;)V
+	public fun deleteBySessionId (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun deleteHealthEvent (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getBucketEventByEventBatchId (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getBucketEventsByEventIdList (Ljava/lang/String;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getEventByType (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun insert (Lclickstream/health/internal/CSHealthEvent;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun insertAll (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public final class clickstream/health/internal/DefaultCSHealthEventFactory : clickstream/health/intermediate/CSHealthEventFactory {
