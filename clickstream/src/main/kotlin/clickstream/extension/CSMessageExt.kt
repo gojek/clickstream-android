@@ -108,13 +108,10 @@ public fun MessageLite.toJson(): JSONObject {
         listOfProperty.forEach { property ->
             val value = when (property.value) {
                 is MessageLite -> getJson(property.value, JSONObject())
-                is List<*> -> property.value.map { ev ->
-                    (ev as? MessageLite)?.run {
-                        getJson(
-                            this,
-                            JSONObject()
-                        )
-                    } ?: this
+                is List<*> -> property.value.map { propertyValue ->
+                    (propertyValue as? MessageLite)?.run {
+                        getJson(this, JSONObject())
+                    } ?: propertyValue
                 }
                 else -> property.value
             }
