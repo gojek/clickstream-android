@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/cs_ev_white1"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_cs_ev_start_capture"
+        style="@style/CSActionBsTextStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:background="@drawable/bg_cs_event_item"
+        android:text="Start capturing" />
+
+    <TextView
+        android:id="@+id/tv_cs_ev_stop_capture"
+        style="@style/CSActionBsTextStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/bg_cs_event_item"
+        android:text="Stop capturing" />
+
+    <TextView
+        android:id="@+id/tv_cs_ev_clear_data"
+        style="@style/CSActionBsTextStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/bg_cs_event_item"
+        android:text="Clear data" />
+
+    <TextView
+        android:id="@+id/tv_cs_ev_close"
+        style="@style/CSActionBsTextStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/bg_cs_event_item"
+        android:text="Close" />
+
+</LinearLayout>

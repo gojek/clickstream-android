@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/home_nav"
+    app:startDestination="@id/CSHomeFragment">
+
+    <fragment
+        android:id="@+id/CSHomeFragment"
+        android:name="clickstream.eventvisualiser.ui.internal.ui.fragment.CSEvHomeListFragment"
+        android:label="CSHomeFragment">
+        <action
+            android:id="@+id/action_CSHomeFragment_to_CSEventListFragment"
+            app:destination="@id/CSEventListFragment" />
+        <action
+            android:id="@+id/action_CSHomeFragment_to_CSEvFilterFragment"
+            app:destination="@id/CSEvFilterFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/CSEventListFragment"
+        android:name="clickstream.eventvisualiser.ui.internal.ui.fragment.CSEvEventListFragment"
+        android:label="CSEventListFragment">
+        <action
+            android:id="@+id/action_CSEventListFragment_to_CSEventDetailFragment"
+            app:destination="@id/CSEventDetailFragment" />
+        <argument
+            android:name="eventName"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/CSEventDetailFragment"
+        android:name="clickstream.eventvisualiser.ui.internal.ui.fragment.CSEvDetailListFragment"
+        android:label="CSEventDetailFragment">
+        <argument
+            android:name="eventName"
+            app:argType="string" />
+        <argument
+            android:name="eventId"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/CSEvFilterFragment"
+        android:name="clickstream.eventvisualiser.ui.internal.ui.fragment.CSEvFilterFragment"
+        android:label="CSEvFilterFragment" />
+</navigation>

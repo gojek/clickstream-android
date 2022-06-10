@@ -29,6 +29,10 @@ jobs:
           :clickstream-health-metrics:assembleRelease
           :clickstream-health-metrics-noop:assembleRelease
           :clickstream-health-metrics-api:assembleRelease
+          :clickstream-event-interceptor:assemble
+          :clickstream-event-visualiser:assembleRelease
+          :clickstream-event-visualiser-noop:assembleRelease
+          :clickstream-event-visualiser-ui:assembleRelease
       - name: Publish to MavenCentral
         run: ./gradlew :clickstream:publishReleasePublicationToSonatypeRepository
           :clickstream-api:publishReleasePublicationToSonatypeRepository
@@ -37,7 +41,12 @@ jobs:
           :clickstream-util:publishReleasePublicationToSonatypeRepository
           :clickstream-health-metrics:publishReleasePublicationToSonatypeRepository
           :clickstream-health-metrics-noop:publishReleasePublicationToSonatypeRepository
-          :clickstream-health-metrics-api:publishReleasePublicationToSonatypeRepository --max-workers 1 closeAndReleaseSonatypeStagingRepository
+          :clickstream-health-metrics-api:publishReleasePublicationToSonatypeRepository
+          :clickstream-event-interceptor:publishReleasePublicationToSonatypeRepository
+          :clickstream-event-visualiser:publishReleasePublicationToSonatypeRepository
+          :clickstream-event-visualiser-noop:publishReleasePublicationToSonatypeRepository
+          :clickstream-event-visualiser-ui:publishReleasePublicationToSonatypeRepository
+          :clickstream-event-visualiser-ui-noop:publishReleasePublicationToSonatypeRepository --max-workers 1 closeAndReleaseSonatypeStagingRepository
         env:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}

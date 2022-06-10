@@ -20,6 +20,14 @@ object versions {
 
 object deps {
     object android {
+
+        object core {
+            const val ktx = "androidx.core:core-ktx:1.5.0"
+            const val appCompat = "androidx.appcompat:appcompat:1.1.0-rc01"
+            const val material = "com.google.android.material:material:1.4.0"
+            const val constraintLayout = "androidx.constraintlayout:constraintlayout:2.1.4"
+        }
+
         object build {
             const val buildToolsVersion = "29.0.2"
             const val compileSdkVersion = 29
@@ -59,6 +67,11 @@ object deps {
         }
     }
 
+    object navigation {
+        const val fragment = "androidx.navigation:navigation-fragment-ktx:2.3.0"
+        const val ui = "androidx.navigation:navigation-ui-ktx:2.3.0"
+    }
+
     object Dagger {
         const val hiltAndroid = "com.google.dagger:hilt-android:2.38.1"
         const val hiltCompiler = "com.google.dagger:hilt-compiler:2.38.1"
@@ -75,8 +88,10 @@ object deps {
 
         object coroutines {
             const val core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${versions.coroutines}"
-            const val android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.coroutines}"
-            const val reactive = "org.jetbrains.kotlinx:kotlinx-coroutines-reactive:${versions.coroutines}"
+            const val android =
+                "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.coroutines}"
+            const val reactive =
+                "org.jetbrains.kotlinx:kotlinx-coroutines-reactive:${versions.coroutines}"
             const val test = "org.jetbrains.kotlinx:kotlinx-coroutines-test:${versions.coroutines}"
 
             val list = listOf(
@@ -94,9 +109,11 @@ object deps {
         const val okHttp = "com.squareup.okhttp3:okhttp:${versions.okHttp}"
         const val scarlet = "com.tinder.scarlet:scarlet:${versions.scarlet}"
         const val scarletOkHttpUtils = "com.tinder.scarlet:websocket-okhttp:${versions.scarlet}"
-        const val scarletCoroutineAdapter = "com.tinder.scarlet:stream-adapter-coroutines:${versions.scarlet}"
+        const val scarletCoroutineAdapter =
+            "com.tinder.scarlet:stream-adapter-coroutines:${versions.scarlet}"
         const val scarletLifeCycle = "com.tinder.scarlet:lifecycle-android:${versions.scarlet}"
-        const val scarletProtobuf = "com.tinder.scarlet:message-adapter-protobuf:${versions.scarlet}"
+        const val scarletProtobuf =
+            "com.tinder.scarlet:message-adapter-protobuf:${versions.scarlet}"
         const val scarletGson = "com.tinder.scarlet:message-adapter-gson:${versions.scarlet}"
 
         val list = listOf(
@@ -119,6 +136,8 @@ object deps {
 
     object lifecycle {
         const val lifeCycleProcess = "androidx.lifecycle:lifecycle-process:${versions.lifecycle}"
+        const val runtime = "androidx.lifecycle:lifecycle-runtime-ktx:${versions.lifecycle}"
+        const val viewmodel = "androidx.lifecycle:lifecycle-viewmodel-ktx:${versions.lifecycle}"
     }
 
     object workManager {
