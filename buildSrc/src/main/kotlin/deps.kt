@@ -39,7 +39,8 @@ object deps {
                     "org.assertj:assertj-core:3.9.1",
                     "com.squareup.okhttp3:mockwebserver:4.9.1",
                     "org.robolectric:robolectric:4.5.1",
-                    "androidx.test:core:1.4.0"
+                    "androidx.test:core:1.4.0",
+                    "org.json:json:20210307"
                 )
             }
 
