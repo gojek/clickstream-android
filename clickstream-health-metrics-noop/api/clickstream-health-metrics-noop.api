@@ -3,30 +3,6 @@ public final class clickstream/health/NoOpCSHealthGateway {
 	public final fun factory ()Lclickstream/health/CSHealthGateway;
 }
 
-public final class clickstream/health/internal/CSHealthDatabase_Impl : clickstream/health/internal/CSHealthDatabase {
-	public fun <init> ()V
-	public fun clearAllTables ()V
-	public fun healthEventDao ()Lclickstream/health/internal/CSHealthEventDao;
-}
-
-public final class clickstream/health/internal/CSHealthEventDao_Impl : clickstream/health/internal/CSHealthEventDao {
-	public fun <init> (Landroidx/room/RoomDatabase;)V
-	public fun deleteBySessionId (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun deleteHealthEvent (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun getBucketEventByEventBatchId (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun getBucketEventsByEventIdList (Ljava/lang/String;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun getEventByType (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun insert (Lclickstream/health/internal/CSHealthEvent;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun insertAll (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-}
-
-public final class com/gojek/android/clickstream/health/metrics/BuildConfig {
-	public static final field BUILD_TYPE Ljava/lang/String;
-	public static final field DEBUG Z
-	public static final field LIBRARY_PACKAGE_NAME Ljava/lang/String;
-	public fun <init> ()V
-}
-
 public final class com/gojek/android/clickstream/health/metrics/noop/BuildConfig {
 	public static final field BUILD_TYPE Ljava/lang/String;
 	public static final field DEBUG Z

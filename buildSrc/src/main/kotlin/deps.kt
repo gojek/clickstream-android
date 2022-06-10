@@ -75,10 +75,8 @@ object deps {
 
         object coroutines {
             const val core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${versions.coroutines}"
-            const val android =
-                "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.coroutines}"
-            const val reactive =
-                "org.jetbrains.kotlinx:kotlinx-coroutines-reactive:${versions.coroutines}"
+            const val android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.coroutines}"
+            const val reactive = "org.jetbrains.kotlinx:kotlinx-coroutines-reactive:${versions.coroutines}"
             const val test = "org.jetbrains.kotlinx:kotlinx-coroutines-test:${versions.coroutines}"
 
             val list = listOf(

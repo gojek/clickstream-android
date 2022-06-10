@@ -1,8 +1,8 @@
 package com.clickstream.app.config
 
-import clickstream.config.CSDeviceInfo
+import clickstream.api.CSDeviceInfo
 
-fun CSDeviceInfo() = object : CSDeviceInfo {
+fun csDeviceInfo() = object : CSDeviceInfo {
     override fun getDeviceManufacturer(): String = "Google"
 
     override fun getDeviceModel(): String = "Pixel 4"

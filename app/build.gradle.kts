@@ -1,8 +1,21 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     kotlin("android")
     kotlin("kapt")
     id("dagger.hilt.android.plugin")
+}
+
+val propFile: File = project.rootProject.file("local.properties")
+val props = Properties()
+if (propFile.exists()) {
+    val fileInput = FileInputStream(propFile)
+    props.load(fileInput)
+    props.forEach { (key, value) ->
+        println("Key : $key Value : $value")
+    }
 }
 
 android {
@@ -19,6 +32,11 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        buildConfigField("String", "ACCOUNT_ID", "\"${props.getProperty("accountId")}\"")
+        buildConfigField("String", "SECRET_KEY", "\"${props.getProperty("secretKey")}\"")
+        buildConfigField("String", "ENDPOINT", "\"${props.getProperty("endpoint")}\"")
+        buildConfigField("String", "STUB_BEARER", "\"${props.getProperty("bearer")}\"")
     }
 
     sourceSets {
@@ -44,6 +62,7 @@ android {
 
     kotlinOptions {
         jvmTarget = "1.8"
+        freeCompilerArgs = listOf("-Xinline-classes")
     }
 
     buildFeatures {
@@ -73,14 +92,16 @@ hilt {
 // However few google libraries uses protobuf-java transitively, hence we have to substitute
 // the protobuf-java to use protobuf-javalite
 configurations.all {
-    resolutionStrategy.dependencySubstitution {
-        substitute(module("com.google.protobuf:protobuf-java:3.11.0"))
-            .because("protobuf javalite supercedes protobuf-java")
-            .with(module("com.google.protobuf:protobuf-javalite:3.11.0"))
+    resolutionStrategy {
+        dependencySubstitution {
+            substitute(module("com.google.protobuf:protobuf-java:3.11.0"))
+                .because("protobuf javalite supercedes protobuf-java")
+                .with(module("com.google.protobuf:protobuf-javalite:3.11.0"))
 
-        substitute(module("com.google.protobuf:protobuf-java:2.6.1"))
-            .because("protobuf javalite supercedes protobuf-java")
-            .with(module("com.google.protobuf:protobuf-javalite:3.11.0"))
+            substitute(module("com.google.protobuf:protobuf-java:2.6.1"))
+                .because("protobuf javalite supercedes protobuf-java")
+                .with(module("com.google.protobuf:protobuf-javalite:3.11.0"))
+        }
     }
 }
 
@@ -92,17 +113,24 @@ dependencies {
     implementation(deps.utils.gson)
     implementation(deps.networkLibs.okHttp)
 
-    implementation("io.github.reactivecircus.flowbinding:flowbinding-android:1.2.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.5.0-rc01")
+    // Coroutine
+    deps.kotlin.coroutines.list.forEach(::implementation)
+    implementation(deps.kotlin.stdlib.core)
+    implementation(deps.kotlin.stdlib.jdk8)
 
+    // Clickstream
     implementation(projects.clickstream)
 
-    implementation("androidx.core:core-ktx:1.7.0")
-    implementation("androidx.appcompat:appcompat:1.4.1")
-    implementation("com.google.android.material:material:1.6.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation("androidx.navigation:navigation-fragment-ktx:2.4.2")
-    implementation("androidx.navigation:navigation-ui-ktx:2.4.2")
+    // Common
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.4.1")
+    implementation("androidx.core:core-ktx:1.5.0")
+    implementation("androidx.appcompat:appcompat:1.1.0-rc01")
+    implementation("com.google.android.material:material:1.4.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.0.2")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.1.0")
+    implementation("androidx.navigation:navigation-ui-ktx:2.1.0")
+    implementation("io.github.reactivecircus.flowbinding:flowbinding-android:1.2.0")
+
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.3")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")

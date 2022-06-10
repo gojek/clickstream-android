@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+./gradlew :app:testReleaseUnitTest &&
 ./gradlew :clickstream:testReleaseUnitTest &&
 ./gradlew :clickstream-api:testReleaseUnitTest &&
 ./gradlew :clickstream-logger:testReleaseUnitTest &&

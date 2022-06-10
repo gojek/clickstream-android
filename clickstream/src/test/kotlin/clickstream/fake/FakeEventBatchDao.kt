@@ -26,26 +26,27 @@ public class FakeEventBatchDao(
         }
     }
 
-    override suspend fun getAll(): List<CSEventData> {
+    override fun getAll(): List<CSEventData> {
         return items
     }
 
-    override suspend fun loadOnGoingEvents(): List<CSEventData> =
-        items.filter { it.isOnGoing }
+    override fun loadOnGoingEvents(): List<CSEventData> {
+        return items.filter { it.isOnGoing }
+    }
 
-    override suspend fun insert(eventData: CSEventData) {
+    override fun insert(eventData: CSEventData) {
         items.add(eventData)
     }
 
-    override suspend fun insertAll(eventDataList: List<CSEventData>) {
+    override fun insertAll(eventDataList: List<CSEventData>) {
         items.addAll(eventDataList)
     }
 
-    override suspend fun deleteByGuId(eventBatchGuId: String) {
+    override fun deleteByGuId(eventBatchGuId: String) {
         items.removeIf { it.eventRequestGuid == eventBatchGuId }
     }
 
-    override suspend fun setOnGoingEvent(guid: String, ongoing: Boolean) {
+    override fun setOnGoingEvent(guid: String, ongoing: Boolean) {
         val newList = items.map { it.copy(isOnGoing = ongoing) }.toList()
         items.clear()
         items.addAll(newList)
