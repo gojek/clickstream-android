@@ -65,7 +65,7 @@ internal class DefaultCServiceLocator(
     override val healthEventProcessor: CSHealthEventProcessor,
     override val healthEventFactory: CSHealthEventFactory,
     override val appLifeCycle: CSAppLifeCycle,
-    override val listOfEventInterceptor: List<EventInterceptor>
+    override val eventInterceptors: List<EventInterceptor>
 ) : CSServiceLocator {
 
     private val guidGenerator: CSGuIdGenerator by lazy {
@@ -173,7 +173,7 @@ internal class DefaultCServiceLocator(
             networkStatusObserver = networkStatusObserver,
             info = info,
             eventHealthListener = eventHealthListener,
-            listOfEventInterceptor = listOfEventInterceptor
+            eventInterceptors = eventInterceptors
         )
     }
 
@@ -215,7 +215,7 @@ internal class DefaultCServiceLocator(
             networkStatusObserver = networkStatusObserver,
             info = info,
             eventHealthListener = eventHealthListener,
-            listOfInterceptor = listOfEventInterceptor
+            listOfInterceptor = eventInterceptors
         )
     }
 

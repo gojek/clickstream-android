@@ -109,5 +109,5 @@ internal interface CSServiceLocator {
     val healthEventProcessor: CSHealthEventProcessor
     val healthEventFactory: CSHealthEventFactory
     val appLifeCycle: CSAppLifeCycle
-    val listOfEventInterceptor : List<EventInterceptor>
+    val eventInterceptors : List<EventInterceptor>
 }
