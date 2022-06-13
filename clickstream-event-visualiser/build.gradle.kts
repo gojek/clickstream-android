@@ -34,6 +34,5 @@ plugins {
 }
 
 dependencies {
-    compileOnly(files("$rootDir/libs/proto-sdk-1.18.6.jar"))
-    compileOnly(projects.clickstream)
+    compileOnly(projects.clickstreamEventVisualiserInterceptor)
 }

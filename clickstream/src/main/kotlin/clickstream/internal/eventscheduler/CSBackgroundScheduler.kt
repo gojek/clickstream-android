@@ -9,7 +9,6 @@ import clickstream.health.intermediate.CSEventHealthListener
 import clickstream.health.intermediate.CSHealthEventRepository
 import clickstream.health.model.CSHealthEventDTO
 import clickstream.health.time.CSTimeStampGenerator
-import clickstream.interceptor.EventInterceptor
 import clickstream.internal.di.CSServiceLocator
 import clickstream.internal.networklayer.CSBackgroundNetworkManager
 import clickstream.internal.utils.CSBatteryStatusObserver
@@ -18,6 +17,7 @@ import clickstream.lifecycle.CSAppLifeCycle
 import clickstream.lifecycle.CSBackgroundLifecycleManager
 import clickstream.logger.CSLogger
 import clickstream.model.CSEvent
+import com.clickstream.clickstream.event_visualiser.interceptor.EventInterceptor
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
