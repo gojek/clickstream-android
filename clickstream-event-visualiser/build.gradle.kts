@@ -34,5 +34,5 @@ plugins {
 }
 
 dependencies {
-    compileOnly(projects.clickstreamEventVisualiserInterceptor)
+    compileOnly(projects.clickstreamEventInterceptor)
 }

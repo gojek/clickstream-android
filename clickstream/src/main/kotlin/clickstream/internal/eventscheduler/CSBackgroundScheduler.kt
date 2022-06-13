@@ -17,7 +17,7 @@ import clickstream.lifecycle.CSAppLifeCycle
 import clickstream.lifecycle.CSBackgroundLifecycleManager
 import clickstream.logger.CSLogger
 import clickstream.model.CSEvent
-import com.clickstream.clickstream.event_visualiser.interceptor.EventInterceptor
+import clickstream.interceptor.EventInterceptor
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi

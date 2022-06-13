@@ -1,6 +1,6 @@
 package com.clickstream.app.main
 
-import com.clickstream.clickstream.event_visualiser.interceptor.InterceptedEvent
+import clickstream.interceptor.InterceptedEvent
 
 sealed class MainState {
 

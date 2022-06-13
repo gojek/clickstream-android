@@ -1,6 +1,6 @@
 package clickstream.event_visualiser
 
-import com.clickstream.clickstream.event_visualiser.interceptor.InterceptedEvent
+import clickstream.interceptor.InterceptedEvent
 
 public abstract class CSEVEventObserver {
     public var enable: Boolean = true

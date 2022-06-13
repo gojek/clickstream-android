@@ -36,7 +36,7 @@ import clickstream.lifecycle.CSAppLifeCycle
 import clickstream.lifecycle.CSBackgroundLifecycleManager
 import clickstream.logger.CSLogLevel
 import clickstream.logger.CSLogger
-import com.clickstream.clickstream.event_visualiser.interceptor.EventInterceptor
+import clickstream.interceptor.EventInterceptor
 import com.tinder.scarlet.Lifecycle
 import com.tinder.scarlet.Scarlet
 import com.tinder.scarlet.lifecycle.android.AndroidLifecycle
