@@ -7,7 +7,7 @@ package clickstream.interceptor
 public interface EventInterceptor {
     /**
      *
-     * @param event
+     * @param events
      */
     public fun onIntercept(events: List<InterceptedEvent>)
 }
