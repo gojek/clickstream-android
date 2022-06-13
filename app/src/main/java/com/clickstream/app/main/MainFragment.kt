@@ -51,6 +51,8 @@ class MainFragment : Fragment() {
         registerObserver()
         vm.processIntents(flows())
         vm.processIntents(sendButtonFlow())
+        vm.processIntents(startButtonFlow())
+        vm.processIntents(stopButtonFlow())
     }
 
     override fun onDestroyView() {
@@ -85,6 +87,8 @@ class MainFragment : Fragment() {
     }
 
     private fun sendButtonFlow() = binding.sendEvent.clicks().map { MainIntent.SendIntent }
+    private fun startButtonFlow() = binding.connect.clicks().map { MainIntent.ConnectIntent }
+    private fun stopButtonFlow() = binding.disconnect.clicks().map { MainIntent.DisconnectIntent }
 
     private fun flows(): Flow<MainIntent> {
         return combine(

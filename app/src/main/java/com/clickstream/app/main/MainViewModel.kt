@@ -29,15 +29,16 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     val dispatcher: Dispatcher,
-    csEv: CSEventVisualiser
+    private val csEv: CSEVEventObserver
 ) : ViewModel() {
 
+    private val eventCallback: (List<InterceptedEvent>) -> Unit = {
+        viewModelScope.launch { _states.emit(MainState.InterceptedEventState(it)) }
+
+    }
+
     init {
-        csEv.addObserver(object : CSEVEventObserver() {
-            override fun onNewEvent(list: List<InterceptedEvent>) {
-                viewModelScope.launch { _states.emit(MainState.InterceptedEventState(list)) }
-            }
-        })
+        startObservingEventChange()
     }
 
     private val _states = MutableStateFlow<MainState>(InFlight)
@@ -48,8 +49,12 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             flows.collect { intent ->
                 when (intent) {
-                    is ConnectIntent -> {}
-                    is DisconnectIntent -> {}
+                    is ConnectIntent -> {
+                        startObservingEventChange()
+                    }
+                    is DisconnectIntent -> {
+                        stopObservingEventChange()
+                    }
                     is SendIntent -> {
                         sendMockCSEvent()
                     }
@@ -57,6 +62,14 @@ class MainViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    private fun startObservingEventChange() {
+        csEv.addCallback(eventCallback)
+    }
+
+    private fun stopObservingEventChange() {
+        csEv.removeCallback(eventCallback)
     }
 
     private fun sendMockCSEvent() {

@@ -5,15 +5,16 @@ import clickstream.interceptor.InterceptedEvent
 
 
 /**
- * An Clickstream [EventInterceptor] that delegate the intercepted event handling to [CSEVEventObserver].
+ * An Clickstream [EventInterceptor] that delegate the intercepted event handling to [CSEventVisualiser].
  * Can be applied to [CSConfiguration.Builder.addInterceptor].
  *
- * Use [getInstance] to create and get a default instance.
+ * Use [getInstance] to create and get a singleton instance.
  *
- * @property eventRepository
+ * @property csEventObserver
  */
-public class CSEventVisualiserInterceptor private constructor(private val csEventVisualiser: CSEventVisualiser) :
-    EventInterceptor {
+public class CSEventVisualiserInterceptor private constructor(
+    private val csEventObserver: CSEVEventObserver
+) : EventInterceptor {
 
     public companion object {
 
@@ -22,9 +23,9 @@ public class CSEventVisualiserInterceptor private constructor(private val csEven
         private var lock = Any()
 
         public fun getInstance(): CSEventVisualiserInterceptor {
-            if (!Companion::csEventInterceptor.isInitialized) {
+            if (!::csEventInterceptor.isInitialized) {
                 synchronized(lock) {
-                    if (!Companion::csEventInterceptor.isInitialized) {
+                    if (!::csEventInterceptor.isInitialized) {
                         csEventInterceptor = CSEventVisualiserInterceptor(CSEventVisualiser)
                     }
                 }
@@ -34,6 +35,6 @@ public class CSEventVisualiserInterceptor private constructor(private val csEven
     }
 
     override fun onIntercept(events: List<InterceptedEvent>) {
-        CSEventVisualiser.setNewEvent(events)
+        csEventObserver.setNewEvent(events)
     }
 }
