@@ -14,6 +14,7 @@ import com.clickstream.app.config.StubBearer
 import com.clickstream.app.config.csConfig
 import com.clickstream.app.config.csInfo
 import com.clickstream.app.helper.printMessage
+import com.gojek.clickstream.clickstream_event_visualiser.CSEventVisualiserInterceptor
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
@@ -37,6 +38,7 @@ class App : Application() {
                 appLifeCycle = DefaultCSAppLifeCycleObserver(this)
             )
             .applyLogLevel()
+                .addCSEVInterceptor()
             .applySocketConnectionListener()
             .build()
         )
@@ -44,6 +46,11 @@ class App : Application() {
 
     private fun CSConfiguration.Builder.applyLogLevel(): CSConfiguration.Builder {
         setLogLevel(CSLogLevel.DEBUG)
+        return this
+    }
+
+    private fun CSConfiguration.Builder.addCSEVInterceptor(): CSConfiguration.Builder {
+        addInterceptor(CSEventVisualiserInterceptor.getInstance())
         return this
     }
 

@@ -120,10 +120,13 @@ dependencies {
 
     // Clickstream
     implementation(projects.clickstream)
+    implementation(projects.clickstreamEventVisualiser)
+    implementation(files("$rootDir/libs/proto-consumer-1.18.6.jar"))
 
     // Common
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.4.1")
     implementation("androidx.core:core-ktx:1.5.0")
+    implementation("androidx.fragment:fragment-ktx:1.4.1")
     implementation("androidx.appcompat:appcompat:1.1.0-rc01")
     implementation("com.google.android.material:material:1.4.0")
     implementation("androidx.constraintlayout:constraintlayout:2.0.2")
