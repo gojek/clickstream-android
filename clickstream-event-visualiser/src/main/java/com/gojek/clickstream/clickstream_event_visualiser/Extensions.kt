@@ -5,10 +5,10 @@ import clickstream.extension.toJson
 import clickstream.extension.protoName
 import clickstream.interceptor.InterceptedEvent
 
-internal fun InterceptedEvent.toEVEvent(): List<EVEvent> =
+internal fun InterceptedEvent.toEVEvent(): List<CSEVEvent> =
     when (this) {
         is InterceptedEvent.Instant -> listOf(
-            EVEvent.Instant(
+            CSEVEvent.Instant(
                 eventId = event.eventGuid,
                 eventName = messageLite.eventName() ?: "",
                 productName = messageLite.protoName(),
@@ -17,7 +17,7 @@ internal fun InterceptedEvent.toEVEvent(): List<EVEvent> =
             )
         )
         is InterceptedEvent.Scheduled -> listOf(
-            EVEvent.Scheduled(
+            CSEVEvent.Scheduled(
                 eventId = event.eventGuid,
                 eventName = messageLite.eventName() ?: "",
                 productName = messageLite.protoName(),
@@ -27,16 +27,25 @@ internal fun InterceptedEvent.toEVEvent(): List<EVEvent> =
         )
         is InterceptedEvent.Dispatched -> events.map {
             val rawEvent = it.event()
-            EVEvent.Dispatched(
+            CSEVEvent.Dispatched(
                 eventId = it.eventGuid,
                 eventName = rawEvent.eventName() ?: "",
                 productName = rawEvent.protoName(),
                 timeStamp = it.eventTimeStamp,
             )
         }
-        is InterceptedEvent.Registered -> events.map {
+        is InterceptedEvent.Acknowledged -> events.map {
             val rawEvent = it.event()
-            EVEvent.Registered(
+            CSEVEvent.Acknowledged(
+                eventId = it.eventGuid,
+                eventName = rawEvent.eventName() ?: "",
+                productName = rawEvent.protoName(),
+                timeStamp = it.eventTimeStamp,
+            )
+        }
+        else -> events.map {
+            val rawEvent = it.event()
+            CSEVEvent.Acknowledged(
                 eventId = it.eventGuid,
                 eventName = rawEvent.eventName() ?: "",
                 productName = rawEvent.protoName(),
