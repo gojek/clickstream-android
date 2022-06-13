@@ -1,7 +1,7 @@
 package com.clickstream.app.main
 
+import clickstream.event_visualiser.CSEventVisualiser
 import com.clickstream.app.helper.Dispatcher
-import com.gojek.clickstream.clickstream_event_visualiser.CSEventVisualiser
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

@@ -1,4 +1,4 @@
-package com.gojek.clickstream.clickstream_event_visualiser
+package clickstream.event_visualiser
 
 import com.clickstream.clickstream.event_visualiser.interceptor.InterceptedEvent
 
