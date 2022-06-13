@@ -34,7 +34,11 @@ public sealed class CSConnectionEvent {
      *
      * @property shutdownReason Reason to shutdown from the peer.
      */
-    public data class OnConnectionClosed(val shutdownReason: CSShutdownReason) : CSConnectionEvent()
+    public data class OnConnectionClosed(val shutdownReason: CSShutdownReason) : CSConnectionEvent() {
+        override fun toString(): String {
+            return "Code : ${shutdownReason.code}, Reason : ${shutdownReason.reason}"
+        }
+    }
 
     /**
      * Invoked when a web socket has been closed due to an error reading from or writing to the network. Both outgoing

@@ -14,23 +14,29 @@ internal class DefaultCSEventRepository(
     private val eventDataDao: CSEventDataDao
 ) : CSEventRepository {
 
-    override suspend fun insertEventData(eventData: CSEventData): Unit =
+    override suspend fun insertEventData(eventData: CSEventData) {
         eventDataDao.insert(eventData = eventData)
+    }
 
-    override suspend fun insertEventDataList(eventDataList: List<CSEventData>): Unit =
+    override suspend fun insertEventDataList(eventDataList: List<CSEventData>) {
         eventDataDao.insertAll(eventDataList = eventDataList)
+    }
 
-    override suspend fun getEventDataList(): Flow<List<CSEventData>> =
-        eventDataDao.loadAll()
+    override suspend fun getEventDataList(): Flow<List<CSEventData>> {
+        return eventDataDao.loadAll()
+    }
 
-    override suspend fun getAllEvents(): List<CSEventData> =
-        eventDataDao.getAll()
+    override suspend fun getAllEvents(): List<CSEventData> {
+        return eventDataDao.getAll()
+    }
 
-    override suspend fun getOnGoingEvents(): List<CSEventData> =
-        eventDataDao.loadOnGoingEvents()
+    override suspend fun getOnGoingEvents(): List<CSEventData> {
+        return eventDataDao.loadOnGoingEvents()
+    }
 
-    override suspend fun resetOnGoingForGuid(guid: String): Unit =
+    override suspend fun resetOnGoingForGuid(guid: String) {
         eventDataDao.setOnGoingEvent(guid, false)
+    }
 
     override suspend fun deleteEventDataByGuId(eventBatchGuId: String) {
         eventDataDao.deleteByGuId(eventBatchGuId = eventBatchGuId)

@@ -6,9 +6,13 @@ import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.map
 import reactivecircus.flowbinding.android.widget.afterTextChanges
 
-sealed interface MainIntent {
-
+interface MainIntentValue {
     val value: String?
+}
+
+sealed class MainIntent : MainIntentValue {
+
+    override val value: String?
         get() = null
 
     open class InputIntent(
@@ -17,7 +21,7 @@ sealed interface MainIntent {
         val gender: String?,
         val phone: String?,
         val email: String?
-    ) : MainIntent {
+    ) : MainIntent() {
 
         constructor() : this(null, null, null, null, null)
 
@@ -77,9 +81,9 @@ sealed interface MainIntent {
         }
     }
 
-    object ConnectIntent : MainIntent
+    object ConnectIntent : MainIntent()
 
-    object DisconnectIntent : MainIntent
+    object DisconnectIntent : MainIntent()
 
-    object SendIntent : MainIntent
+    object SendIntent : MainIntent()
 }

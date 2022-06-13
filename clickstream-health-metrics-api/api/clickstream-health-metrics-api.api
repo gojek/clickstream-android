@@ -5,15 +5,6 @@ public abstract interface class clickstream/health/CSHealthGateway {
 	public abstract fun getHealthEventRepository ()Lclickstream/health/intermediate/CSHealthEventRepository;
 }
 
-public abstract interface class clickstream/health/CSTimeStampGenerator {
-	public abstract fun getTimeStamp ()J
-}
-
-public final class clickstream/health/DefaultCSTimeStampGenerator : clickstream/health/CSTimeStampGenerator {
-	public fun <init> (Lclickstream/health/time/CSEventGeneratedTimestampListener;)V
-	public fun getTimeStamp ()J
-}
-
 public final class clickstream/health/constant/CSEventDestinationConstant {
 	public static final field CS_DESTINATION Ljava/lang/String;
 	public static final field CT_DESTINATION Ljava/lang/String;
@@ -211,6 +202,15 @@ public final class clickstream/health/model/CSHealthEventDTO {
 
 public abstract interface class clickstream/health/time/CSEventGeneratedTimestampListener {
 	public abstract fun now ()J
+}
+
+public abstract interface class clickstream/health/time/CSTimeStampGenerator {
+	public abstract fun getTimeStamp ()J
+}
+
+public final class clickstream/health/time/DefaultCSTimeStampGenerator : clickstream/health/time/CSTimeStampGenerator {
+	public fun <init> (Lclickstream/health/time/CSEventGeneratedTimestampListener;)V
+	public fun getTimeStamp ()J
 }
 
 public final class com/gojek/android/clickstream/health/metrics/api/BuildConfig {

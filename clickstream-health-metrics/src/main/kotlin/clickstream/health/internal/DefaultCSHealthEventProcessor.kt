@@ -85,7 +85,8 @@ public class DefaultCSHealthEventProcessor(
             if (!appVersionPreference.isAppVersionEqual(appVersion) && isActive) {
                 healthEventRepository.deleteHealthEvents(
                     healthEventRepository.getAggregateEvents()
-                        .filter { healthEventConfig.isTrackedViaClickstream(it.eventName) })
+                        .filter { healthEventConfig.isTrackedViaClickstream(it.eventName) }
+                )
             }
         }
     }
@@ -106,7 +107,7 @@ public class DefaultCSHealthEventProcessor(
         }
         job = SupervisorJob()
         coroutineScope = CoroutineScope(job + dispatcher)
-        sendEvents()
+        logEventsToAnalytics()
     }
 
     /**
@@ -133,10 +134,7 @@ public class DefaultCSHealthEventProcessor(
         return healthEvents
     }
 
-    /**
-     * Sends all existing events in the database to server
-     */
-    private fun sendEvents() {
+    private fun logEventsToAnalytics() {
         logger.debug { "CSHealthEventProcessor#sendEvents" }
 
         coroutineScope.launch {
@@ -151,8 +149,8 @@ public class DefaultCSHealthEventProcessor(
                 return@launch
             }
             if (healthEventConfig.destination.contains(CSEventDestinationConstant.CT_DESTINATION)) {
-                logger.debug { "CSHealthEventProcessor#sendEvents - sendEventsToCleverTap" }
-                sendEventsToCleverTap()
+                logger.debug { "CSHealthEventProcessor#sendEvents - sendEventsToAnalytics" }
+                sendEventsToAnalytics()
             }
         }
     }
@@ -161,7 +159,7 @@ public class DefaultCSHealthEventProcessor(
         return healthEventConfig.isEnabled(info.appInfo.appVersion, info.userInfo.identity)
     }
 
-    private suspend fun sendEventsToCleverTap() {
+    private suspend fun sendEventsToAnalytics() {
         sendInstantEvents()
         sendAggregateEvents()
         sendBucketEvents()
@@ -171,7 +169,7 @@ public class DefaultCSHealthEventProcessor(
         logger.debug { "CSHealthEventProcessor#sendInstantEvents" }
 
         val instantEvents: List<CSHealthEventDTO> = healthEventRepository.getInstantEvents()
-        pushEvents(instantEvents.dtosMapTo())
+        logAndDeleteEvents(instantEvents.dtosMapTo())
         healthEventRepository.deleteHealthEvents(instantEvents)
     }
 
@@ -182,8 +180,7 @@ public class DefaultCSHealthEventProcessor(
         aggregateEvents
             .groupBy { it.eventName }
             .forEach { entry: Entry<String, List<CSHealthEventDTO>> ->
-                val errorEvents: Map<String, List<CSHealthEventDTO>> =
-                    entry.value.filter { it.error.isNotBlank() }.groupBy { it.error }
+                val errorEvents: Map<String, List<CSHealthEventDTO>> = entry.value.filter { it.error.isNotBlank() }.groupBy { it.error }
                 if (errorEvents.isEmpty()) {
                     sendAggregateEventsBasedOnEventName(entry.value.dtosMapTo())
                 } else {
@@ -203,13 +200,11 @@ public class DefaultCSHealthEventProcessor(
             .forEach { batch ->
                 val healthEvent = events[0].copy(
                     eventId = batch.filter { it.eventId.isNotBlank() }.joinToString { it.eventId },
-                    eventBatchId = batch.filter { it.eventBatchId.isNotBlank() }
-                        .joinToString { it.eventBatchId },
-                    timestamp = batch.filter { it.timestamp.isNotBlank() }
-                        .joinToString { it.timestamp },
+                    eventBatchId = batch.filter { it.eventBatchId.isNotBlank() }.joinToString { it.eventBatchId },
+                    timestamp = batch.filter { it.timestamp.isNotBlank() }.joinToString { it.timestamp },
                     count = batch.size
                 )
-                pushEvents(listOf(healthEvent))
+                logAndDeleteEvents(listOf(healthEvent))
             }
     }
 
@@ -220,13 +215,11 @@ public class DefaultCSHealthEventProcessor(
             val batch: List<CSHealthEvent> = entry.value.dtosMapTo()
             val healthEvent = batch[0].copy(
                 eventId = batch.filter { it.eventId.isNotBlank() }.joinToString { it.eventId },
-                eventBatchId = batch.filter { it.eventBatchId.isNotBlank() }
-                    .joinToString { it.eventBatchId },
-                timestamp = batch.filter { it.timestamp.isNotBlank() }
-                    .joinToString { it.timestamp },
+                eventBatchId = batch.filter { it.eventBatchId.isNotBlank() }.joinToString { it.eventBatchId },
+                timestamp = batch.filter { it.timestamp.isNotBlank() }.joinToString { it.timestamp },
                 count = batch.size
             )
-            pushEvents(listOf(healthEvent))
+            logAndDeleteEvents(listOf(healthEvent))
         }
     }
 
@@ -237,23 +230,22 @@ public class DefaultCSHealthEventProcessor(
         val events = bucketEvents.map { event ->
             val eventName = event.eventName
             val bucketType = when {
-                eventName == ClickStreamEventBatchLatency.value &&
-                        event.stopTime > event.startTime -> {
+                eventName == ClickStreamEventBatchLatency.value && event.stopTime > event.startTime -> {
                     getBucketTypeForBatchLatency(
                         event.startTime,
                         event.stopTime,
                         event.networkType
                     )
                 }
-                eventName == ClickStreamEventWaitTime.value &&
-                        event.stopTime > event.startTime -> {
+                eventName == ClickStreamEventWaitTime.value && event.stopTime > event.startTime -> {
                     getBucketTypeForWaitTime(event.startTime, event.stopTime)
                 }
-                eventName == ClickStreamEventBatchWaitTime.value &&
-                        event.stopTime > event.startTime ->
+                eventName == ClickStreamEventBatchWaitTime.value && event.stopTime > event.startTime -> {
                     getBucketTypeForWaitTime(event.startTime, event.stopTime)
-                eventName == ClickStreamBatchSize.value ->
+                }
+                eventName == ClickStreamBatchSize.value -> {
                     getBucketTypeForBatchSize(event.batchSize)
+                }
                 else -> event.bucketType
             }
             event.copy(bucketType = bucketType)
@@ -318,27 +310,24 @@ public class DefaultCSHealthEventProcessor(
 
         val groupByEventNames = bucketEvents.groupBy { it.eventName }
         groupByEventNames.forEach { entry: Entry<String, List<CSHealthEventDTO>> ->
-            val groupByBucketType: Map<String, List<CSHealthEvent>> =
-                entry.value.dtosMapTo().groupBy { it.bucketType }
+            val groupByBucketType: Map<String, List<CSHealthEvent>> = entry.value.dtosMapTo().groupBy { it.bucketType }
+
             groupByBucketType.forEach {
                 val batches = it.value.chunked(MAX_BATCH_THRESHOLD)
                 batches.forEach { batch ->
                     val healthEvent = batch[0].copy(
-                        eventId = batch.filter { it.eventId.isNotBlank() }
-                            .joinToString { it.eventId },
-                        eventBatchId = batch.filter { it.eventBatchId.isNotBlank() }
-                            .joinToString { it.eventBatchId },
-                        timestamp = batch.filter { it.timestamp.isNotBlank() }
-                            .joinToString { it.timestamp },
+                        eventId = batch.filter { it.eventId.isNotBlank() }.joinToString { it.eventId },
+                        eventBatchId = batch.filter { it.eventBatchId.isNotBlank() }.joinToString { it.eventBatchId },
+                        timestamp = batch.filter { it.timestamp.isNotBlank() }.joinToString { it.timestamp },
                         count = batch.size
                     )
-                    pushEvents(listOf(healthEvent))
+                    logAndDeleteEvents(listOf(healthEvent))
                 }
             }
         }
     }
 
-    private suspend fun pushEvents(events: List<CSHealthEvent>) {
+    private suspend fun logAndDeleteEvents(events: List<CSHealthEvent>) {
         logger.debug { "CSHealthEventProcessor#pushEvents" }
 
         events.forEach {
@@ -361,8 +350,7 @@ public class DefaultCSHealthEventProcessor(
             eventGuids += eventIdArray
         }
 
-        val eventBatchGuids =
-            events.filter { it.eventBatchId.isNotBlank() }.map { it.eventBatchId }
+        val eventBatchGuids = events.filter { it.eventBatchId.isNotBlank() }.map { it.eventBatchId }
 
         logger.debug { "CSHealthEventProcessor#createHealthProto - eventGuids $eventGuids" }
         logger.debug { "CSHealthEventProcessor#createHealthProto - eventBatchGuids $eventBatchGuids" }
@@ -373,18 +361,9 @@ public class DefaultCSHealthEventProcessor(
             numberOfBatches = eventBatchGuids.size.toLong()
 
             logger.debug { "CSHealthEventProcessor#createHealthProto# - isVerboseLoggingEnabled ${healthEventConfig.isVerboseLoggingEnabled()}" }
-            logger.debug {
-                "CSHealthEventProcessor#createHealthProto# - isExemptedFromVerbosityCheck ${
-                    isExemptedFromVerbosityCheck(
-                        eventName
-                    )
-                }"
-            }
+            logger.debug { "CSHealthEventProcessor#createHealthProto# - isExemptedFromVerbosityCheck ${isExemptedFromVerbosityCheck(eventName)}" }
 
-            if (healthEventConfig.isVerboseLoggingEnabled() || isExemptedFromVerbosityCheck(
-                    eventName
-                )
-            ) {
+            if (healthEventConfig.isVerboseLoggingEnabled() || isExemptedFromVerbosityCheck(eventName)) {
                 healthDetails = HealthDetails.newBuilder().apply {
                     addAllEventGuids(eventGuids)
                     addAllEventBatchGuids(eventBatchGuids)

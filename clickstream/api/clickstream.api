@@ -31,10 +31,11 @@ public final class clickstream/config/CSConfiguration {
 }
 
 public final class clickstream/config/CSConfiguration$Builder {
-	public fun <init> (Landroid/content/Context;Lclickstream/api/CSInfo;Lclickstream/config/CSConfig;Lclickstream/lifecycle/CSAppLifeCycle;Lclickstream/health/CSHealthGateway;)V
+	public fun <init> (Landroid/content/Context;Lclickstream/api/CSInfo;Lclickstream/config/CSConfig;Lclickstream/lifecycle/CSAppLifeCycle;)V
 	public final fun build ()Lclickstream/config/CSConfiguration;
 	public final fun setDispatcher (Lkotlinx/coroutines/CoroutineDispatcher;)Lclickstream/config/CSConfiguration$Builder;
 	public final fun setEventGeneratedTimestamp (Lclickstream/health/time/CSEventGeneratedTimestampListener;)Lclickstream/config/CSConfiguration$Builder;
+	public final fun setHealthGateway (Lclickstream/health/CSHealthGateway;)Lclickstream/config/CSConfiguration$Builder;
 	public final fun setLogLevel (Lclickstream/logger/CSLogLevel;)Lclickstream/config/CSConfiguration$Builder;
 	public final fun setRemoteConfig (Lclickstream/config/CSRemoteConfig;)Lclickstream/config/CSConfiguration$Builder;
 	public final fun setSocketConnectionListener (Lclickstream/connection/CSSocketConnectionListener;)Lclickstream/config/CSConfiguration$Builder;

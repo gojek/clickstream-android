@@ -30,8 +30,9 @@ public class FakeEventBatchDao(
         return items
     }
 
-    override suspend fun loadOnGoingEvents(): List<CSEventData> =
-        items.filter { it.isOnGoing }
+    override suspend fun loadOnGoingEvents(): List<CSEventData> {
+        return items.filter { it.isOnGoing }
+    }
 
     override suspend fun insert(eventData: CSEventData) {
         items.add(eventData)

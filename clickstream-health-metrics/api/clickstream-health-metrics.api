@@ -1,7 +1,7 @@
 public final class clickstream/health/DefaultCSHealthGateway {
 	public static final field INSTANCE Lclickstream/health/DefaultCSHealthGateway;
-	public final fun factory (Landroid/content/Context;Lclickstream/health/model/CSHealthEventConfig;Lclickstream/api/CSInfo;Lclickstream/logger/CSLogger;Lclickstream/health/intermediate/CSHealthEventLoggerListener;Ljava/lang/String;Lclickstream/health/CSTimeStampGenerator;Lclickstream/api/CSMetaProvider;Lclickstream/health/intermediate/CSEventHealthListener;Lclickstream/lifecycle/CSAppLifeCycle;Lclickstream/health/identity/CSGuIdGenerator;Lkotlinx/coroutines/CoroutineDispatcher;Lclickstream/util/CSAppVersionSharedPref;)Lclickstream/health/CSHealthGateway;
-	public static synthetic fun factory$default (Lclickstream/health/DefaultCSHealthGateway;Landroid/content/Context;Lclickstream/health/model/CSHealthEventConfig;Lclickstream/api/CSInfo;Lclickstream/logger/CSLogger;Lclickstream/health/intermediate/CSHealthEventLoggerListener;Ljava/lang/String;Lclickstream/health/CSTimeStampGenerator;Lclickstream/api/CSMetaProvider;Lclickstream/health/intermediate/CSEventHealthListener;Lclickstream/lifecycle/CSAppLifeCycle;Lclickstream/health/identity/CSGuIdGenerator;Lkotlinx/coroutines/CoroutineDispatcher;Lclickstream/util/CSAppVersionSharedPref;ILjava/lang/Object;)Lclickstream/health/CSHealthGateway;
+	public final fun factory (Ljava/lang/String;Ljava/lang/String;Landroid/content/Context;Lclickstream/health/model/CSHealthEventConfig;Lclickstream/api/CSInfo;Lclickstream/logger/CSLogger;Lclickstream/health/intermediate/CSHealthEventLoggerListener;Lclickstream/health/time/CSTimeStampGenerator;Lclickstream/api/CSMetaProvider;Lclickstream/health/intermediate/CSEventHealthListener;Lclickstream/lifecycle/CSAppLifeCycle;Lclickstream/health/identity/CSGuIdGenerator;Lkotlinx/coroutines/CoroutineDispatcher;Lclickstream/util/CSAppVersionSharedPref;)Lclickstream/health/CSHealthGateway;
+	public static synthetic fun factory$default (Lclickstream/health/DefaultCSHealthGateway;Ljava/lang/String;Ljava/lang/String;Landroid/content/Context;Lclickstream/health/model/CSHealthEventConfig;Lclickstream/api/CSInfo;Lclickstream/logger/CSLogger;Lclickstream/health/intermediate/CSHealthEventLoggerListener;Lclickstream/health/time/CSTimeStampGenerator;Lclickstream/api/CSMetaProvider;Lclickstream/health/intermediate/CSEventHealthListener;Lclickstream/lifecycle/CSAppLifeCycle;Lclickstream/health/identity/CSGuIdGenerator;Lkotlinx/coroutines/CoroutineDispatcher;Lclickstream/util/CSAppVersionSharedPref;ILjava/lang/Object;)Lclickstream/health/CSHealthGateway;
 }
 
 public final class clickstream/health/internal/CSHealthDatabase_Impl {
@@ -72,7 +72,7 @@ public final class clickstream/health/internal/CSHealthEventDao_Impl : clickstre
 }
 
 public final class clickstream/health/internal/DefaultCSHealthEventFactory : clickstream/health/intermediate/CSHealthEventFactory {
-	public fun <init> (Lclickstream/health/identity/CSGuIdGenerator;Lclickstream/health/CSTimeStampGenerator;Lclickstream/api/CSMetaProvider;)V
+	public fun <init> (Lclickstream/health/identity/CSGuIdGenerator;Lclickstream/health/time/CSTimeStampGenerator;Lclickstream/api/CSMetaProvider;)V
 	public fun create (Lcom/gojek/clickstream/internal/Health;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 

@@ -1,6 +1,12 @@
 package com.clickstream.app.config
 
-fun CSInfo() = CSInfo(
+import clickstream.api.CSAppInfo
+import clickstream.api.CSInfo
+import clickstream.api.CSLocationInfo
+import clickstream.api.CSSessionInfo
+import clickstream.api.CSUserInfo
+
+fun csInfo() = CSInfo(
     appInfo = CSAppInfo(appVersion = "1.1.0"),
     locationInfo = CSLocationInfo(
         latitude = -6.1753871,
@@ -8,8 +14,8 @@ fun CSInfo() = CSInfo(
         s2Ids = emptyMap()
     ),
     sessionInfo = CSSessionInfo("1234"),
-    deviceInfo = CSDeviceInfo(),
-    customerInfo = CSUserInfo(
+    deviceInfo = csDeviceInfo(),
+    userInfo = CSUserInfo(
         "ID", "ID", 1234, "bill@gmail.com"
     )
 )
