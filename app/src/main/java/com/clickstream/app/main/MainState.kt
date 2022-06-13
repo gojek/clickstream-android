@@ -1,11 +1,11 @@
 package com.clickstream.app.main
 
-import com.gojek.clickstream.clickstream_event_visualiser.CSEVEvent
+import com.clickstream.clickstream.event_visualiser.interceptor.InterceptedEvent
 
 sealed class MainState {
 
     object InFlight : MainState()
-    class CSEventState(val list: List<CSEVEvent>) : MainState()
+    class InterceptedEventState(val list: List<InterceptedEvent>) : MainState()
 
     data class Content(
         val isNameInputNull: Boolean

@@ -11,7 +11,7 @@ import com.clickstream.app.main.MainIntent.DisconnectIntent
 import com.clickstream.app.main.MainIntent.InputIntent
 import com.clickstream.app.main.MainIntent.SendIntent
 import com.clickstream.app.main.MainState.InFlight
-import com.gojek.clickstream.clickstream_event_visualiser.CSEVEvent
+import com.clickstream.clickstream.event_visualiser.interceptor.InterceptedEvent
 import com.gojek.clickstream.clickstream_event_visualiser.CSEVEventObserver
 import com.gojek.clickstream.clickstream_event_visualiser.CSEventVisualiser
 import com.gojek.clickstream.common.Customer
@@ -34,8 +34,8 @@ class MainViewModel @Inject constructor(
 
     init {
         csEv.addObserver(object : CSEVEventObserver() {
-            override fun onNewEvent(list: List<CSEVEvent>) {
-                viewModelScope.launch { _states.emit(MainState.CSEventState(list)) }
+            override fun onNewEvent(list: List<InterceptedEvent>) {
+                viewModelScope.launch { _states.emit(MainState.InterceptedEventState(list)) }
             }
         })
     }

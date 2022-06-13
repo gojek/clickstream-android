@@ -16,7 +16,6 @@ import clickstream.health.intermediate.CSHealthEventRepository
 import clickstream.health.time.CSEventGeneratedTimestampListener
 import clickstream.health.time.CSTimeStampGenerator
 import clickstream.health.time.DefaultCSTimeStampGenerator
-import clickstream.interceptor.EventInterceptor
 import clickstream.internal.db.CSDatabase
 import clickstream.internal.di.CSServiceLocator
 import clickstream.internal.eventprocessor.CSEventProcessor
@@ -37,6 +36,7 @@ import clickstream.lifecycle.CSAppLifeCycle
 import clickstream.lifecycle.CSBackgroundLifecycleManager
 import clickstream.logger.CSLogLevel
 import clickstream.logger.CSLogger
+import com.clickstream.clickstream.event_visualiser.interceptor.EventInterceptor
 import com.tinder.scarlet.Lifecycle
 import com.tinder.scarlet.Scarlet
 import com.tinder.scarlet.lifecycle.android.AndroidLifecycle

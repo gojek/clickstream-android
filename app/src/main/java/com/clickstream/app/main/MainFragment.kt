@@ -17,7 +17,7 @@ import com.clickstream.app.main.MainIntent.InputIntent.EmailInputIntent.Companio
 import com.clickstream.app.main.MainIntent.InputIntent.GenderInputIntent.Companion.setupGenderInputFlow
 import com.clickstream.app.main.MainIntent.InputIntent.NameInputIntent.Companion.setupNameInputFlow
 import com.clickstream.app.main.MainIntent.InputIntent.PhoneInputIntent.Companion.setupPhoneInputFlow
-import com.gojek.clickstream.clickstream_event_visualiser.CSEVEvent
+import com.clickstream.clickstream.event_visualiser.interceptor.InterceptedEvent
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
@@ -63,7 +63,7 @@ class MainFragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(STARTED) {
                 vm.states.collect {
                     when (it) {
-                        is MainState.CSEventState -> handleEventInterception(it.list)
+                        is MainState.InterceptedEventState -> handleEventInterception(it.list)
                         else -> { // no-op
                         }
                     }
@@ -73,10 +73,10 @@ class MainFragment : Fragment() {
     }
 
 
-    private fun handleEventInterception(eventList: List<CSEVEvent>) {
+    private fun handleEventInterception(eventList: List<InterceptedEvent>) {
         eventList.forEach {
             when (it) {
-                is CSEVEvent.Scheduled -> {
+                is InterceptedEvent.Scheduled -> {
                     Log.e("EV EVENTS:", it.properties.toString())
                 }
                 else -> {}

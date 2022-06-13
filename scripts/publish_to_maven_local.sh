@@ -7,5 +7,6 @@
 ./gradlew :clickstream-util:assembleRelease -PisLocal -Partifactory && ./gradlew :clickstream-util:publishToMavenLocal -PisLocal -Partifactory &&
 ./gradlew :clickstream-health-metrics:assembleRelease -PisLocal -Partifactory && ./gradlew :clickstream-health-metrics:publishToMavenLocal -PisLocal -Partifactory &&
 ./gradlew :clickstream-health-metrics-noop:assembleRelease -PisLocal -Partifactory && ./gradlew :clickstream-health-metrics-noop:publishToMavenLocal -PisLocal -Partifactory &&
-./gradlew :clickstream-health-metrics-api:assembleRelease -PisLocal -Partifactory && ./gradlew :clickstream-health-metrics-api:publishToMavenLocal -PisLocal -Partifactory
-./gradlew :clickstream-event-visualiser:assembleRelease -PisLocal -Partifactory && ./gradlew :clickstream-event-visualiser:publishToMavenLocal -PisLocal -Partifactory
+./gradlew :clickstream-health-metrics-api:assembleRelease -PisLocal -Partifactory && ./gradlew :clickstream-health-metrics-api:publishToMavenLocal -PisLocal -Partifactory &&
+./gradlew :clickstream-event-visualiser:assembleRelease -PisLocal -Partifactory && ./gradlew :clickstream-event-visualiser:publishToMavenLocal -PisLocal -Partifactory &&
+./gradlew :clickstream-event-visualiser-interceptor:assemble -PisLocal -Partifactory && ./gradlew :clickstream-event-visualiser-interceptor:publishToMavenLocal -PisLocal -Partifactory

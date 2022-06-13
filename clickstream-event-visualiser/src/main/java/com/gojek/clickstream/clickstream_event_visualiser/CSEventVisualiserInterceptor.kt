@@ -1,8 +1,7 @@
 package com.gojek.clickstream.clickstream_event_visualiser
 
-import clickstream.config.CSConfiguration
-import clickstream.interceptor.EventInterceptor
-import clickstream.interceptor.InterceptedEvent
+import com.clickstream.clickstream.event_visualiser.interceptor.EventInterceptor
+import com.clickstream.clickstream.event_visualiser.interceptor.InterceptedEvent
 
 
 /**
@@ -15,10 +14,6 @@ import clickstream.interceptor.InterceptedEvent
  */
 public class CSEventVisualiserInterceptor private constructor(private val csEventVisualiser: CSEventVisualiser) :
     EventInterceptor {
-
-    override fun onIntercept(event: InterceptedEvent) {
-        csEventVisualiser.setNewEvent(event)
-    }
 
     public companion object {
 
@@ -36,5 +31,9 @@ public class CSEventVisualiserInterceptor private constructor(private val csEven
             }
             return csEventInterceptor
         }
+    }
+
+    override fun onIntercept(events: List<InterceptedEvent>) {
+        csEventVisualiser.setNewEvent(events)
     }
 }

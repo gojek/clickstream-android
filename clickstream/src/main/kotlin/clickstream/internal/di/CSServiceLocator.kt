@@ -6,7 +6,6 @@ import clickstream.health.intermediate.CSEventHealthListener
 import clickstream.health.intermediate.CSHealthEventFactory
 import clickstream.health.intermediate.CSHealthEventProcessor
 import clickstream.health.intermediate.CSHealthEventRepository
-import clickstream.interceptor.EventInterceptor
 import clickstream.internal.eventprocessor.CSEventProcessor
 import clickstream.internal.eventscheduler.CSBackgroundScheduler
 import clickstream.internal.eventscheduler.CSEventScheduler
@@ -15,6 +14,7 @@ import clickstream.internal.workmanager.CSWorkManager
 import clickstream.lifecycle.CSAppLifeCycle
 import clickstream.logger.CSLogLevel
 import clickstream.logger.CSLogger
+import com.clickstream.clickstream.event_visualiser.interceptor.EventInterceptor
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 

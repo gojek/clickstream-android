@@ -1,6 +1,6 @@
 package com.gojek.clickstream.clickstream_event_visualiser
 
-import clickstream.interceptor.InterceptedEvent
+import com.clickstream.clickstream.event_visualiser.interceptor.InterceptedEvent
 import java.util.concurrent.atomic.AtomicReference
 
 public object CSEventVisualiser {
@@ -15,10 +15,10 @@ public object CSEventVisualiser {
         observers.get().remove(observer)
     }
 
-    internal fun setNewEvent(interceptedEvent: InterceptedEvent) {
+    internal fun setNewEvent(events: List<InterceptedEvent>) {
         observers.get().forEach {
             if (it.enable) {
-                it.onNewEvent(interceptedEvent.toEVEvent())
+                it.onNewEvent(events)
             }
         }
     }
