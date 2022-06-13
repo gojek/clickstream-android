@@ -3,6 +3,8 @@ package com.clickstream.app.main
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import clickstream.ClickStream
+import clickstream.event_visualiser.CSEVEventObserver
+import clickstream.event_visualiser.CSEventVisualiser
 import clickstream.model.CSEvent
 import com.clickstream.app.helper.Dispatcher
 import com.clickstream.app.helper.printMessage
@@ -12,8 +14,6 @@ import com.clickstream.app.main.MainIntent.InputIntent
 import com.clickstream.app.main.MainIntent.SendIntent
 import com.clickstream.app.main.MainState.InFlight
 import com.clickstream.clickstream.event_visualiser.interceptor.InterceptedEvent
-import com.gojek.clickstream.clickstream_event_visualiser.CSEVEventObserver
-import com.gojek.clickstream.clickstream_event_visualiser.CSEventVisualiser
 import com.gojek.clickstream.common.Customer
 import com.gojek.clickstream.common.CustomerRole
 import com.google.protobuf.Timestamp

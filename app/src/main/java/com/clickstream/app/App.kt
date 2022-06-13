@@ -5,6 +5,7 @@ import clickstream.ClickStream
 import clickstream.config.CSConfiguration
 import clickstream.connection.CSConnectionEvent
 import clickstream.connection.CSSocketConnectionListener
+import clickstream.event_visualiser.CSEventVisualiserInterceptor
 import clickstream.lifecycle.impl.DefaultCSAppLifeCycleObserver
 import clickstream.logger.CSLogLevel
 import com.clickstream.app.config.AccountId
@@ -14,7 +15,6 @@ import com.clickstream.app.config.StubBearer
 import com.clickstream.app.config.csConfig
 import com.clickstream.app.config.csInfo
 import com.clickstream.app.helper.printMessage
-import com.gojek.clickstream.clickstream_event_visualiser.CSEventVisualiserInterceptor
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 

@@ -1,4 +1,4 @@
-package com.gojek.clickstream.clickstream_event_visualiser
+package clickstream.event_visualiser
 
 import com.clickstream.clickstream.event_visualiser.interceptor.EventInterceptor
 import com.clickstream.clickstream.event_visualiser.interceptor.InterceptedEvent
@@ -22,9 +22,9 @@ public class CSEventVisualiserInterceptor private constructor(private val csEven
         private var lock = Any()
 
         public fun getInstance(): CSEventVisualiserInterceptor {
-            if (!::csEventInterceptor.isInitialized) {
+            if (!Companion::csEventInterceptor.isInitialized) {
                 synchronized(lock) {
-                    if (!::csEventInterceptor.isInitialized) {
+                    if (!Companion::csEventInterceptor.isInitialized) {
                         csEventInterceptor = CSEventVisualiserInterceptor(CSEventVisualiser)
                     }
                 }
@@ -34,6 +34,6 @@ public class CSEventVisualiserInterceptor private constructor(private val csEven
     }
 
     override fun onIntercept(events: List<InterceptedEvent>) {
-        csEventVisualiser.setNewEvent(events)
+        CSEventVisualiser.setNewEvent(events)
     }
 }
