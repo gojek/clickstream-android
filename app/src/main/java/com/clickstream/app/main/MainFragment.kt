@@ -1,6 +1,7 @@
 package com.clickstream.app.main
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,10 +17,14 @@ import com.clickstream.app.main.MainIntent.InputIntent.EmailInputIntent.Companio
 import com.clickstream.app.main.MainIntent.InputIntent.GenderInputIntent.Companion.setupGenderInputFlow
 import com.clickstream.app.main.MainIntent.InputIntent.NameInputIntent.Companion.setupNameInputFlow
 import com.clickstream.app.main.MainIntent.InputIntent.PhoneInputIntent.Companion.setupPhoneInputFlow
+import com.gojek.clickstream.clickstream_event_visualiser.CSEVEvent
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import reactivecircus.flowbinding.android.view.clicks
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
@@ -45,6 +50,7 @@ class MainFragment : Fragment() {
 
         registerObserver()
         vm.processIntents(flows())
+        vm.processIntents(sendButtonFlow())
     }
 
     override fun onDestroyView() {
@@ -55,10 +61,30 @@ class MainFragment : Fragment() {
     private fun registerObserver() {
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(STARTED) {
-                vm.states
+                vm.states.collect {
+                    when (it) {
+                        is MainState.CSEventState -> handleEventInterception(it.list)
+                        else -> { // no-op
+                        }
+                    }
+                }
             }
         }
     }
+
+
+    private fun handleEventInterception(eventList: List<CSEVEvent>) {
+        eventList.forEach {
+            when (it) {
+                is CSEVEvent.Scheduled -> {
+                    Log.e("EV EVENTS:", it.properties.toString())
+                }
+                else -> {}
+            }
+        }
+    }
+
+    private fun sendButtonFlow() = binding.sendEvent.clicks().map { MainIntent.SendIntent }
 
     private fun flows(): Flow<MainIntent> {
         return combine(

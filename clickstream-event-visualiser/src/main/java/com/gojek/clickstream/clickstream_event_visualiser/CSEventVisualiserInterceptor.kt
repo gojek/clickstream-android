@@ -3,7 +3,6 @@ package com.gojek.clickstream.clickstream_event_visualiser
 import clickstream.config.CSConfiguration
 import clickstream.interceptor.EventInterceptor
 import clickstream.interceptor.InterceptedEvent
-import net.jcip.annotations.GuardedBy
 
 
 /**
@@ -24,7 +23,6 @@ public class CSEventVisualiserInterceptor private constructor(private val csEven
     public companion object {
 
         @Volatile
-        @GuardedBy("lock")
         private lateinit var csEventInterceptor: CSEventVisualiserInterceptor
         private var lock = Any()
 

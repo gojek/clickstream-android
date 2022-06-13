@@ -1,6 +1,7 @@
 package com.clickstream.app.main
 
 import com.clickstream.app.helper.Dispatcher
+import com.gojek.clickstream.clickstream_event_visualiser.CSEventVisualiser
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,4 +24,7 @@ internal object MainModule {
                 get() = Dispatchers.Main
         }
     }
+
+    @Provides
+    fun getEventVisualiser() = CSEventVisualiser
 }

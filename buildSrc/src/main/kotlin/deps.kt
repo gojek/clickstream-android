@@ -112,7 +112,6 @@ object deps {
         const val roomCompiler = "androidx.room:room-compiler:${versions.room}"
         const val roomTesting = "androidx.room:room-testing:${versions.room}"
         const val roomKtx = "androidx.room:room-ktx:${versions.room}"
-        const val sqlite = "org.xerial:sqlite-jdbc:3.34.0"
 
         val list = listOf(
             room, roomKtx

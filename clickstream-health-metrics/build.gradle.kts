@@ -47,5 +47,4 @@ dependencies {
     // Room
     deps.room.list.forEach(::implementation)
     kapt(deps.room.roomCompiler)
-    kapt(deps.room.sqlite)
 }

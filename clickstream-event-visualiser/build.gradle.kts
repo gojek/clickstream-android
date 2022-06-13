@@ -25,7 +25,6 @@ android {
     }
 }
 
-
 plugins {
     id("com.android.library")
     kotlin("android")
@@ -34,10 +33,7 @@ plugins {
 
 }
 
-
-
 dependencies {
-    implementation(files("$rootDir/libs/proto-sdk-1.18.6.jar"))
-    implementation(projects.clickstream)
-
+    compileOnly(files("$rootDir/libs/proto-sdk-1.18.6.jar"))
+    compileOnly(projects.clickstream)
 }
