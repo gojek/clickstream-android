@@ -14,7 +14,7 @@ import clickstream.internal.workmanager.CSWorkManager
 import clickstream.lifecycle.CSAppLifeCycle
 import clickstream.logger.CSLogLevel
 import clickstream.logger.CSLogger
-import com.clickstream.clickstream.event_visualiser.interceptor.EventInterceptor
+import clickstream.interceptor.EventInterceptor
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 

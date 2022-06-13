@@ -8,7 +8,7 @@ include ':clickstream-util'
 include ':clickstream-health-metrics'
 include ':clickstream-health-metrics-api'
 include ':clickstream-health-metrics-noop'
+include ':clickstream-event-visualiser'
+include ':clickstream-event-interceptor'
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
-include ':clickstream-event-visualiser'
-include ':clickstream-event-visualiser-interceptor'

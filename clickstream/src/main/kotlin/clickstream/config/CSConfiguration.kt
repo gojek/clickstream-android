@@ -16,7 +16,7 @@ import clickstream.health.time.CSEventGeneratedTimestampListener
 import clickstream.internal.di.CSServiceLocator
 import clickstream.lifecycle.CSAppLifeCycle
 import clickstream.logger.CSLogLevel
-import com.clickstream.clickstream.event_visualiser.interceptor.EventInterceptor
+import clickstream.interceptor.EventInterceptor
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

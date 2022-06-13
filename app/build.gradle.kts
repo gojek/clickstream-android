@@ -121,7 +121,7 @@ dependencies {
     // Clickstream
     implementation(projects.clickstream)
     implementation(projects.clickstreamEventVisualiser)
-    implementation(projects.clickstreamEventVisualiserInterceptor)
+    implementation(projects.clickstreamEventInterceptor)
     implementation(files("$rootDir/libs/proto-consumer-1.18.6.jar"))
 
     // Common

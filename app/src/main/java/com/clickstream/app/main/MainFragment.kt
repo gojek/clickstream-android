@@ -17,7 +17,7 @@ import com.clickstream.app.main.MainIntent.InputIntent.EmailInputIntent.Companio
 import com.clickstream.app.main.MainIntent.InputIntent.GenderInputIntent.Companion.setupGenderInputFlow
 import com.clickstream.app.main.MainIntent.InputIntent.NameInputIntent.Companion.setupNameInputFlow
 import com.clickstream.app.main.MainIntent.InputIntent.PhoneInputIntent.Companion.setupPhoneInputFlow
-import com.clickstream.clickstream.event_visualiser.interceptor.InterceptedEvent
+import clickstream.interceptor.InterceptedEvent
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect

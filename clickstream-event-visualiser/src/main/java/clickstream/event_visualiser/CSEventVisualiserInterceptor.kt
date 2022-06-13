@@ -1,7 +1,7 @@
 package clickstream.event_visualiser
 
-import com.clickstream.clickstream.event_visualiser.interceptor.EventInterceptor
-import com.clickstream.clickstream.event_visualiser.interceptor.InterceptedEvent
+import clickstream.interceptor.EventInterceptor
+import clickstream.interceptor.InterceptedEvent
 
 
 /**

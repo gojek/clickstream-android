@@ -13,7 +13,7 @@ import com.clickstream.app.main.MainIntent.DisconnectIntent
 import com.clickstream.app.main.MainIntent.InputIntent
 import com.clickstream.app.main.MainIntent.SendIntent
 import com.clickstream.app.main.MainState.InFlight
-import com.clickstream.clickstream.event_visualiser.interceptor.InterceptedEvent
+import clickstream.interceptor.InterceptedEvent
 import com.gojek.clickstream.common.Customer
 import com.gojek.clickstream.common.CustomerRole
 import com.google.protobuf.Timestamp

@@ -1,6 +1,6 @@
 package clickstream.event_visualiser
 
-import com.clickstream.clickstream.event_visualiser.interceptor.InterceptedEvent
+import clickstream.interceptor.InterceptedEvent
 import java.util.concurrent.atomic.AtomicReference
 
 public object CSEventVisualiser {

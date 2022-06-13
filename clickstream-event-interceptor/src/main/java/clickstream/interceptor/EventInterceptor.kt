@@ -1,4 +1,4 @@
-package com.clickstream.clickstream.event_visualiser.interceptor
+package clickstream.interceptor
 
 /**
  * Observes and intercepts all events going out from clickstream.

@@ -1,4 +1,4 @@
-package com.clickstream.clickstream.event_visualiser.interceptor
+package clickstream.interceptor
 
 import org.json.JSONObject
 

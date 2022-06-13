@@ -28,8 +28,8 @@ import clickstream.lifecycle.CSAppLifeCycle
 import clickstream.lifecycle.CSLifeCycleManager
 import clickstream.logger.CSLogger
 import clickstream.model.CSEvent
-import com.clickstream.clickstream.event_visualiser.interceptor.EventInterceptor
-import com.clickstream.clickstream.event_visualiser.interceptor.InterceptedEvent
+import clickstream.interceptor.EventInterceptor
+import clickstream.interceptor.InterceptedEvent
 import com.gojek.clickstream.de.EventRequest
 import com.gojek.clickstream.internal.Health
 import com.google.protobuf.MessageLite
