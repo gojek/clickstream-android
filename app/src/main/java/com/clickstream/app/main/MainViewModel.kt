@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import clickstream.ClickStream
 import clickstream.event_visualiser.CSEVEventObserver
-import clickstream.event_visualiser.CSEventVisualiser
 import clickstream.model.CSEvent
 import com.clickstream.app.helper.Dispatcher
 import com.clickstream.app.helper.printMessage
@@ -13,9 +12,21 @@ import com.clickstream.app.main.MainIntent.DisconnectIntent
 import com.clickstream.app.main.MainIntent.InputIntent
 import com.clickstream.app.main.MainIntent.SendIntent
 import com.clickstream.app.main.MainState.InFlight
-import clickstream.interceptor.InterceptedEvent
+import clickstream.interceptor.CSInterceptedEvent
+import com.gojek.clickstream.common.App
 import com.gojek.clickstream.common.Customer
 import com.gojek.clickstream.common.CustomerRole
+import com.gojek.clickstream.common.EventMeta
+import com.gojek.clickstream.products.common.AppType
+import com.gojek.clickstream.products.common.DroppedProperties
+import com.gojek.clickstream.products.common.DroppedPropertiesBatch
+import com.gojek.clickstream.products.common.Product
+import com.gojek.clickstream.products.shuffle.ShuffleArticleCard
+import com.gojek.clickstream.products.shuffle.ShuffleCardV2
+import com.gojek.clickstream.products.shuffle.ShuffleContent
+import com.gojek.clickstream.products.shuffle.ShuffleGroupedCard
+import com.gojek.clickstream.products.telemetry.Protocol
+import com.gojek.clickstream.products.telemetry.PubSubHealth
 import com.google.protobuf.Timestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -32,7 +43,7 @@ class MainViewModel @Inject constructor(
     private val csEv: CSEVEventObserver
 ) : ViewModel() {
 
-    private val eventCallback: (List<InterceptedEvent>) -> Unit = {
+    private val eventCallback: (List<CSInterceptedEvent>) -> Unit = {
         viewModelScope.launch { _states.emit(MainState.InterceptedEventState(it)) }
 
     }
@@ -73,13 +84,24 @@ class MainViewModel @Inject constructor(
     }
 
     private fun sendMockCSEvent() {
-        val customerProto = Customer.newBuilder().apply {
-            currentCountry = "India"
-            email = "kshitij.sharma@gojek.com"
-            identity = 78
-            signedUpCountry = "India"
-            role = CustomerRole.CUSTOMER_ROLE_CASHIER
+        val customerProto = DroppedPropertiesBatch.newBuilder().apply {
+            appType = AppType.Consumer
+            product = Product.GoSend
+            addAllDroppedProperties(
+                listOf(
+                    DroppedProperties.newBuilder()
+                        .addProperties("kshitij")
+                        .addProperties("kera")
+                        .build(),
+                    DroppedProperties.newBuilder()
+                        .addProperties("amil")
+                        .addProperties("gogo")
+                        .build()
+                )
+            )
         }.build()
+
+
         ClickStream.getInstance().trackEvent(
             CSEvent(
                 UUID.randomUUID().toString(),

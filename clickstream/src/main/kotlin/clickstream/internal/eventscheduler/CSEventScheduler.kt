@@ -2,10 +2,7 @@ package clickstream.internal.eventscheduler
 
 import clickstream.api.CSInfo
 import clickstream.config.CSEventSchedulerConfig
-import clickstream.extension.eventName
-import clickstream.extension.isValidMessage
-import clickstream.extension.protoName
-import clickstream.extension.toJson
+import clickstream.extension.*
 import clickstream.health.constant.CSEventNamesConstant.ClickStreamEventBatchCreated
 import clickstream.health.constant.CSEventNamesConstant.ClickStreamEventBatchTriggerFailed
 import clickstream.health.constant.CSEventNamesConstant.ClickStreamEventCached
@@ -28,8 +25,8 @@ import clickstream.lifecycle.CSAppLifeCycle
 import clickstream.lifecycle.CSLifeCycleManager
 import clickstream.logger.CSLogger
 import clickstream.model.CSEvent
-import clickstream.interceptor.EventInterceptor
-import clickstream.interceptor.InterceptedEvent
+import clickstream.interceptor.CSEventInterceptor
+import clickstream.interceptor.CSInterceptedEvent
 import com.gojek.clickstream.de.EventRequest
 import com.gojek.clickstream.internal.Health
 import com.google.protobuf.MessageLite
@@ -77,7 +74,7 @@ internal open class CSEventScheduler(
     private val networkStatusObserver: CSNetworkStatusObserver,
     private val info: CSInfo,
     private val eventHealthListener: CSEventHealthListener,
-    private val eventInterceptors: List<EventInterceptor>
+    private val cSEventInterceptors: List<CSEventInterceptor>
 ) : CSLifeCycleManager(appLifeCycle) {
 
     protected var job: CompletableJob = SupervisorJob()
@@ -121,17 +118,17 @@ internal open class CSEventScheduler(
         val (eventData, eventHealthData) = CSEventData.create(event)
         eventHealthListener.onEventCreated(eventHealthData)
         eventRepository.insertEventData(eventData)
-        dispatchEventToInterceptor(
+        dispatchEventToInterceptor {
             listOf(
-                InterceptedEvent.Scheduled(
+                CSInterceptedEvent.Scheduled(
                     eventId = eventData.eventGuid,
                     eventName = event.message.eventName(),
                     productName = event.message.protoName(),
-                    properties = event.message.toJson(),
+                    properties = event.message.toFlatMap(),
                     timeStamp = eventData.eventTimeStamp
                 )
             )
-        )
+        }
 
         logHealthEvent(
             CSHealthEventDTO(
@@ -161,28 +158,29 @@ internal open class CSEventScheduler(
 
             val (eventData, eventHealthData) = CSEventData.create(event)
             eventHealthListener.onEventCreated(eventHealthData)
-            dispatchEventToInterceptor(
+            dispatchEventToInterceptor {
                 listOf(
-                    InterceptedEvent.Instant(
+                    CSInterceptedEvent.Instant(
                         eventId = eventData.eventGuid,
                         eventName = event.message.eventName(),
                         productName = event.message.protoName(),
-                        properties = event.message.toJson(),
+                        properties = event.message.toFlatMap(),
                         timeStamp = eventData.eventTimeStamp
                     )
                 )
-            )
+            }
             val eventRequest =
                 transformToEventRequest(eventData = listOf(eventData))
             networkManager.processInstantEvent(eventRequest)
         }
     }
 
-    private fun dispatchEventToInterceptor(interceptedEvents: List<InterceptedEvent>) {
-        eventInterceptors.forEach {
-            it.onIntercept(interceptedEvents)
+    private fun dispatchEventToInterceptor(evaluator: () -> List<CSInterceptedEvent>) =
+        coroutineScope.launch {
+            cSEventInterceptors.forEach {
+                it.onIntercept(evaluator())
+            }
         }
-    }
 
     /**
      * Sets up the observers to listen the event data and response from network manager
@@ -203,16 +201,16 @@ internal open class CSEventScheduler(
                 when (it) {
                     is CSResult.Success -> {
                         val currentRequestIdEvents = eventRepository.getEventsOnGuId(it.value)
-                        dispatchEventToInterceptor(
+                        dispatchEventToInterceptor {
                             currentRequestIdEvents.map { csEvent ->
-                                InterceptedEvent.Acknowledged(
+                                CSInterceptedEvent.Acknowledged(
                                     eventId = csEvent.eventGuid,
                                     eventName = csEvent.event().eventName(),
                                     productName = csEvent.event().protoName(),
                                     timeStamp = csEvent.eventTimeStamp
                                 )
                             }
-                        )
+                        }
                         eventRepository.deleteEventDataByGuId(it.value)
                         logger.debug {
                             "CSEventScheduler#setupObservers - " +
@@ -275,14 +273,16 @@ internal open class CSEventScheduler(
         if (!networkManager.isAvailable()) {
             return isSocketConnected()
         }
-        dispatchEventToInterceptor(batch.map { csEvent ->
-            InterceptedEvent.Dispatched(
-                eventId = csEvent.eventGuid,
-                eventName = csEvent.event().eventName(),
-                productName = csEvent.event().protoName(),
-                timeStamp = csEvent.eventTimeStamp
-            )
-        })
+        dispatchEventToInterceptor {
+            batch.map { csEvent ->
+                CSInterceptedEvent.Dispatched(
+                    eventId = csEvent.eventGuid,
+                    eventName = csEvent.event().eventName(),
+                    productName = csEvent.event().protoName(),
+                    timeStamp = csEvent.eventTimeStamp
+                )
+            }
+        }
         val eventRequest =
             transformToEventRequest(eventData = batch)
         if (batch.isNotEmpty() && batch[0].messageName != Health::class.qualifiedName.orEmpty()) {

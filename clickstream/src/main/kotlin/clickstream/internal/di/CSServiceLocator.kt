@@ -14,7 +14,7 @@ import clickstream.internal.workmanager.CSWorkManager
 import clickstream.lifecycle.CSAppLifeCycle
 import clickstream.logger.CSLogLevel
 import clickstream.logger.CSLogger
-import clickstream.interceptor.EventInterceptor
+import clickstream.interceptor.CSEventInterceptor
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
@@ -109,5 +109,5 @@ internal interface CSServiceLocator {
     val healthEventProcessor: CSHealthEventProcessor
     val healthEventFactory: CSHealthEventFactory
     val appLifeCycle: CSAppLifeCycle
-    val eventInterceptors : List<EventInterceptor>
+    val cSEventInterceptors : List<CSEventInterceptor>
 }

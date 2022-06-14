@@ -1,11 +1,11 @@
 package clickstream.event_visualiser
 
-import clickstream.interceptor.EventInterceptor
-import clickstream.interceptor.InterceptedEvent
+import clickstream.interceptor.CSEventInterceptor
+import clickstream.interceptor.CSInterceptedEvent
 
 
 /**
- * An Clickstream [EventInterceptor] that delegate the intercepted event handling to [CSEventVisualiser].
+ * An Clickstream [CSEventInterceptor] that delegate the intercepted event handling to [CSEventVisualiser].
  * Can be applied to [CSConfiguration.Builder.addInterceptor].
  *
  * Use [getInstance] to create and get a singleton instance.
@@ -14,7 +14,7 @@ import clickstream.interceptor.InterceptedEvent
  */
 public class CSEventVisualiserInterceptor private constructor(
     private val csEventObserver: CSEVEventObserver
-) : EventInterceptor {
+) : CSEventInterceptor {
 
     public companion object {
 
@@ -34,7 +34,7 @@ public class CSEventVisualiserInterceptor private constructor(
         }
     }
 
-    override fun onIntercept(events: List<InterceptedEvent>) {
-        csEventObserver.setNewEvent(events)
+    override fun onIntercept(events: List<CSInterceptedEvent>) {
+        csEventObserver.onEventChanged(events)
     }
 }

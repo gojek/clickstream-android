@@ -5,13 +5,12 @@ import com.gojek.clickstream.products.telemetry.Protocol
 import com.gojek.clickstream.products.telemetry.PubSubHealth
 import com.gojek.clickstream.products.telemetry.QOS
 import com.gojek.clickstream.products.telemetry.Topic
-import org.json.JSONObject
 import org.junit.Test
 
 internal class CSMessageExtTest {
 
     @Test
-    fun `Given proto with basic data types as field check if toJson returns valid json`() {
+    fun `Given proto with basic data types as field check if toFlatMap returns valid map`() {
 
         val address = Address.newBuilder().apply {
             id = "1"
@@ -21,18 +20,18 @@ internal class CSMessageExtTest {
             locationDetails = "location details"
         }.build()
 
-        val addressJson = address.toJson()
+        val addressMap = address.toFlatMap()
 
-        assert(addressJson["Id"] == "1")
-        assert(addressJson["Label"] == "home address")
-        assert(addressJson["PillPosition"] == 5)
-        assert(addressJson["ChangedAddressSourceOnUi"] == true)
-        assert(addressJson["LocationDetails"] == "location details")
+        assert(addressMap["id_"] == "1")
+        assert(addressMap["label_"] == "home address")
+        assert(addressMap["pillPosition_"] == 5)
+        assert(addressMap["changedAddressSourceOnUi_"] == true)
+        assert(addressMap["locationDetails_"] == "location details")
 
     }
 
     @Test
-    fun `Given proto with a nested proto as field check if toJson returns valid json`() {
+    fun `Given proto with a nested proto as field check if toFlatMap returns valid map`() {
 
         val pubSubHealth = PubSubHealth.newBuilder().apply {
             val topic = Topic.newBuilder()
@@ -46,29 +45,25 @@ internal class CSMessageExtTest {
 
         }.build()
 
-        pubSubHealth.toJson().run {
-            val topic = getJSONObject("Topic")
-            assert(topic is JSONObject)
-            topic.run {
-                assert(get("QosValue") == QOS.QOS_ZERO_VALUE)
-                assert(get("Topic") == "test topic")
-            }
-            assert(get("Protocol") == Protocol.PROTOCOL_MQTT)
-            assert(get("AppType") == AppType.Consumer)
+        pubSubHealth.toFlatMap().run {
+            assert(get("topic_/topic_") == "test topic")
+            assert(get("topic_/qos_") == QOS.QOS_ZERO_VALUE)
+            assert(get("protocol_") == Protocol.PROTOCOL_MQTT.ordinal)
+            assert(get("appType_") == AppType.Consumer.ordinal)
         }
     }
 
     @Test
-    fun `Given proto with nested proto and list type as field check if toJson returns valid json`() {
+    fun `Given proto with nested proto and list type as field check if toFlatMap returns valid map`() {
         val originalBadgeList = listOf("badge1", "badge2")
         val apiParameter = Outlet.newBuilder().apply {
             addAllBadges(originalBadgeList)
         }.build()
 
-        apiParameter.toJson().run {
-            val badgesListJSON = get("BadgesList")
-            assert(badgesListJSON is List<*>)
-            (badgesListJSON as List<*>).forEachIndexed { index, badge ->
+        apiParameter.toFlatMap().run {
+            val badgesList = get("badges_")
+            assert(badgesList is List<*>)
+            (badgesList as List<*>).forEachIndexed { index, badge ->
                 assert(badge is String && badge == originalBadgeList[index])
             }
         }

@@ -1,7 +1,5 @@
 package clickstream.interceptor
 
-import org.json.JSONObject
-
 /**
  * Intercepted event from clickstream with different states.
  * [Instant] events : fire and forget.
@@ -13,7 +11,7 @@ import org.json.JSONObject
  * @property timeStamp
  * @constructor Create empty Intercepted event
  */
-public sealed class InterceptedEvent(
+public sealed class CSInterceptedEvent(
     public open val eventId: String,
     public open val eventName: String?,
     public open val productName: String,
@@ -34,8 +32,8 @@ public sealed class InterceptedEvent(
         override val eventName: String?,
         override val productName: String,
         override val timeStamp: Long,
-        public val properties: JSONObject
-    ) : InterceptedEvent(eventId, eventName, productName, timeStamp)
+        public val properties: Map<String, Any?>
+    ) : CSInterceptedEvent(eventId, eventName, productName, timeStamp)
 
     /**
      * Scheduled
@@ -52,8 +50,8 @@ public sealed class InterceptedEvent(
         override val eventName: String?,
         override val productName: String,
         override val timeStamp: Long,
-        public val properties: JSONObject
-    ) : InterceptedEvent(eventId, eventName, productName, timeStamp)
+        public val properties: Map<String, Any?>
+    ) : CSInterceptedEvent(eventId, eventName, productName, timeStamp)
 
     /**
      * Dispatched
@@ -69,7 +67,7 @@ public sealed class InterceptedEvent(
         override val eventName: String?,
         override val productName: String,
         override val timeStamp: Long,
-    ) : InterceptedEvent(eventId, eventName, productName, timeStamp)
+    ) : CSInterceptedEvent(eventId, eventName, productName, timeStamp)
 
     /**
      * Acknowledged
@@ -85,6 +83,6 @@ public sealed class InterceptedEvent(
         override val eventName: String?,
         override val productName: String,
         override val timeStamp: Long,
-    ) : InterceptedEvent(eventId, eventName, productName, timeStamp)
+    ) : CSInterceptedEvent(eventId, eventName, productName, timeStamp)
 
 }

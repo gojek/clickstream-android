@@ -17,7 +17,7 @@ import com.clickstream.app.main.MainIntent.InputIntent.EmailInputIntent.Companio
 import com.clickstream.app.main.MainIntent.InputIntent.GenderInputIntent.Companion.setupGenderInputFlow
 import com.clickstream.app.main.MainIntent.InputIntent.NameInputIntent.Companion.setupNameInputFlow
 import com.clickstream.app.main.MainIntent.InputIntent.PhoneInputIntent.Companion.setupPhoneInputFlow
-import clickstream.interceptor.InterceptedEvent
+import clickstream.interceptor.CSInterceptedEvent
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
@@ -75,10 +75,10 @@ class MainFragment : Fragment() {
     }
 
 
-    private fun handleEventInterception(eventList: List<InterceptedEvent>) {
+    private fun handleEventInterception(eventList: List<CSInterceptedEvent>) {
         eventList.forEach {
             when (it) {
-                is InterceptedEvent.Scheduled -> {
+                is CSInterceptedEvent.Scheduled -> {
                     Log.e("EV EVENTS:", it.properties.toString())
                 }
                 else -> {}

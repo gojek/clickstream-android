@@ -36,7 +36,7 @@ import clickstream.lifecycle.CSAppLifeCycle
 import clickstream.lifecycle.CSBackgroundLifecycleManager
 import clickstream.logger.CSLogLevel
 import clickstream.logger.CSLogger
-import clickstream.interceptor.EventInterceptor
+import clickstream.interceptor.CSEventInterceptor
 import com.tinder.scarlet.Lifecycle
 import com.tinder.scarlet.Scarlet
 import com.tinder.scarlet.lifecycle.android.AndroidLifecycle
@@ -65,7 +65,7 @@ internal class DefaultCServiceLocator(
     override val healthEventProcessor: CSHealthEventProcessor,
     override val healthEventFactory: CSHealthEventFactory,
     override val appLifeCycle: CSAppLifeCycle,
-    override val eventInterceptors: List<EventInterceptor>
+    override val cSEventInterceptors: List<CSEventInterceptor>
 ) : CSServiceLocator {
 
     private val guidGenerator: CSGuIdGenerator by lazy {
@@ -173,7 +173,7 @@ internal class DefaultCServiceLocator(
             networkStatusObserver = networkStatusObserver,
             info = info,
             eventHealthListener = eventHealthListener,
-            eventInterceptors = eventInterceptors
+            cSEventInterceptors = cSEventInterceptors
         )
     }
 
@@ -215,7 +215,7 @@ internal class DefaultCServiceLocator(
             networkStatusObserver = networkStatusObserver,
             info = info,
             eventHealthListener = eventHealthListener,
-            eventInterceptors = eventInterceptors
+            cSEventInterceptors = cSEventInterceptors
         )
     }
 

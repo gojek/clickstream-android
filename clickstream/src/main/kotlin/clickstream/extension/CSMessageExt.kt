@@ -4,9 +4,7 @@ import com.gojek.clickstream.de.Event
 import com.gojek.clickstream.internal.Health
 import com.google.protobuf.Internal.isValidUtf8
 import com.google.protobuf.MessageLite
-import org.json.JSONObject
 import java.lang.reflect.Field
-import java.lang.reflect.Method
 import java.util.Locale
 
 /**
@@ -79,47 +77,32 @@ public fun MessageLite.eventName(): String? {
 }
 
 /**
- * Converts [MessageLite] to [JSONObject] using reflection.
+ * Converts [MessageLite] to [Map<String,Any?>] using reflection.
  * */
-public fun MessageLite.toJson(): JSONObject {
+public fun MessageLite.toFlatMap(): Map<String, Any?> {
 
-    fun isValidMethod(method: Method) =
-        method.parameterTypes.isEmpty() && method.name.split(".").last().run {
-            startsWith("get") && !equals("getDefaultInstance") && !contains("Byte")
+    fun isValidField(field: Field) =
+        field.name.split(".").last().run {
+            endsWith("_")
         }
 
-    fun getPropertyNameFromMethod(methodName: String) = methodName.split(".").last()
-        .substring(3).substringBefore("(")
+    fun getPropertyNameFromField(field: Field) = field.name.split(".").last()
 
-    fun getAllPropertyValueAndName(messageLite: MessageLite): List<Property> {
-        val declaredMethods = messageLite.javaClass.declaredMethods
-        val validMethods = declaredMethods.filter { isValidMethod(it) }
-        return validMethods.map {
+    val propertyMap = mutableMapOf<String, Any?>()
+
+    fun populatePropertyMap(messageLite: MessageLite, prefix: String) {
+        val declaredMethods = messageLite.javaClass.declaredFields
+        val validFields = declaredMethods.filter { isValidField(it) }
+        return validFields.forEach {
             it.isAccessible = true
-            Property(
-                getPropertyNameFromMethod(it.name),
-                it.invoke(messageLite)
-            )
-        }
-    }
-
-    fun getJson(messageLite: MessageLite, json: JSONObject): JSONObject {
-        val listOfProperty = getAllPropertyValueAndName(messageLite)
-        listOfProperty.forEach { property ->
-            val value = when (property.value) {
-                is MessageLite -> getJson(property.value, JSONObject())
-                is List<*> -> property.value.map { propertyValue ->
-                    (propertyValue as? MessageLite)?.run {
-                        getJson(this, JSONObject())
-                    } ?: propertyValue
-                }
-                else -> property.value
+            val fieldName = getPropertyNameFromField(it)
+            val key = if (prefix.isNotEmpty()) "$prefix/$fieldName" else fieldName
+            when (val fieldValue = it.get(messageLite)) {
+                is MessageLite -> populatePropertyMap(fieldValue, key)
+                else -> propertyMap[key] = fieldValue
             }
-            json.put(property.name, value)
         }
-        return json
     }
-    return getJson(this, JSONObject())
+    populatePropertyMap(this, "")
+    return propertyMap
 }
-
-private data class Property(val name: String, val value: Any?)

@@ -17,7 +17,7 @@ import clickstream.lifecycle.CSAppLifeCycle
 import clickstream.lifecycle.CSBackgroundLifecycleManager
 import clickstream.logger.CSLogger
 import clickstream.model.CSEvent
-import clickstream.interceptor.EventInterceptor
+import clickstream.interceptor.CSEventInterceptor
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -49,7 +49,7 @@ internal class CSBackgroundScheduler(
     private val backgroundLifecycleManager: CSBackgroundLifecycleManager,
     private val info: CSInfo,
     eventHealthListener: CSEventHealthListener,
-    eventInterceptors: List<EventInterceptor>
+    cSEventInterceptors: List<CSEventInterceptor>
 ) : CSEventScheduler(
     appLifeCycle,
     networkManager,
@@ -64,7 +64,7 @@ internal class CSBackgroundScheduler(
     networkStatusObserver,
     info,
     eventHealthListener,
-    eventInterceptors
+    cSEventInterceptors
 ) {
 
     override fun onStart() {

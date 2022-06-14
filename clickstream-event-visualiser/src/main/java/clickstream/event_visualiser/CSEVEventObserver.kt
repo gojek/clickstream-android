@@ -1,18 +1,18 @@
 package clickstream.event_visualiser
 
-import clickstream.interceptor.EventInterceptor
-import clickstream.interceptor.InterceptedEvent
+import clickstream.interceptor.CSEventInterceptor
+import clickstream.interceptor.CSInterceptedEvent
 
 
 /**
- * Observer class that manages callback and emits event updates from [EventInterceptor]
+ * Observer class that manages callback and emits event updates from [CSEventInterceptor]
  *
  * */
 public interface CSEVEventObserver {
 
-    public fun addCallback(callback: (List<InterceptedEvent>) -> Unit)
+    public fun addCallback(callback: (List<CSInterceptedEvent>) -> Unit)
 
-    public fun removeCallback(callback: (List<InterceptedEvent>) -> Unit)
+    public fun removeCallback(callback: (List<CSInterceptedEvent>) -> Unit)
 
-    public fun setNewEvent(events: List<InterceptedEvent>)
+    public fun onEventChanged(events: List<CSInterceptedEvent>)
 }
