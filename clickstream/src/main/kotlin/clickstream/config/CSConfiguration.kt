@@ -53,7 +53,7 @@ public class CSConfiguration private constructor(
     internal val healthEventProcessor: CSHealthEventProcessor,
     internal val healthEventFactory: CSHealthEventFactory,
     internal val appLifeCycle: CSAppLifeCycle,
-    internal val CSEventInterceptors: List<CSEventInterceptor> = listOf(),
+    internal val cSEventInterceptors: List<CSEventInterceptor> = listOf(),
 ) {
     /**
      * A Builder for [CSConfiguration]'s.
@@ -99,7 +99,7 @@ public class CSConfiguration private constructor(
         private lateinit var remoteConfig: CSRemoteConfig
         private lateinit var healthGateway: CSHealthGateway
         private var logLevel: CSLogLevel = CSLogLevel.OFF
-        private val CSEventInterceptors = mutableListOf<CSEventInterceptor>()
+        private val cSEventInterceptors = mutableListOf<CSEventInterceptor>()
 
         /**
          * Specifies a custom [CoroutineDispatcher] for [ClickStream].
@@ -175,7 +175,7 @@ public class CSConfiguration private constructor(
          * @return This [Builder] instance
          */
         public fun addInterceptor(interceptor: CSEventInterceptor): Builder = apply {
-            this.CSEventInterceptors.add(interceptor)
+            this.cSEventInterceptors.add(interceptor)
         }
 
         public fun build(): CSConfiguration {
@@ -206,7 +206,7 @@ public class CSConfiguration private constructor(
                 healthGateway.healthEventProcessor,
                 healthGateway.healthEventFactory,
                 appLifeCycle,
-                CSEventInterceptors
+                cSEventInterceptors
             )
         }
     }

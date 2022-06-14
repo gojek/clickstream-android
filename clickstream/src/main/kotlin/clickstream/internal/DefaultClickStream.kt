@@ -110,7 +110,7 @@ internal class DefaultClickStream private constructor(
                         healthEventProcessor = configuration.healthEventProcessor,
                         healthEventFactory = configuration.healthEventFactory,
                         appLifeCycle = configuration.appLifeCycle,
-                        cSEventInterceptors = configuration.CSEventInterceptors
+                        cSEventInterceptors = configuration.cSEventInterceptors
                     )
 
                     CSServiceLocator.setServiceLocator(serviceLocator)

@@ -11,12 +11,14 @@ import com.gojek.clickstream.internal.HealthMeta.Session
  * so that the can be added to each event before being passed to the scheduler.
  */
 public interface CSMetaProvider {
+
     /**
      * Fetches and returns values for location properties.
      *
      * @return [Location]
      */
     public suspend fun location(): Location
+
     /**
      * Fetches and returns values for customer properties.
      *
