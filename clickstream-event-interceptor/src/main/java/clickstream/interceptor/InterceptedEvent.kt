@@ -1,7 +1,5 @@
 package clickstream.interceptor
 
-import org.json.JSONObject
-
 /**
  * Intercepted event from clickstream with different states.
  * [Instant] events : fire and forget.
@@ -34,7 +32,7 @@ public sealed class InterceptedEvent(
         override val eventName: String?,
         override val productName: String,
         override val timeStamp: Long,
-        public val properties: JSONObject
+        public val properties: Map<String,Any?>
     ) : InterceptedEvent(eventId, eventName, productName, timeStamp)
 
     /**
@@ -52,7 +50,7 @@ public sealed class InterceptedEvent(
         override val eventName: String?,
         override val productName: String,
         override val timeStamp: Long,
-        public val properties: JSONObject
+        public val properties: Map<String,Any?>
     ) : InterceptedEvent(eventId, eventName, productName, timeStamp)
 
     /**
