@@ -1,11 +1,10 @@
 package clickstream.fake
 
+import clickstream.health.constant.CSTrackedVia
 import clickstream.health.model.CSHealthEventConfig
-import clickstream.health.model.CSHealthEventConfig.Companion.MAX_VERBOSITY_LEVEL
 
 internal val fakeCSHealthEventConfig = CSHealthEventConfig(
-    minTrackedVersion = "4.37.0",
-    randomUserIdRemainder = listOf(123453, 5),
-    destination = emptyList(),
-    verbosityLevel = MAX_VERBOSITY_LEVEL
+    minimumTrackedVersion = "4.37.0",
+    randomisingUserIdRemainders = listOf(123453, 5),
+    trackedVia = CSTrackedVia.Both
 )

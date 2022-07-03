@@ -1,17 +1,30 @@
 package clickstream.health.internal
 
+import androidx.annotation.RestrictTo
 import clickstream.api.CSInfo
 import clickstream.health.intermediate.CSHealthEventRepository
-import clickstream.health.internal.CSHealthEvent.Companion.dtoMapTo
-import clickstream.health.internal.CSHealthEvent.Companion.dtosMapTo
-import clickstream.health.internal.CSHealthEvent.Companion.mapToDtos
+import clickstream.health.internal.CSHealthEventEntity.Companion.dtoMapTo
+import clickstream.health.internal.CSHealthEventEntity.Companion.dtosMapTo
+import clickstream.health.internal.CSHealthEventEntity.Companion.mapToDtos
 import clickstream.health.model.CSHealthEventDTO
 
 /**
- * The HealthRepositoryImpl is the implementation detail of the [CSHealthEventRepository].
+ * [CSHealthEventRepository] Act as repository pattern where internally it doing DAO operation
+ * to insert, delete, and read the [CSHealthEventEntity]'s.
  *
- * @param healthEventDao - The Dao object to communicate to the DB
+ * If you're using `com.gojek.clickstream:clickstream-health-metrics-noop`, the
+ * [CSHealthEventRepository] internally will doing nothing.
+ *
+ * Do consider to use `com.gojek.clickstream:clickstream-health-metrics`, to operate
+ * [CSHealthEventRepository] as expected. Whenever you opt in the `com.gojek.clickstream:clickstream-health-metrics`,
+ * you should never touch the [DefaultCSHealthEventRepository] explicitly. All the wiring
+ * is happening through [DefaultCSHealthGateway.factory(/*args*/)]
+ *
+ * @param sessionId in form of UUID
+ * @param healthEventDao the [CSHealthEventDao]
+ * @param info the [CSInfo]
  */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 internal class DefaultCSHealthEventRepository(
     private val sessionId: String,
     private val healthEventDao: CSHealthEventDao,
@@ -19,7 +32,7 @@ internal class DefaultCSHealthEventRepository(
 ) : CSHealthEventRepository {
 
     override suspend fun insertHealthEvent(healthEvent: CSHealthEventDTO) {
-        val event = healthEvent.dtoMapTo()
+        val event: CSHealthEventEntity = healthEvent.dtoMapTo()
             .copy(
                 sessionId = sessionId,
                 timestamp = System.currentTimeMillis().toString(),
@@ -29,11 +42,12 @@ internal class DefaultCSHealthEventRepository(
     }
 
     override suspend fun insertHealthEventList(healthEventList: List<CSHealthEventDTO>) {
-        val eventList: List<CSHealthEvent> = healthEventList.map { eventDto ->
+        val eventList: List<CSHealthEventEntity> = healthEventList.map { eventDto ->
             eventDto.dtoMapTo()
                 .copy(
                     sessionId = sessionId,
-                    timestamp = System.currentTimeMillis().toString()
+                    timestamp = System.currentTimeMillis().toString(),
+                    appVersion = info.appInfo.appVersion
                 )
         }.toList()
         healthEventDao.insertAll(healthEventList = eventList)
@@ -41,10 +55,6 @@ internal class DefaultCSHealthEventRepository(
 
     override suspend fun getInstantEvents(): List<CSHealthEventDTO> {
         return healthEventDao.getEventByType(INSTANT_EVENT_TYPE).mapToDtos()
-    }
-
-    override suspend fun getBucketEvents(): List<CSHealthEventDTO> {
-        return healthEventDao.getEventByType(BUCKET_EVENT_TYPE).mapToDtos()
     }
 
     override suspend fun getAggregateEvents(): List<CSHealthEventDTO> {

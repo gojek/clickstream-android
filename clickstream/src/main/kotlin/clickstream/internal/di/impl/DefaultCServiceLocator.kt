@@ -16,30 +16,33 @@ import clickstream.health.intermediate.CSHealthEventRepository
 import clickstream.health.time.CSEventGeneratedTimestampListener
 import clickstream.health.time.CSTimeStampGenerator
 import clickstream.health.time.DefaultCSTimeStampGenerator
-import clickstream.listener.CSEventListener
 import clickstream.internal.db.CSDatabase
 import clickstream.internal.di.CSServiceLocator
 import clickstream.internal.eventprocessor.CSEventProcessor
-import clickstream.internal.eventscheduler.CSBackgroundScheduler
+import clickstream.internal.eventscheduler.CSBackgroundEventScheduler
 import clickstream.internal.eventscheduler.CSEventRepository
-import clickstream.internal.eventscheduler.CSEventScheduler
+import clickstream.internal.eventscheduler.CSForegroundEventScheduler
+import clickstream.internal.eventscheduler.CSWorkManagerEventScheduler
 import clickstream.internal.eventscheduler.impl.DefaultCSEventRepository
-import clickstream.internal.networklayer.CSBackgroundNetworkManager
 import clickstream.internal.networklayer.CSEventService
 import clickstream.internal.networklayer.CSNetworkManager
 import clickstream.internal.networklayer.CSNetworkRepository
 import clickstream.internal.networklayer.CSNetworkRepositoryImpl
+import clickstream.internal.networklayer.CSWorkManagerNetworkManager
 import clickstream.internal.utils.CSBatteryStatusObserver
 import clickstream.internal.utils.CSFlowStreamAdapterFactory
 import clickstream.internal.utils.CSNetworkStatusObserver
 import clickstream.internal.workmanager.CSWorkManager
+import clickstream.lifecycle.CSAndroidLifecycle
+import clickstream.lifecycle.CSAndroidLifecycle.APPLICATION_THROTTLE_TIMEOUT_MILLIS
 import clickstream.lifecycle.CSAppLifeCycle
 import clickstream.lifecycle.CSBackgroundLifecycleManager
+import clickstream.listener.CSEventListener
 import clickstream.logger.CSLogLevel
 import clickstream.logger.CSLogger
 import com.tinder.scarlet.Lifecycle
 import com.tinder.scarlet.Scarlet
-import com.tinder.scarlet.lifecycle.android.AndroidLifecycle
+import com.tinder.scarlet.lifecycle.LifecycleRegistry
 import com.tinder.scarlet.messageadapter.protobuf.ProtobufMessageAdapter
 import com.tinder.scarlet.retry.ExponentialBackoffStrategy
 import com.tinder.scarlet.websocket.okhttp.newWebSocketFactory
@@ -65,8 +68,12 @@ internal class DefaultCServiceLocator(
     override val healthEventProcessor: CSHealthEventProcessor,
     override val healthEventFactory: CSHealthEventFactory,
     override val appLifeCycle: CSAppLifeCycle,
-    override val eventListeners: List<CSEventListener>
+    override val eventListener: List<CSEventListener>
 ) : CSServiceLocator {
+
+    private val db: CSDatabase by lazy {
+        CSDatabase.getInstance(context)
+    }
 
     private val guidGenerator: CSGuIdGenerator by lazy {
         DefaultCSGuIdGenerator()
@@ -84,30 +91,34 @@ internal class DefaultCServiceLocator(
         CSNetworkStatusObserver(context)
     }
 
-    private val db: CSDatabase by lazy {
-        CSDatabase.getInstance(context)
+    private val eventRepository: CSEventRepository by lazy {
+        DefaultCSEventRepository(eventDataDao = db.eventDataDao())
     }
 
-    private val lifecycle: Lifecycle by lazy {
-        AndroidLifecycle.ofApplicationForeground(context.applicationContext as Application)
+    override val foregroundLifecycleRegistry: LifecycleRegistry by lazy {
+        LifecycleRegistry(APPLICATION_THROTTLE_TIMEOUT_MILLIS)
     }
 
-    private val backgroundLifecycleManager: CSBackgroundLifecycleManager by lazy {
+    private val foregroundLifecycleManager: Lifecycle by lazy {
+        CSAndroidLifecycle.ofApplicationForeground(context.applicationContext as Application, logger, foregroundLifecycleRegistry)
+    }
+
+    override val backgroundLifecycleManager: CSBackgroundLifecycleManager by lazy {
         CSBackgroundLifecycleManager()
-    }
-
-    private val eventService: CSEventService by lazy {
-        Scarlet.Builder().lifecycle(lifecycle).apply()
     }
 
     private val backgroundEventService: CSEventService by lazy {
         Scarlet.Builder().lifecycle(backgroundLifecycleManager).apply()
     }
 
+    private val foregroundEventService: CSEventService by lazy {
+        Scarlet.Builder().lifecycle(foregroundLifecycleManager).apply()
+    }
+
     private val networkRepository: CSNetworkRepository by lazy {
         CSNetworkRepositoryImpl(
             networkConfig = config.networkConfig,
-            eventService = eventService,
+            eventService = foregroundEventService,
             dispatcher = dispatcher,
             timeStampGenerator = timeStampGenerator,
             logger = logger,
@@ -116,14 +127,8 @@ internal class DefaultCServiceLocator(
         )
     }
 
-    private val eventRepository: CSEventRepository by lazy {
-        DefaultCSEventRepository(
-            eventDataDao = db.eventDataDao()
-        )
-    }
-
-    private val backgroundNetworkManager: CSBackgroundNetworkManager by lazy {
-        CSBackgroundNetworkManager(
+    private val workManagerNetworkManager: CSWorkManagerNetworkManager by lazy {
+        CSWorkManagerNetworkManager(
             appLifeCycle = appLifeCycle,
             networkRepository = CSNetworkRepositoryImpl(
                 networkConfig = config.networkConfig,
@@ -142,11 +147,11 @@ internal class DefaultCServiceLocator(
         )
     }
 
-    override val logger: CSLogger by lazy {
-        CSLogger(logLevel)
-    }
+    override val logger: CSLogger by lazy { CSLogger(logLevel) }
 
-    override val networkManager: CSNetworkManager by lazy {
+    override val eventSchedulerConfig: CSEventSchedulerConfig by lazy { config.eventSchedulerConfig }
+
+    override val foregroundNetworkManager: CSNetworkManager by lazy {
         CSNetworkManager(
             appLifeCycle = appLifeCycle,
             networkRepository = networkRepository,
@@ -158,10 +163,28 @@ internal class DefaultCServiceLocator(
         )
     }
 
-    override val eventScheduler: CSEventScheduler by lazy {
-        CSEventScheduler(
+    override val backgroundEventScheduler: CSBackgroundEventScheduler by lazy {
+        CSBackgroundEventScheduler(
             appLifeCycle = appLifeCycle,
-            networkManager = networkManager,
+            dispatcher = dispatcher,
+            guIdGenerator = guidGenerator,
+            timeStampGenerator = timeStampGenerator,
+            batteryStatusObserver = batteryStatusObserver,
+            networkStatusObserver = networkStatusObserver,
+            eventListeners = eventListener,
+            healthEventProcessor = healthEventProcessor,
+            info = info,
+            eventRepository = eventRepository,
+            healthEventRepository = healthEventRepository,
+            logger = logger,
+            networkManager = foregroundNetworkManager
+        )
+    }
+
+    override val foregroundEventScheduler: CSForegroundEventScheduler by lazy {
+        CSForegroundEventScheduler(
+            appLifeCycle = appLifeCycle,
+            networkManager = foregroundNetworkManager,
             config = config.eventSchedulerConfig,
             logger = logger,
             eventRepository = eventRepository,
@@ -173,14 +196,36 @@ internal class DefaultCServiceLocator(
             networkStatusObserver = networkStatusObserver,
             info = info,
             eventHealthListener = eventHealthListener,
-            eventListeners = eventListeners
+            eventListeners = eventListener
+        ).also {
+            // initialise backgroundEventScheduler
+            backgroundEventScheduler
+        }
+    }
+
+    override val workManagerEventScheduler: CSWorkManagerEventScheduler by lazy {
+        CSWorkManagerEventScheduler(
+            appLifeCycle = appLifeCycle,
+            guIdGenerator = guidGenerator,
+            timeStampGenerator = timeStampGenerator,
+            batteryStatusObserver = batteryStatusObserver,
+            networkStatusObserver = networkStatusObserver,
+            eventListeners = eventListener,
+            dispatcher = dispatcher,
+            healthEventProcessor = healthEventProcessor,
+            backgroundLifecycleManager = backgroundLifecycleManager,
+            info = info,
+            eventRepository = eventRepository,
+            healthEventRepository = healthEventRepository,
+            logger = logger,
+            networkManager = workManagerNetworkManager
         )
     }
 
     override val eventProcessor: CSEventProcessor by lazy {
         CSEventProcessor(
             config = config.eventProcessorConfiguration,
-            eventScheduler = eventScheduler,
+            eventScheduler = foregroundEventScheduler,
             dispatcher = dispatcher,
             healthEventRepository = healthEventRepository,
             logger = logger,
@@ -194,33 +239,8 @@ internal class DefaultCServiceLocator(
             context = context,
             eventSchedulerConfig = config.eventSchedulerConfig,
             logger = logger,
-            backgroundLifecycleManager = backgroundLifecycleManager,
             remoteConfig = remoteConfig
         )
-    }
-
-    override val backgroundScheduler: CSBackgroundScheduler by lazy {
-        CSBackgroundScheduler(
-            appLifeCycle = appLifeCycle,
-            networkManager = backgroundNetworkManager,
-            config = config.eventSchedulerConfig,
-            logger = logger,
-            eventRepository = eventRepository,
-            healthEventRepository = healthEventRepository,
-            dispatcher = dispatcher,
-            guIdGenerator = guidGenerator,
-            timeStampGenerator = timeStampGenerator,
-            backgroundLifecycleManager = backgroundLifecycleManager,
-            batteryStatusObserver = batteryStatusObserver,
-            networkStatusObserver = networkStatusObserver,
-            info = info,
-            eventHealthListener = eventHealthListener,
-            eventListeners = eventListeners
-        )
-    }
-
-    override val eventSchedulerConfig: CSEventSchedulerConfig by lazy {
-        config.eventSchedulerConfig
     }
 
     private inline fun <reified T> Scarlet.Builder.apply(): T {

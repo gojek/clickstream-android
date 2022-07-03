@@ -23,6 +23,7 @@ object deps {
 
         object core {
             const val ktx = "androidx.core:core-ktx:1.5.0"
+            const val annotation = "androidx.annotation:annotation:1.1.0"
             const val appCompat = "androidx.appcompat:appcompat:1.1.0-rc01"
             const val material = "com.google.android.material:material:1.4.0"
             const val constraintLayout = "androidx.constraintlayout:constraintlayout:2.1.4"

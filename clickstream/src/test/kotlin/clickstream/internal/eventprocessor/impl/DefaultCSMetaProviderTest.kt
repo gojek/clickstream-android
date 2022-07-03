@@ -31,7 +31,7 @@ public class DefaultCSMetaProviderTest {
 
     @Before
     public fun setup() {
-        metaProvider = DefaultCSMetaProvider(fakeCSInfo(deviceInfo))
+        metaProvider = DefaultCSMetaProvider(fakeCSInfo(deviceInfo = deviceInfo))
         whenever(deviceInfo.getDeviceModel()).thenReturn(testDeviceModel)
         whenever(deviceInfo.getDeviceManufacturer()).thenReturn(testDeviceMake)
         whenever(deviceInfo.getOperatingSystem()).thenReturn(testOS)

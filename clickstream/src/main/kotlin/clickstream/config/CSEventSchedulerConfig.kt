@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit.SECONDS
  * for the EventScheduler to process the event data
  *
  * @param eventsPerBatch Number of events to combine in a single request
- * @param batchPeriod Delay between two request
+ * @param batchPeriod Delay between batches
  * @param flushOnBackground Flag for enabling forced flushing of events
  * @param connectionTerminationTimerWaitTimeInMillis Wait time after which socket gets disconnected
  * @param backgroundTaskEnabled Flag for enabling flushing of events by background task

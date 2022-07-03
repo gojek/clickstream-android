@@ -169,13 +169,15 @@ public class CSConfiguration private constructor(
                 this.healthGateway = healthGateway
             }
 
+
         /**
-         * Add any [CSEventListener] to intercept clickstream events.
+         * Configure a single client scoped listener that will receive all analytic events
+         * for this client.
          *
-         * @return This [Builder] instance
+         * @see CSEventListener for semantics and restrictions on listener implementations.
          */
-        public fun addEventListener(listener: CSEventListener): Builder = apply {
-            this.eventListeners.add(listener)
+        public fun addEventListener(eventListener: CSEventListener): Builder = apply {
+            this.eventListeners.add(eventListener)
         }
 
         public fun build(): CSConfiguration {

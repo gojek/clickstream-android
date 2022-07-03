@@ -3,7 +3,7 @@ package clickstream.fake
 import clickstream.lifecycle.CSAppLifeCycle
 import clickstream.lifecycle.CSAppLifeCycleObserver
 
-internal class FakeCSAppLifecycle : CSAppLifeCycle {
+internal class FakeCSAppLifeCycle : CSAppLifeCycle {
 
     val observers = mutableListOf<CSAppLifeCycleObserver>()
 

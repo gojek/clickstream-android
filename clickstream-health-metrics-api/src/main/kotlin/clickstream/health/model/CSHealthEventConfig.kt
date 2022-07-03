@@ -1,34 +1,32 @@
 package clickstream.health.model
 
-import clickstream.health.constant.CSEventNamesConstant
-import java.util.Locale
+import clickstream.health.constant.CSTrackedVia
 
 /**
  * Config for HealthEventTracker, based on which the health events are handled
  *
- * @param minTrackedVersion - The minimum app version above which the event will be sent.
- * @param randomUserIdRemainder - A list with the last char of userID for whom the health events are tracked.
+ * @param minimumTrackedVersion - The minimum app version above which the event will be sent.
+ * @param randomisingUserIdRemainders - A list with the last char of userID for whom the health events are tracked.
  */
 public data class CSHealthEventConfig(
-    val minTrackedVersion: String,
-    val randomUserIdRemainder: List<Int>,
-    val destination: List<String>,
-    val verbosityLevel: String
+    val minimumTrackedVersion: String,
+    val randomisingUserIdRemainders: List<Int>,
+    val trackedVia: CSTrackedVia
 ) {
     /**
      * Checking whether the current app version is greater than the version in the config.
      */
     private fun isAppVersionGreater(appVersion: String): Boolean {
         return appVersion.isNotBlank() &&
-            minTrackedVersion.isNotBlank() &&
-            convertVersionToNumber(appVersion) >= convertVersionToNumber(minTrackedVersion)
+                minimumTrackedVersion.isNotBlank() &&
+                convertVersionToNumber(appVersion) >= convertVersionToNumber(minimumTrackedVersion)
     }
 
     /**
      * Checking whether the userID is present in the randomUserIdRemainder list
      */
     private fun isRandomUser(userId: Int): Boolean {
-        return randomUserIdRemainder.isNotEmpty() && randomUserIdRemainder.contains(userId % DIVIDING_FACTOR)
+        return randomisingUserIdRemainders.isNotEmpty() && randomisingUserIdRemainders.contains(userId % DIVIDING_FACTOR)
     }
 
     /**
@@ -51,31 +49,16 @@ public data class CSHealthEventConfig(
         return isAppVersionGreater(appVersion) && (isRandomUser(userId) || isAlpha(appVersion))
     }
 
-    /**
-     * With the given event name, it returns whether the event should be sent to Clickstream or not.
-     *
-     * @param eventName - Current event name
-     *
-     * @return Boolean - True if should be sent to CS
-     */
-    public fun isTrackedViaClickstream(eventName: String): Boolean =
-        listOf(
-            CSEventNamesConstant.ClickStreamEventReceived.value,
-            CSEventNamesConstant.ClickStreamEventObjectCreated.value,
-            CSEventNamesConstant.ClickStreamEventCached.value,
-            CSEventNamesConstant.ClickStreamEventBatchCreated.value,
-            CSEventNamesConstant.ClickStreamBatchSent.value,
-            CSEventNamesConstant.ClickStreamEventBatchAck.value,
-            CSEventNamesConstant.ClickStreamFlushOnBackground.value
-        ).contains(eventName)
+    public fun isTrackedForExternal(): Boolean {
+        return trackedVia == CSTrackedVia.External
+    }
 
-    /**
-     * Returns whether logging level is set to Maximum or not
-     *
-     * @return Boolean - True if the condition satisfies else false
-     */
-    public fun isVerboseLoggingEnabled(): Boolean {
-        return verbosityLevel.toLowerCase(Locale.getDefault()) == MAX_VERBOSITY_LEVEL
+    public fun isTrackedForInternal(): Boolean {
+        return trackedVia == CSTrackedVia.Internal
+    }
+
+    public fun isTrackedForBoth(): Boolean {
+        return trackedVia == CSTrackedVia.Both
     }
 
     public companion object {
@@ -88,11 +71,10 @@ public data class CSHealthEventConfig(
         /**
          * Creates the default instance of the config
          */
-        public fun default(): CSHealthEventConfig = CSHealthEventConfig(
-            minTrackedVersion = "",
-            randomUserIdRemainder = emptyList(),
-            destination = emptyList(),
-            verbosityLevel = ""
+        public fun default(trackedVia: CSTrackedVia): CSHealthEventConfig = CSHealthEventConfig(
+            minimumTrackedVersion = "",
+            randomisingUserIdRemainders = emptyList(),
+            trackedVia = trackedVia
         )
 
         /**

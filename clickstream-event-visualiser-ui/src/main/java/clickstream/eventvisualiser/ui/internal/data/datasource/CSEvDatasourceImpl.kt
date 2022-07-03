@@ -116,13 +116,13 @@ internal class CSEvDatasourceImpl private constructor(private val evObserver: CS
     }
 
     private fun changeEventStatusInCurrentList(
-        csEventModel: CSEventModel,
+        csInterceptedEvent: CSEventModel,
         newState: CSEvState
     ) {
         eventDataMap.forEach {
             it.value.run {
                 val currentPosition = indexOfFirst {
-                    csEventModel.eventId == it.eventId
+                    csInterceptedEvent.eventId == it.eventId
                 }
                 if (currentPosition != -1) {
                     set(currentPosition, get(currentPosition).copy(state = newState))

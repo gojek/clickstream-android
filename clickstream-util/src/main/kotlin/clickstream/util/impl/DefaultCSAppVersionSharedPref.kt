@@ -19,8 +19,7 @@ public class DefaultCSAppVersionSharedPref(
      * */
     override suspend fun isAppVersionEqual(currentAppVersion: String): Boolean {
         return coroutineScope {
-            val sharedPref =
-                context.getSharedPreferences(CLICKSTREAM_PREF, Context.MODE_PRIVATE)
+            val sharedPref = context.getSharedPreferences(CLICKSTREAM_PREF, Context.MODE_PRIVATE)
             val oldAppVersion = sharedPref.getString(APP_VERSION_KEY, "")
             when {
                 oldAppVersion == "" -> {

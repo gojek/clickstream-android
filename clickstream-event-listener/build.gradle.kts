@@ -4,7 +4,7 @@ plugins {
 }
 
 apply(from = "$rootDir/scripts/versioning.gradle")
-apply(from="$rootDir/scripts/publish-jar-artifact-task.gradle")
+apply(from = "$rootDir/scripts/publish-jar-artifact-task.gradle")
 
 ext {
     set("PUBLISH_GROUP_ID", "com.gojek.clickstream")
@@ -17,7 +17,7 @@ if (!project.hasProperty("isLocal")) {
 }
 
 java {
-    withJavadocJar()
+    withSourcesJar()
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
 }

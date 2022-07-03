@@ -36,6 +36,7 @@ internal interface CSNetworkRepository {
      */
     public fun sendEvents(
         eventRequest: EventRequest,
+        eventGuids: String,
         callback: CSCallback<String>
     )
 
@@ -76,6 +77,7 @@ internal class CSNetworkRepositoryImpl(
 
     override fun sendEvents(
         eventRequest: EventRequest,
+        eventGuids: String,
         callback: CSCallback<String>
     ) {
         logger.debug { "CSNetworkRepositoryImpl#sendEvents" }
@@ -84,6 +86,7 @@ internal class CSNetworkRepositoryImpl(
             networkConfig = networkConfig,
             eventService = eventService,
             eventRequest = eventRequest,
+            eventGuids = eventGuids,
             dispatcher = dispatcher,
             timeStampGenerator = timeStampGenerator,
             logger = logger,

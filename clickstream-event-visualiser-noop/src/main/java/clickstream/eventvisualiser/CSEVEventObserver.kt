@@ -31,5 +31,5 @@ public interface CSEVEventObserver {
      *
      * @param events
      */
-    public fun onEventChanged(events: List<CSEventModel>)
+    public fun onCall(events: List<CSEventModel>)
 }

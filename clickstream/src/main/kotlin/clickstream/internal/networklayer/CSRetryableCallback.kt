@@ -17,6 +17,7 @@ import com.gojek.clickstream.de.common.EventResponse
 import com.gojek.clickstream.de.common.Status
 import java.util.concurrent.atomic.AtomicInteger
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
@@ -40,6 +41,7 @@ internal abstract class CSRetryableCallback(
     private val networkConfig: CSNetworkConfig,
     private val eventService: CSEventService,
     private var eventRequest: EventRequest,
+    private val eventGuids: String,
     private val dispatcher: CoroutineDispatcher,
     private val timeStampGenerator: CSTimeStampGenerator,
     private val logger: CSLogger,
@@ -62,15 +64,23 @@ internal abstract class CSRetryableCallback(
      */
     abstract fun onFailure(throwable: Throwable, guid: String)
 
+    private val coroutineExceptionHandler: CoroutineExceptionHandler by lazy {
+        CoroutineExceptionHandler { _, throwable ->
+            logger.error {
+                "================== CRASH IS HAPPENING ================== \n" +
+                "= In : CSRetryableCallback                             = \n" +
+                "= Due : ${throwable.message}                           = \n" +
+                "==================== END OF CRASH ====================== \n"
+            }
+        }
+    }
     private var timeOutJob: Job = SupervisorJob()
     private var retryCount: AtomicInteger = AtomicInteger(0)
 
     init {
-        logger.debug {
-            "CSRetryableCallback#init"
-        }
+        logger.debug { "CSRetryableCallback#init" }
 
-        coroutineScope.launch {
+        coroutineScope.launch(coroutineExceptionHandler) {
             launch { observeCallback() }
             launch { sendEvent() }
         }
@@ -84,42 +94,30 @@ internal abstract class CSRetryableCallback(
      * If success, it invokes onSuccess callback
      */
     private suspend fun observeCallback() {
-        logger.debug {
-            "CSRetryableCallback#observeCallback"
-        }
+        logger.debug { "CSRetryableCallback#observeCallback" }
 
         eventService.observeResponse().onEach { response ->
-            logger.debug {
-                "CSRetryableCallback#observeCallback#onEach - response $response"
-            }
+            logger.debug { "CSRetryableCallback#observeCallback#onEach - response $response" }
         }.filter {
             it.dataMap[REQUEST_GUID_KEY] == eventRequest.reqGuid
         }.collect {
-            logger.debug {
-                "CSRetryableCallback#observeCallback - Message received from the server: ${it.dataMap[REQUEST_GUID_KEY]}"
-            }
+            logger.debug { "CSRetryableCallback#observeCallback - Message received from the server: ${it.dataMap[REQUEST_GUID_KEY]}" }
             val guid = it.dataMap[REQUEST_GUID_KEY]!!
             when {
                 it.status == Status.SUCCESS -> {
-                    logger.debug {
-                        "CSRetryableCallback#observeCallback - Success"
-                    }
+                    logger.debug { "CSRetryableCallback#observeCallback - Success" }
 
                     onSuccess(guid)
                     sendAckAndComplete()
                 }
                 shouldRetry() -> {
-                    logger.debug {
-                        "CSRetryableCallback#observeCallback - retried"
-                    }
+                    logger.debug { "CSRetryableCallback#observeCallback - retried" }
 
                     trackEventResponse(it, eventRequest.reqGuid)
                     retry()
                 }
                 else -> {
-                    logger.debug {
-                        "CSRetryableCallback#observeCallback - else"
-                    }
+                    logger.debug { "CSRetryableCallback#observeCallback - else" }
 
                     trackEventResponse(it, eventRequest.reqGuid)
                     onFailure(Throwable(), guid)
@@ -137,18 +135,12 @@ internal abstract class CSRetryableCallback(
         if (eventService.sendEvent(eventRequest)) {
             logBatchSentEvent()
             logger.debug {
-                "CSRetryableCallback#sendEvent - Request successfully sent to the server: $eventRequest"
+                "CSRetryableCallback#sendEvent : Request successfully sent to the server: $eventRequest"
             }
         } else {
             logger.debug {
-                "CSRetryableCallback#sendEvent - Request sent to the server failed: ${eventRequest.reqGuid}"
+                "CSRetryableCallback#sendEvent : Request sent to the server failed: ${eventRequest.reqGuid}"
             }
-            recordHealthEvent(
-                eventName = CSEventNamesConstant.ClickStreamBatchWriteFailed.value,
-                eventType = CSEventTypesConstant.AGGREGATE,
-                eventBatchId = eventRequest.reqGuid,
-                error = "Batch write failed"
-            )
         }
 
         observeTimeout()
@@ -175,9 +167,9 @@ internal abstract class CSRetryableCallback(
             }
 
             recordHealthEvent(
-                eventName = CSEventNamesConstant.ClickStreamEventBatchTimeout.value,
-                eventType = CSEventTypesConstant.AGGREGATE,
-                eventBatchId = eventRequest.reqGuid,
+                eventName = CSEventNamesConstant.Instant.ClickStreamEventBatchTimeout.value,
+                eventType = CSEventTypesConstant.INSTANT,
+                eventBatchGuid = eventRequest.reqGuid,
                 error = "SocketTimeout"
             )
             if (shouldRetry()) {
@@ -210,9 +202,7 @@ internal abstract class CSRetryableCallback(
     private fun shouldRetry(): Boolean {
         val shouldRetry = retryCount.get() < networkConfig.maxRetriesPerBatch
 
-        logger.debug {
-            "CSRetryableCallback#shouldRetry - shouldRetry $shouldRetry"
-        }
+        logger.debug { "CSRetryableCallback#shouldRetry : shouldRetry $shouldRetry" }
         return shouldRetry
     }
 
@@ -220,15 +210,14 @@ internal abstract class CSRetryableCallback(
      * Logs the batch sent to the CT
      */
     private fun logBatchSentEvent() {
-        logger.debug {
-            "CSRetryableCallback#logBatchSentEvent"
-        }
+        logger.debug { "CSRetryableCallback#logBatchSentEvent" }
 
         coroutineScope.launch(dispatcher) {
             recordHealthEvent(
-                eventName = CSEventNamesConstant.ClickStreamBatchSent.value,
+                eventName = CSEventNamesConstant.AggregatedAndFlushed.ClickStreamBatchSent.value,
                 eventType = CSEventTypesConstant.AGGREGATE,
-                eventBatchId = eventRequest.reqGuid,
+                eventBatchGuid = eventRequest.reqGuid,
+                eventGuids = eventGuids,
                 error = ""
             )
         }
@@ -238,14 +227,12 @@ internal abstract class CSRetryableCallback(
      * Send the Ack event and then invokes complete
      */
     private suspend fun sendAckAndComplete() {
-        logger.debug {
-            "CSRetryableCallback#sendAckAndComplete"
-        }
+        logger.debug { "CSRetryableCallback#sendAckAndComplete" }
 
         recordHealthEvent(
-            eventName = CSEventNamesConstant.ClickStreamEventBatchAck.value,
+            eventName = CSEventNamesConstant.AggregatedAndFlushed.ClickStreamEventBatchSuccessAck.value,
             eventType = CSEventTypesConstant.AGGREGATE,
-            eventBatchId = eventRequest.reqGuid,
+            eventBatchGuid = eventRequest.reqGuid,
             error = ""
         )
         onComplete()
@@ -270,51 +257,43 @@ internal abstract class CSRetryableCallback(
 
         when (eventResponse.code.ordinal) {
             Code.MAX_CONNECTION_LIMIT_REACHED.ordinal -> {
-                logger.debug {
-                    "CSRetryableCallback#trackEventResponse - eventResponse MAX_CONNECTION_LIMIT_REACHED"
-                }
+                logger.debug { "CSRetryableCallback#trackEventResponse - eventResponse MAX_CONNECTION_LIMIT_REACHED" }
 
                 recordHealthEvent(
-                    eventName = CSEventNamesConstant.ClickStreamConnectionFailed.value,
-                    eventType = CSEventTypesConstant.AGGREGATE,
+                    eventName = CSEventNamesConstant.Instant.ClickStreamConnectionFailure.value,
+                    eventType = CSEventTypesConstant.INSTANT,
                     error = CSErrorReasons.MAX_CONNECTION_LIMIT_REACHED,
-                    eventBatchId = eventRequestGuid
+                    eventBatchGuid = eventRequestGuid
                 )
             }
             Code.MAX_USER_LIMIT_REACHED.ordinal -> {
-                logger.debug {
-                    "CSRetryableCallback#trackEventResponse - eventResponse MAX_USER_LIMIT_REACHED"
-                }
+                logger.debug { "CSRetryableCallback#trackEventResponse - eventResponse MAX_USER_LIMIT_REACHED" }
 
                 recordHealthEvent(
-                    eventName = CSEventNamesConstant.ClickStreamConnectionFailed.value,
-                    eventType = CSEventTypesConstant.AGGREGATE,
+                    eventName = CSEventNamesConstant.Instant.ClickStreamConnectionFailure.value,
+                    eventType = CSEventTypesConstant.INSTANT,
                     error = CSErrorReasons.MAX_USER_LIMIT_REACHED,
-                    eventBatchId = eventRequestGuid
+                    eventBatchGuid = eventRequestGuid
                 )
             }
             Code.BAD_REQUEST.ordinal -> {
-                logger.debug {
-                    "CSRetryableCallback#trackEventResponse - eventResponse BAD_REQUEST"
-                }
+                logger.debug { "CSRetryableCallback#trackEventResponse : eventResponse BAD_REQUEST" }
 
                 recordHealthEvent(
-                    eventName = CSEventNamesConstant.ClickStreamEventBatchErrorResponse.value,
-                    eventType = CSEventTypesConstant.AGGREGATE,
+                    eventName = CSEventNamesConstant.Instant.ClickStreamWriteToSocketFailed.value,
+                    eventType = CSEventTypesConstant.INSTANT,
                     error = CSErrorReasons.PARSING_EXCEPTION,
-                    eventBatchId = eventRequestGuid
+                    eventBatchGuid = eventRequestGuid
                 )
             }
             else -> {
-                logger.debug {
-                    "CSRetryableCallback#trackEventResponse - eventResponse ClickStreamEventBatchErrorResponse"
-                }
+                logger.debug { "CSRetryableCallback#trackEventResponse : eventResponse ClickStreamEventBatchErrorResponse" }
 
                 recordHealthEvent(
-                    eventName = CSEventNamesConstant.ClickStreamEventBatchErrorResponse.value,
-                    eventType = CSEventTypesConstant.AGGREGATE,
+                    eventName = CSEventNamesConstant.Instant.ClickStreamEventBatchErrorResponse.value,
+                    eventType = CSEventTypesConstant.INSTANT,
                     error = CSErrorReasons.UNKNOWN,
-                    eventBatchId = eventRequestGuid
+                    eventBatchGuid = eventRequestGuid
                 )
             }
         }
@@ -324,11 +303,12 @@ internal abstract class CSRetryableCallback(
         eventName: String,
         eventType: String,
         error: String,
-        eventBatchId: String,
+        eventBatchGuid: String,
+        eventGuids: String = ""
     ) {
         logger.debug {
             StringBuilder()
-                .append("CSRetryableCallback#recordHealthEvent - events : ${eventRequest.eventsList}")
+                .append("CSRetryableCallback#recordHealthEvent : events ${eventRequest.eventsList}")
                 .apply {
                     if (eventRequest.eventsCount > 0) {
                         append("isHealthEvent : ${eventRequest.getEvents(0).isHealthEvent()}")
@@ -337,15 +317,14 @@ internal abstract class CSRetryableCallback(
         }
 
         if (eventRequest.eventsCount > 0 && eventRequest.getEvents(0).isHealthEvent().not()) {
-            logger.debug {
-                "CSRetryableCallback#recordHealthEvent - insertHealthEvent"
-            }
+            logger.debug { "CSRetryableCallback#recordHealthEvent : insertHealthEvent" }
 
             healthEventRepository.insertHealthEvent(
                 CSHealthEventDTO(
                     eventName = eventName,
                     eventType = eventType,
-                    eventBatchId = eventBatchId,
+                    eventBatchGuid = eventBatchGuid,
+                    eventGuid = eventGuids,
                     error = error,
                     appVersion = info.appInfo.appVersion
                 )

@@ -1,5 +1,6 @@
 package clickstream.lifecycle
 
+import androidx.annotation.RestrictTo
 import androidx.lifecycle.LifecycleObserver
 
 /**
@@ -7,6 +8,7 @@ import androidx.lifecycle.LifecycleObserver
  * Start -> Called when app goes to background
  * Stop -> Called `connectionTerminationTimerWaitTimeInMillis` after app moves to background
  */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public abstract class CSLifeCycleManager(
     private val appLifeCycleObserver: CSAppLifeCycle
 ) : LifecycleObserver {

@@ -25,6 +25,8 @@ public final class clickstream/logger/CSLogger {
 	public final fun debug (Lkotlin/jvm/functions/Function0;)V
 	public final fun debug (Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;)V
 	public final fun debug (Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;)V
+	public final fun error (Lkotlin/jvm/functions/Function0;)V
+	public final fun isDebug ()Z
 }
 
 public final class com/gojek/android/clickstream/logger/BuildConfig {

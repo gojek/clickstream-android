@@ -3,9 +3,9 @@ package clickstream.internal.workmanager
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.work.CoroutineWorker
+import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import clickstream.internal.di.CSServiceLocator
@@ -18,11 +18,12 @@ internal open class CSBaseEventFlushWorkManager(
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
+        CSServiceLocator.getInstance().logger.debug { "CSBaseEventFlushWorkManager#doWork" }
+
         return try {
             val serviceLocator = CSServiceLocator.getInstance()
-            val backgroundScheduler = serviceLocator.backgroundScheduler
+            val backgroundScheduler = serviceLocator.workManagerEventScheduler
             val success = backgroundScheduler.sendEvents()
-            backgroundScheduler.terminate()
             if (success) Result.success() else Result.failure()
         } catch (e: Exception) {
             Result.failure()
@@ -35,15 +36,13 @@ internal open class CSBaseEventFlushWorkManager(
 
         fun addObserveForWorkManagerStatus(context: Context, workerName: String) {
             fun getWorkInfosByTagLiveData(workerName: String) {
+                val logger = CSServiceLocator.getInstance().logger
                 WorkManager.getInstance(context)
                     .getWorkInfosByTagLiveData(workerName).observe(
                         ProcessLifecycleOwner.get()
-                    ) { state ->
+                    ) { state: MutableList<WorkInfo> ->
                         state.forEach { entry ->
-                            Log.d(
-                                "ClickStream",
-                                "CSFlushScheduledService#addObserveForWorkManagerStatus - $workerName : ${entry.progress} ${entry.state}"
-                            )
+                            logger.debug { "CSFlushScheduledService#addObserveForWorkManagerStatus - $workerName : ${entry.progress} ${entry.state}" }
                         }
                     }
             }

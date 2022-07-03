@@ -11,7 +11,7 @@ import androidx.room.RoomDatabase
  *
  * The Events are cached, processed and then cleared.
  */
-@Database(entities = [CSHealthEvent::class], version = 8)
+@Database(entities = [CSHealthEventEntity::class], version = 9)
 internal abstract class CSHealthDatabase : RoomDatabase() {
 
     /**

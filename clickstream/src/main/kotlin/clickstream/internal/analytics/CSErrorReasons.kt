@@ -8,6 +8,7 @@ internal object CSErrorReasons {
     const val UNKNOWN = "unknown"
     const val USER_UNAUTHORIZED = "401 Unauthorized"
     const val SOCKET_TIMEOUT = "socket_timeout"
+    const val EOFException = "EOFException"
     const val MAX_USER_LIMIT_REACHED = "max_user_limit_reached"
     const val MAX_CONNECTION_LIMIT_REACHED = "max_connection_limit_reached"
 }
