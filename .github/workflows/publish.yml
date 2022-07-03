@@ -35,10 +35,10 @@ jobs:
           :clickstream-health-metrics-noop:assembleRelease
           :clickstream-health-metrics-api:assembleRelease
           :clickstream-event-listener:assemble
-          :clickstream-event-listener:javadocJar
           :clickstream-event-visualiser:assembleRelease
           :clickstream-event-visualiser-noop:assembleRelease
           :clickstream-event-visualiser-ui:assembleRelease
+          :clickstream-event-visualiser-ui-noop:assembleRelease
       - name: Publish to MavenCentral
         run: ./gradlew :clickstream:publishReleasePublicationToSonatypeRepository
           :clickstream-api:publishReleasePublicationToSonatypeRepository
