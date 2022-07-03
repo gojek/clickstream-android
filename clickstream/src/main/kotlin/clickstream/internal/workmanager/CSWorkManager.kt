@@ -4,7 +4,6 @@ import android.content.Context
 import clickstream.config.CSEventSchedulerConfig
 import clickstream.config.CSRemoteConfig
 import clickstream.lifecycle.CSAppLifeCycle
-import clickstream.lifecycle.CSBackgroundLifecycleManager
 import clickstream.lifecycle.CSLifeCycleManager
 import clickstream.logger.CSLogger
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -15,10 +14,9 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 @ExperimentalCoroutinesApi
 internal class CSWorkManager(
     appLifeCycle: CSAppLifeCycle,
-    private val context: Context,
+    internal val context: Context,
     private val eventSchedulerConfig: CSEventSchedulerConfig,
     private val logger: CSLogger,
-    private val backgroundLifecycleManager: CSBackgroundLifecycleManager,
     private val remoteConfig: CSRemoteConfig
 ) : CSLifeCycleManager(appLifeCycle) {
 
@@ -29,12 +27,11 @@ internal class CSWorkManager(
 
     override fun onStart() {
         logger.debug {
-            "CSWorkManager#onStart -" +
+            "CSWorkManager#onStart : " +
             "backgroundTaskEnabled ${eventSchedulerConfig.backgroundTaskEnabled}, " +
             "isForegroundEventFlushEnabled ${remoteConfig.isForegroundEventFlushEnabled}"
         }
 
-        backgroundLifecycleManager.onStop()
         if (remoteConfig.isForegroundEventFlushEnabled && eventSchedulerConfig.backgroundTaskEnabled) {
             setupFutureWork()
         }

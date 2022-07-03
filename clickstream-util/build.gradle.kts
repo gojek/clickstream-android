@@ -35,4 +35,6 @@ android {
 dependencies {
     // Coroutine
     deps.kotlin.coroutines.list.forEach(::implementation)
+
+    implementation("androidx.annotation:annotation:1.1.0")
 }

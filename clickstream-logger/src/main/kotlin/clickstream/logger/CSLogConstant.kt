@@ -1,8 +1,11 @@
 package clickstream.logger
 
+import androidx.annotation.RestrictTo
+
 /**
  * A class to declare constant tag
  */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public object CSLogConstant {
     public const val CLICK_STREAM_LOG_TAG: String = "ClickStream"
     public const val BATCH_SENT_TAG: String = "ClickStream Batch Sent"

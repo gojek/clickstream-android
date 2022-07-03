@@ -3,9 +3,8 @@ package clickstream.eventvisualiser
 import clickstream.listener.CSEventModel
 
 /**
- * An Implementation of [CSEVEventObserver] that is used by [CSEventVisualiserListener] singleton.
- *
- * */
+ * An Implementation of [CSEVEventObserver] that is used by [CSEventVisualiserInterceptor] singleton.
+ **/
 public object CSEventVisualiser : CSEVEventObserver {
 
     public override fun addObserver(observer: (List<CSEventModel>) -> Unit) {
@@ -16,7 +15,7 @@ public object CSEventVisualiser : CSEVEventObserver {
         /*NoOp*/
     }
 
-    override fun onEventChanged(events: List<CSEventModel>) {
+    override fun onCall(events: List<CSEventModel>) {
         /*NoOp*/
     }
 }

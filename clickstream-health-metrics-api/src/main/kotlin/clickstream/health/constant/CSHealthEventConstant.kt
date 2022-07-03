@@ -1,5 +1,8 @@
 package clickstream.health.constant
 
+import androidx.annotation.RestrictTo
+
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public object CSHealthEventConstant {
     public const val HEALTH_ID: String = "healthEventID"
     public const val HEALTH_EVENT_NAME: String = "eventName"

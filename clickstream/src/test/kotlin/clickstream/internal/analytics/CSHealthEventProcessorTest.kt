@@ -1,25 +1,26 @@
 package clickstream.internal.analytics
 
 import clickstream.api.CSInfo
+import clickstream.fake.FakeCSAppVersionSharedPref
 import clickstream.fake.fakeAppInfo
 import clickstream.fake.fakeCSHealthEventConfig
 import clickstream.fake.fakeCSInfo
 import clickstream.fake.fakeUserInfo
-import clickstream.health.constant.CSEventDestinationConstant.CT_DESTINATION
+import clickstream.health.constant.CSTrackedVia
 import clickstream.health.intermediate.CSHealthEventFactory
 import clickstream.health.intermediate.CSHealthEventRepository
-import clickstream.health.internal.CSHealthEvent
-import clickstream.health.internal.CSHealthEvent.Companion.mapToDtos
+import clickstream.health.internal.CSHealthEventEntity
+import clickstream.health.internal.CSHealthEventEntity.Companion.mapToDtos
 import clickstream.health.internal.DefaultCSHealthEventProcessor
 import clickstream.internal.analytics.impl.NoOpCSHealthEventLogger
 import clickstream.lifecycle.CSAppLifeCycle
 import clickstream.logger.CSLogLevel.OFF
 import clickstream.logger.CSLogger
-import clickstream.util.CSAppVersionSharedPref
 import clickstream.utils.CoroutineTestRule
 import com.nhaarman.mockitokotlin2.any
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -28,7 +29,6 @@ import org.mockito.junit.MockitoJUnitRunner
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
-import org.mockito.kotlin.verifyNoMoreInteractions
 import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
@@ -38,9 +38,9 @@ public class CSHealthEventProcessorTest {
     @get:Rule
     public val coroutineRule: CoroutineTestRule = CoroutineTestRule()
 
-    private val csHealthEventRepository = mock(CSHealthEventRepository::class.java)
+    private val healthEventRepository = mock(CSHealthEventRepository::class.java)
     private val csHealthEventFactory = mock(CSHealthEventFactory::class.java)
-    private val csAppVersionSharedPref = mock(CSAppVersionSharedPref::class.java)
+    private val csAppVersionSharedPref = FakeCSAppVersionSharedPref(false)
     private val appLifeCycle = mock<CSAppLifeCycle>()
 
     private lateinit var sut: DefaultCSHealthEventProcessor
@@ -55,17 +55,13 @@ public class CSHealthEventProcessorTest {
             )
 
             val events = fakeCSHealthEvent().mapToDtos()
-            whenever(csHealthEventRepository.getInstantEvents()).thenReturn(events)
-            whenever(csHealthEventRepository.getAggregateEvents()).thenReturn(events)
-            whenever(csHealthEventRepository.getBucketEvents()).thenReturn(events)
+            whenever(healthEventRepository.getInstantEvents()).thenReturn(events)
+            whenever(healthEventRepository.getAggregateEvents()).thenReturn(events)
 
             sut.onStop()
 
-            verify(csHealthEventRepository).getInstantEvents()
-            verify(csHealthEventRepository).getAggregateEvents()
-            verify(csHealthEventRepository).getBucketEvents()
-            verify(csHealthEventRepository, times(5)).deleteHealthEvents(any())
-            verifyNoMoreInteractions(csHealthEventRepository)
+            verify(healthEventRepository).getInstantEvents()
+            verify(healthEventRepository, times(2)).getAggregateEvents()
         }
     }
 
@@ -80,36 +76,48 @@ public class CSHealthEventProcessorTest {
             )
 
             val events = fakeCSHealthEvent().mapToDtos()
-            whenever(csHealthEventRepository.getInstantEvents()).thenReturn(events)
-            whenever(csHealthEventRepository.getAggregateEvents()).thenReturn(events)
-            whenever(csHealthEventRepository.getBucketEvents()).thenReturn(events)
+            whenever(healthEventRepository.getInstantEvents()).thenReturn(events)
+            whenever(healthEventRepository.getAggregateEvents()).thenReturn(events)
 
             sut.onStop()
 
-            verify(csHealthEventRepository).getInstantEvents()
-            verify(csHealthEventRepository).getAggregateEvents()
-            verify(csHealthEventRepository).getBucketEvents()
-            verify(csHealthEventRepository, times(5)).deleteHealthEvents(any())
-            verifyNoMoreInteractions(csHealthEventRepository)
+            verify(healthEventRepository).getInstantEvents()
+            verify(healthEventRepository, times(2)).getAggregateEvents()
+        }
+    }
+
+    @Test
+    public fun `verify aggregate events`() {
+        runBlocking {
+            sut = getEventProcessor(
+                fakeCSInfo().copy(
+                    appInfo = fakeAppInfo.copy(appVersion = "4.38.0"),
+                    userInfo = fakeUserInfo()
+                )
+            )
+
+            whenever(healthEventRepository.getAggregateEvents()).thenReturn(fakeCSHealthEvent().mapToDtos())
+
+            assertTrue(sut.getAggregateEvents().isNotEmpty())
         }
     }
 
     private fun getEventProcessor(csInfo: CSInfo) = DefaultCSHealthEventProcessor(
         appLifeCycleObserver = appLifeCycle,
-        healthEventRepository = csHealthEventRepository,
+        healthEventRepository = healthEventRepository,
         dispatcher = coroutineRule.testDispatcher,
-        healthEventConfig = fakeCSHealthEventConfig.copy(destination = listOf(CT_DESTINATION)),
+        healthEventConfig = fakeCSHealthEventConfig.copy(trackedVia = CSTrackedVia.Both),
         info = csInfo,
         logger = CSLogger(OFF),
-        healthEventLogger = NoOpCSHealthEventLogger(),
+        healthEventLoggerListener = NoOpCSHealthEventLogger(),
         healthEventFactory = csHealthEventFactory,
         appVersion = "4.37.0",
         appVersionPreference = csAppVersionSharedPref
     )
 
-    private fun fakeCSHealthEvent(): List<CSHealthEvent> {
+    private fun fakeCSHealthEvent(): List<CSHealthEventEntity> {
         return listOf(
-            CSHealthEvent(
+            CSHealthEventEntity(
                 healthEventID = 1,
                 eventName = "broken-1",
                 eventType = "instant",

@@ -1,11 +1,13 @@
 package clickstream.health.intermediate
 
+import androidx.annotation.RestrictTo
 import com.gojek.clickstream.internal.Health
 
 /**
  * This is responsible for creating an event object in proto format when provided with user-generated,
  * common data, event-specific attributes, and priority.
  */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public interface CSHealthEventFactory {
 
     /**

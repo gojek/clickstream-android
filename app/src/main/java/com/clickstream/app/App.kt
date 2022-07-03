@@ -7,8 +7,10 @@ import clickstream.connection.CSConnectionEvent
 import clickstream.connection.CSSocketConnectionListener
 import clickstream.eventvisualiser.CSEventVisualiserListener
 import clickstream.eventvisualiser.ui.CSEventVisualiserUI
+import clickstream.health.constant.CSTrackedVia
 import clickstream.lifecycle.impl.DefaultCSAppLifeCycleObserver
 import clickstream.logger.CSLogLevel
+import clickstream.logger.CSLogger
 import com.clickstream.app.config.AccountId
 import com.clickstream.app.config.EndPoint
 import com.clickstream.app.config.SecretKey
@@ -26,6 +28,8 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
 
+        val csLogger = CSLogger(CSLogLevel.DEBUG)
+
         ClickStream.initialize(
             configuration = CSConfiguration.Builder(
                 context = this,
@@ -34,14 +38,15 @@ class App : Application() {
                     AccountId(BuildConfig.ACCOUNT_ID),
                     SecretKey(BuildConfig.SECRET_KEY),
                     EndPoint(BuildConfig.ENDPOINT),
-                    StubBearer(BuildConfig.STUB_BEARER)
+                    StubBearer(BuildConfig.STUB_BEARER),
+                    CSTrackedVia.Both
                 ),
-                appLifeCycle = DefaultCSAppLifeCycleObserver(this)
+                appLifeCycle = DefaultCSAppLifeCycleObserver(csLogger)
             )
-                .applyLogLevel()
-                .addEventListener()
-                .applySocketConnectionListener()
-                .build()
+            .applyLogLevel()
+            .applyEventListener()
+            .applySocketConnectionListener()
+            .build()
         )
 
         CSEventVisualiserUI.initialise(this)
@@ -52,7 +57,7 @@ class App : Application() {
         return this
     }
 
-    private fun CSConfiguration.Builder.addEventListener(): CSConfiguration.Builder {
+    private fun CSConfiguration.Builder.applyEventListener(): CSConfiguration.Builder {
         addEventListener(CSEventVisualiserListener.getInstance())
         return this
     }

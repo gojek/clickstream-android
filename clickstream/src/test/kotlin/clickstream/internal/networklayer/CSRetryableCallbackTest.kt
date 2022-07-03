@@ -2,8 +2,8 @@ package clickstream.internal.networklayer
 
 import clickstream.config.CSNetworkConfig
 import clickstream.fake.fakeCSInfo
-import clickstream.health.time.CSTimeStampGenerator
 import clickstream.health.intermediate.CSHealthEventRepository
+import clickstream.health.time.CSTimeStampGenerator
 import clickstream.internal.utils.CSFlowStreamAdapterFactory
 import clickstream.logger.CSLogLevel.OFF
 import clickstream.logger.CSLogger
@@ -70,7 +70,8 @@ public class CSRetryableCallbackTest {
             logger = CSLogger(OFF),
             healthEventRepository = health,
             info = fakeCSInfo(),
-            coroutineScope = coroutineRule.scope
+            coroutineScope = coroutineRule.scope,
+            eventGuids = "1234"
         ) {
             override fun onSuccess(guid: String) { /*No Op*/
             }

@@ -27,11 +27,12 @@ public final class clickstream/config/CSConfig {
 }
 
 public final class clickstream/config/CSConfiguration {
-	public synthetic fun <init> (Landroid/content/Context;Lkotlinx/coroutines/CoroutineDispatcher;Lclickstream/api/CSInfo;Lclickstream/config/CSConfig;Lclickstream/logger/CSLogLevel;Lclickstream/health/time/CSEventGeneratedTimestampListener;Lclickstream/connection/CSSocketConnectionListener;Lclickstream/config/CSRemoteConfig;Lclickstream/health/intermediate/CSEventHealthListener;Lclickstream/health/intermediate/CSHealthEventRepository;Lclickstream/health/intermediate/CSHealthEventProcessor;Lclickstream/health/intermediate/CSHealthEventFactory;Lclickstream/lifecycle/CSAppLifeCycle;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Landroid/content/Context;Lkotlinx/coroutines/CoroutineDispatcher;Lclickstream/api/CSInfo;Lclickstream/config/CSConfig;Lclickstream/logger/CSLogLevel;Lclickstream/health/time/CSEventGeneratedTimestampListener;Lclickstream/connection/CSSocketConnectionListener;Lclickstream/config/CSRemoteConfig;Lclickstream/health/intermediate/CSEventHealthListener;Lclickstream/health/intermediate/CSHealthEventRepository;Lclickstream/health/intermediate/CSHealthEventProcessor;Lclickstream/health/intermediate/CSHealthEventFactory;Lclickstream/lifecycle/CSAppLifeCycle;Ljava/util/List;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 }
 
 public final class clickstream/config/CSConfiguration$Builder {
 	public fun <init> (Landroid/content/Context;Lclickstream/api/CSInfo;Lclickstream/config/CSConfig;Lclickstream/lifecycle/CSAppLifeCycle;)V
+	public final fun addEventListener (Lclickstream/listener/CSEventListener;)Lclickstream/config/CSConfiguration$Builder;
 	public final fun build ()Lclickstream/config/CSConfiguration;
 	public final fun setDispatcher (Lkotlinx/coroutines/CoroutineDispatcher;)Lclickstream/config/CSConfiguration$Builder;
 	public final fun setEventGeneratedTimestamp (Lclickstream/health/time/CSEventGeneratedTimestampListener;)Lclickstream/config/CSConfiguration$Builder;
@@ -249,7 +250,9 @@ public final class clickstream/extension/CSMessageExtKt {
 	public static final fun getField (Lcom/google/protobuf/MessageLite;Ljava/lang/String;)Ljava/lang/reflect/Field;
 	public static final fun isHealthEvent (Lcom/gojek/clickstream/de/Event;)Z
 	public static final fun isValidMessage (Lcom/google/protobuf/MessageLite;)Z
+	public static final fun messageName (Lcom/google/protobuf/MessageLite;)Ljava/lang/String;
 	public static final fun protoName (Lcom/google/protobuf/MessageLite;)Ljava/lang/String;
+	public static final fun toFlatMap (Lcom/google/protobuf/MessageLite;)Ljava/util/Map;
 }
 
 public final class clickstream/internal/db/CSDatabase_Impl {
@@ -302,6 +305,7 @@ public final class clickstream/internal/eventscheduler/CSEventDataDao_Impl : cli
 	public fun insert (Lclickstream/internal/eventscheduler/CSEventData;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun insertAll (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun loadAll ()Lkotlinx/coroutines/flow/Flow;
+	public fun loadEventByRequestId (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun loadOnGoingEvents (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun setOnGoingEvent (Ljava/lang/String;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }

@@ -1,3 +1,18 @@
+public final class clickstream/lifecycle/CSAndroidLifecycle {
+	public static final field APPLICATION_THROTTLE_TIMEOUT_MILLIS J
+	public static final field INSTANCE Lclickstream/lifecycle/CSAndroidLifecycle;
+	public static final fun ofActivityForeground (Landroid/app/Application;Lclickstream/logger/CSLogger;)Lcom/tinder/scarlet/Lifecycle;
+	public static final fun ofActivityForeground (Landroid/app/Application;Lclickstream/logger/CSLogger;J)Lcom/tinder/scarlet/Lifecycle;
+	public static synthetic fun ofActivityForeground$default (Landroid/app/Application;Lclickstream/logger/CSLogger;JILjava/lang/Object;)Lcom/tinder/scarlet/Lifecycle;
+	public static final fun ofApplicationForeground (Landroid/app/Application;Lclickstream/logger/CSLogger;Lcom/tinder/scarlet/lifecycle/LifecycleRegistry;)Lcom/tinder/scarlet/Lifecycle;
+	public static final fun ofLifecycleOwnerForeground (Landroid/app/Application;Landroidx/lifecycle/LifecycleOwner;Lclickstream/logger/CSLogger;)Lcom/tinder/scarlet/Lifecycle;
+	public static final fun ofLifecycleOwnerForeground (Landroid/app/Application;Landroidx/lifecycle/LifecycleOwner;Lclickstream/logger/CSLogger;J)Lcom/tinder/scarlet/Lifecycle;
+	public static synthetic fun ofLifecycleOwnerForeground$default (Landroid/app/Application;Landroidx/lifecycle/LifecycleOwner;Lclickstream/logger/CSLogger;JILjava/lang/Object;)Lcom/tinder/scarlet/Lifecycle;
+	public static final fun ofServiceStarted (Landroid/app/Application;Landroidx/lifecycle/LifecycleOwner;Lclickstream/logger/CSLogger;)Lcom/tinder/scarlet/Lifecycle;
+	public static final fun ofServiceStarted (Landroid/app/Application;Landroidx/lifecycle/LifecycleOwner;Lclickstream/logger/CSLogger;J)Lcom/tinder/scarlet/Lifecycle;
+	public static synthetic fun ofServiceStarted$default (Landroid/app/Application;Landroidx/lifecycle/LifecycleOwner;Lclickstream/logger/CSLogger;JILjava/lang/Object;)Lcom/tinder/scarlet/Lifecycle;
+}
+
 public abstract interface class clickstream/lifecycle/CSAppLifeCycle {
 	public abstract fun addObserver (Lclickstream/lifecycle/CSAppLifeCycleObserver;)V
 }
@@ -11,6 +26,7 @@ public final class clickstream/lifecycle/CSBackgroundLifecycleManager : com/tind
 	public fun <init> ()V
 	public fun <init> (Lcom/tinder/scarlet/lifecycle/LifecycleRegistry;)V
 	public fun combineWith ([Lcom/tinder/scarlet/Lifecycle;)Lcom/tinder/scarlet/Lifecycle;
+	public final fun getLifecycleRegistry ()Lcom/tinder/scarlet/lifecycle/LifecycleRegistry;
 	public final fun onStart ()V
 	public final fun onStop ()V
 	public fun subscribe (Lorg/reactivestreams/Subscriber;)V
@@ -23,9 +39,16 @@ public abstract class clickstream/lifecycle/CSLifeCycleManager : androidx/lifecy
 	public abstract fun onStop ()V
 }
 
-public final class clickstream/lifecycle/impl/DefaultCSAppLifeCycleObserver : clickstream/lifecycle/CSAppLifeCycle {
-	public fun <init> (Landroid/content/Context;)V
+public final class clickstream/lifecycle/impl/DefaultCSActivityLifeCycleObserver : clickstream/lifecycle/CSAppLifeCycle {
+	public fun <init> (Landroid/content/Context;Lclickstream/logger/CSLogger;)V
 	public fun addObserver (Lclickstream/lifecycle/CSAppLifeCycleObserver;)V
+}
+
+public final class clickstream/lifecycle/impl/DefaultCSAppLifeCycleObserver : androidx/lifecycle/LifecycleObserver, clickstream/lifecycle/CSAppLifeCycle {
+	public fun <init> (Lclickstream/logger/CSLogger;)V
+	public fun addObserver (Lclickstream/lifecycle/CSAppLifeCycleObserver;)V
+	public final fun onAppStart ()V
+	public final fun onAppStop ()V
 }
 
 public final class com/gojek/android/clickstream/lifecycle/BuildConfig {

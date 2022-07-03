@@ -1,5 +1,6 @@
 package clickstream.internal.networklayer
 
+import androidx.annotation.VisibleForTesting
 import clickstream.api.CSInfo
 import clickstream.connection.CSConnectionEvent.OnConnectionClosed
 import clickstream.connection.CSConnectionEvent.OnConnectionClosing
@@ -9,9 +10,9 @@ import clickstream.connection.CSConnectionEvent.OnConnectionFailed
 import clickstream.connection.CSConnectionEvent.OnMessageReceived
 import clickstream.connection.CSSocketConnectionListener
 import clickstream.connection.mapTo
-import clickstream.health.intermediate.CSHealthEventRepository
-import clickstream.health.constant.CSEventNamesConstant.ClickStreamConnectionFailed
+import clickstream.health.constant.CSEventNamesConstant
 import clickstream.health.constant.CSEventTypesConstant
+import clickstream.health.intermediate.CSHealthEventRepository
 import clickstream.health.model.CSHealthEventDTO
 import clickstream.internal.analytics.CSErrorReasons
 import clickstream.internal.utils.CSResult
@@ -20,24 +21,23 @@ import clickstream.lifecycle.CSLifeCycleManager
 import clickstream.logger.CSLogger
 import com.gojek.clickstream.de.EventRequest
 import com.tinder.scarlet.WebSocket
+import java.io.EOFException
 import java.net.SocketTimeoutException
 import java.util.concurrent.atomic.AtomicBoolean
-import kotlinx.coroutines.CompletableJob
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlin.coroutines.coroutineContext
 
 /**
  * The NetworkManager is responsible for communicating with repository and the event scheduler
@@ -51,41 +51,37 @@ import kotlinx.coroutines.launch
 internal open class CSNetworkManager(
     appLifeCycle: CSAppLifeCycle,
     private val networkRepository: CSNetworkRepository,
-    protected val dispatcher: CoroutineDispatcher,
-    protected val logger: CSLogger,
+    private val dispatcher: CoroutineDispatcher,
+    private val logger: CSLogger,
     private val healthEventRepository: CSHealthEventRepository,
     private val info: CSInfo,
     private val connectionListener: CSSocketConnectionListener
 ) : CSLifeCycleManager(appLifeCycle) {
 
     private val isConnected: AtomicBoolean = AtomicBoolean(false)
-
-    protected var job: CompletableJob = SupervisorJob()
-    protected var coroutineScope: CoroutineScope = CoroutineScope(job + dispatcher)
-    private val handler = CoroutineExceptionHandler { _, throwable ->
-        logger.debug { "CSNetworkManager#handler : ${throwable.message}" }
+    private val job = SupervisorJob()
+    protected val coroutineScope = CoroutineScope(job + dispatcher)
+    @VisibleForTesting
+    internal var startConnectingTime: Long = 0L
+    @VisibleForTesting
+    internal var endConnectedTime: Long = 0L
+    @Volatile
+    private lateinit var callback: CSEventGuidCallback
+    private val coroutineExceptionHandler: CoroutineExceptionHandler by lazy {
+        CoroutineExceptionHandler { _, throwable ->
+            logger.error {
+                "================== CRASH IS HAPPENING ================== \n" +
+                "= In : CSBackgroundEventScheduler                      = \n" +
+                "= Due : ${throwable.message}                           = \n" +
+                "==================== END OF CRASH ====================== \n"
+            }
+        }
     }
 
     init {
         logger.debug { "CSNetworkManager#init" }
         addObserver()
     }
-
-    /**
-     * Provides status of network manager
-     *
-     * @return isAvailable - Whether network manager is available or not
-     */
-    fun isAvailable(): Boolean {
-        logger.debug { "CSNetworkManager#isAvailable - isSocketConnected : ${isConnected.get()}" }
-
-        return isConnected.get()
-    }
-
-    /**
-     * Updates the caller with the status of the request
-     */
-    private lateinit var callback: CSEventGuidCallback
 
     val eventGuidFlow: Flow<CSResult<String>> = callbackFlow {
         logger.debug { "CSNetworkManager#eventGuidFlow" }
@@ -99,7 +95,7 @@ internal open class CSNetworkManager(
 
             override fun onError(error: Throwable, guid: String) {
                 error.printStackTrace()
-                logger.debug { "CSNetworkManager#eventGuidFlow#onError - $guid errorMessage : ${error.message}" }
+                logger.debug { "CSNetworkManager#eventGuidFlow#onError : $guid errorMessage ${error.message}" }
 
                 offer(CSResult.Failure(error, guid))
             }
@@ -112,9 +108,9 @@ internal open class CSNetworkManager(
      */
     override fun onStart() {
         logger.debug { "CSNetworkManager#onStart" }
-        job = SupervisorJob()
-        coroutineScope = CoroutineScope(job + dispatcher)
-        observeSocketState()
+        coroutineScope.launch(coroutineExceptionHandler) {
+            observeSocketConnectionState()
+        }
     }
 
     /**
@@ -123,22 +119,24 @@ internal open class CSNetworkManager(
      */
     override fun onStop() {
         logger.debug { "CSNetworkManager#onStop" }
-        coroutineScope.cancel()
+        cancelJob()
+    }
+
+    fun cancelJob() {
+        logger.debug { "CSNetworkManager#cancelJob" }
+        job.cancelChildren()
     }
 
     /**
      * The analytic data which is sent to the server
      *
      * @param eventRequest - The data which hold the analytic events
+     * @param eventGuids - a guid list within string the comma separate "1, 2, 3"
      */
-    fun processEvent(
-        eventRequest: EventRequest
-    ) {
+    fun processEvent(eventRequest: EventRequest, eventGuids: String) {
         logger.debug { "CSNetworkManager#processEvent" }
-        networkRepository.sendEvents(
-            eventRequest = eventRequest,
-            callback = callback
-        )
+
+        networkRepository.sendEvents(eventRequest, eventGuids, callback)
     }
 
     /**
@@ -154,90 +152,162 @@ internal open class CSNetworkManager(
     }
 
     /**
+     * Provides status of network manager
+     *
+     * @return isAvailable - Whether network manager is available or not
+     */
+    fun isSocketConnected(): Boolean {
+        logger.debug { "CSNetworkManager#isSocketConnected : ${isConnected.get()}" }
+
+        return this.isConnected.get()
+    }
+
+    /**
      * Observes the web socket connection state.
      *
      * When the connection is closed, the scope is cancelled to unsubscribe the events
      */
-    protected fun observeSocketState(): Job {
-        logger.debug { "CSNetworkManager#observeSocketState" }
+    @VisibleForTesting
+    suspend fun observeSocketConnectionState() {
+        logger.debug { "CSNetworkManager#observeSocketConnectionState" }
 
-        return coroutineScope.launch(handler) {
-            logger.debug { "CSNetworkManager#observeSocketState is coroutine active : $isActive" }
+        if (coroutineContext.isActive.not()) {
+            logger.debug { "CSNetworkManager#observeSocketConnectionState : coroutine is not active" }
+            return
+        }
 
-            ensureActive()
-            networkRepository.observeSocketState()
-                .onStart {
-                    connectionListener.onEventChanged(OnConnectionConnecting)
-                }
-                .collect {
-                    when (it) {
-                        is WebSocket.Event.OnConnectionOpened<*> -> {
-                            connectionListener.onEventChanged(OnConnectionConnected)
-                            logger.debug { "CSNetworkManager#observeSocketState - Socket State: OnConnectionOpened" }
-                            isConnected.set(true)
-                        }
-                        is WebSocket.Event.OnMessageReceived -> {
-                            connectionListener.onEventChanged(OnMessageReceived(it.message.mapTo()))
-                            logger.debug { "CSNetworkManager#observeSocketState - Socket State: OnMessageReceived : " + it.message }
-                        }
-                        is WebSocket.Event.OnConnectionClosing -> {
-                            connectionListener.onEventChanged(OnConnectionClosing(it.shutdownReason.mapTo()))
-                            logger.debug { "CSNetworkManager#observeSocketState - Socket State: OnConnectionClosing. Due to" + it.shutdownReason }
-                        }
-                        is WebSocket.Event.OnConnectionClosed -> {
-                            connectionListener.onEventChanged(OnConnectionClosed(it.shutdownReason.mapTo()))
-                            logger.debug { "CSNetworkManager#observeSocketState - Socket State: OnConnectionClosed. Due to" + it.shutdownReason }
-                            isConnected.set(false)
-                        }
-                        is WebSocket.Event.OnConnectionFailed -> {
-                            connectionListener.onEventChanged(OnConnectionFailed(it.throwable))
-                            logger.debug { "CSNetworkManager#observeSocketState - Socket State: OnConnectionFailed. Due to " + it.throwable }
-                            isConnected.set(false)
-                            trackConnectionFailure(it)
-                        }
+        networkRepository.observeSocketState()
+            .onStart {
+                // start time for connecting
+                startConnectingTime = System.currentTimeMillis()
+
+                connectionListener.onEventChanged(OnConnectionConnecting)
+                recordNonErrorHealthEvent(
+                    eventName = CSEventNamesConstant.Instant.ClickStreamConnectionAttempt.value,
+                    type = CSEventTypesConstant.INSTANT
+                )
+            }
+            .collect {
+                when (it) {
+                    is WebSocket.Event.OnConnectionOpened<*> -> {
+                        logger.debug { "CSNetworkManager#observeSocketConnectionState - Socket State: OnConnectionOpened" }
+                        isConnected.set(true)
+                        endConnectedTime = System.currentTimeMillis()
+                        connectionListener.onEventChanged(OnConnectionConnected)
+
+                        recordNonErrorHealthEvent(
+                            eventName = CSEventNamesConstant.Instant.ClickStreamConnectionSuccess.value,
+                            type = CSEventTypesConstant.INSTANT,
+                            timeToConnection = endConnectedTime - startConnectingTime
+                        )
+                    }
+                    is WebSocket.Event.OnMessageReceived -> {
+                        logger.debug { "CSNetworkManager#observeSocketConnectionState - Socket State: OnMessageReceived : " + it.message }
+                        isConnected.set(true)
+
+                        connectionListener.onEventChanged(OnMessageReceived(it.message.mapTo()))
+                    }
+                    is WebSocket.Event.OnConnectionClosing -> {
+                        logger.debug { "CSNetworkManager#observeSocketConnectionState - Socket State: OnConnectionClosing. Due to" + it.shutdownReason }
+
+                        connectionListener.onEventChanged(OnConnectionClosing(it.shutdownReason.mapTo()))
+                    }
+                    is WebSocket.Event.OnConnectionClosed -> {
+                        logger.debug { "CSNetworkManager#observeSocketConnectionState - Socket State: OnConnectionClosed. Due to" + it.shutdownReason }
+                        isConnected.set(false)
+                        connectionListener.onEventChanged(OnConnectionClosed(it.shutdownReason.mapTo()))
+
+                        recordErrorHealthEvent(
+                            eventName = CSEventNamesConstant.Instant.ClickStreamConnectionDropped.value,
+                            throwable = Exception(it.shutdownReason.reason),
+                            failureMessage = it.shutdownReason.reason
+                        )
+                    }
+                    is WebSocket.Event.OnConnectionFailed -> {
+                        logger.debug { "CSNetworkManager#observeSocketConnectionState - Socket State: OnConnectionFailed. Due to " + it.throwable }
+                        isConnected.set(false)
+                        endConnectedTime = System.currentTimeMillis()
+                        connectionListener.onEventChanged(OnConnectionFailed(it.throwable))
+
+                        recordErrorHealthEvent(
+                            eventName = CSEventNamesConstant.Instant.ClickStreamConnectionFailure.value,
+                            throwable = it.throwable,
+                            failureMessage = it.throwable.message,
+                            timeToConnection = endConnectedTime - startConnectingTime
+                        )
                     }
                 }
-        }
+            }
     }
 
-    private suspend fun trackConnectionFailure(failureResponse: WebSocket.Event.OnConnectionFailed) {
-        logger.debug { "CSNetworkManager#trackConnectionFailure $failureResponse" }
-
-        val healthEvent = when {
-            failureResponse.throwable.message?.contains(CSErrorReasons.USER_UNAUTHORIZED, true)
-                ?: false -> {
+    private suspend fun recordErrorHealthEvent(
+        eventName: String,
+        throwable: Throwable,
+        failureMessage: String?,
+        timeToConnection: Long = 0L
+    ) {
+        val healthEvent: CSHealthEventDTO = when {
+            failureMessage?.contains(CSErrorReasons.USER_UNAUTHORIZED, true) ?: false -> {
                 CSHealthEventDTO(
-                    eventName = ClickStreamConnectionFailed.value,
-                    eventType = CSEventTypesConstant.AGGREGATE,
+                    eventName = eventName,
+                    eventType = CSEventTypesConstant.INSTANT,
                     error = CSErrorReasons.USER_UNAUTHORIZED,
-                    appVersion = info.appInfo.appVersion
+                    appVersion = info.appInfo.appVersion,
+                    timeToConnection = timeToConnection
                 )
             }
-            failureResponse.throwable is SocketTimeoutException -> {
+            throwable is SocketTimeoutException -> {
                 CSHealthEventDTO(
-                    eventName = ClickStreamConnectionFailed.value,
-                    eventType = CSEventTypesConstant.AGGREGATE,
+                    eventName = eventName,
+                    eventType = CSEventTypesConstant.INSTANT,
                     error = CSErrorReasons.SOCKET_TIMEOUT,
-                    appVersion = info.appInfo.appVersion
+                    appVersion = info.appInfo.appVersion,
+                    timeToConnection = timeToConnection
                 )
             }
-            failureResponse.throwable.message?.isNotEmpty() ?: false -> {
+            throwable is EOFException -> {
                 CSHealthEventDTO(
-                    eventName = ClickStreamConnectionFailed.value,
-                    eventType = CSEventTypesConstant.AGGREGATE,
-                    error = failureResponse.throwable.toString(),
-                    appVersion = info.appInfo.appVersion
+                    eventName = eventName,
+                    eventType = CSEventTypesConstant.INSTANT,
+                    error = CSErrorReasons.EOFException,
+                    appVersion = info.appInfo.appVersion,
+                    timeToConnection = timeToConnection
+                )
+            }
+            failureMessage?.isNotEmpty() == true -> {
+                CSHealthEventDTO(
+                    eventName = eventName,
+                    eventType = CSEventTypesConstant.INSTANT,
+                    error = failureMessage,
+                    appVersion = info.appInfo.appVersion,
+                    timeToConnection = timeToConnection
                 )
             }
             else -> {
                 CSHealthEventDTO(
-                    eventName = ClickStreamConnectionFailed.value,
-                    eventType = CSEventTypesConstant.AGGREGATE,
-                    error = CSErrorReasons.UNKNOWN,
-                    appVersion = info.appInfo.appVersion
+                    eventName = eventName,
+                    eventType = CSEventTypesConstant.INSTANT,
+                    error = failureMessage ?: CSErrorReasons.UNKNOWN,
+                    appVersion = info.appInfo.appVersion,
+                    timeToConnection = timeToConnection
                 )
             }
         }
+        logger.debug { "CSNetworkManager#trackConnectionFailure due to ${healthEvent.error}" }
         healthEventRepository.insertHealthEvent(healthEvent = healthEvent)
+    }
+
+    private suspend fun recordNonErrorHealthEvent(
+        eventName: String,
+        type: String,
+        timeToConnection: Long = 0L
+    ) {
+        val event = CSHealthEventDTO(
+            eventName = eventName,
+            eventType = type,
+            appVersion = info.appInfo.appVersion,
+            timeToConnection = timeToConnection
+        )
+        healthEventRepository.insertHealthEvent(healthEvent = event)
     }
 }

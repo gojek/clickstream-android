@@ -27,13 +27,14 @@ afterEvaluate {
                 project.artifactoryPublish.skip = false
                 project.tasks.artifactoryPublish.dependsOn("assemble")
                 project.tasks.artifactoryPublish.dependsOn("generatePomFileForJarPublication")
-
                 println("$project.name will be published as $projectArtifactId : $projectVersionId")
 
                 groupId projectGroupId
                 artifactId projectArtifactId
                 version = projectVersionId
-                artifact("$buildDir/libs/${project.getName()}.jar")
+                artifact(sourcesJar)
+                artifact("$buildDir/libs/${project.getName()}-${projectVersionId}.jar")
+
                 pom.withXml {
                     def dependencies = asNode().appendNode('dependencies')
                     configurations.implementation.allDependencies.each {

@@ -1,1 +1,5 @@
-<manifest package="com.gojek.android.clickstream.lifecycle" />
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.gojek.android.clickstream.lifecycle">
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+</manifest>

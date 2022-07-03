@@ -37,10 +37,10 @@ dependencies {
     implementation(files("$rootDir/libs/proto-sdk-1.18.6.jar"))
     api(projects.clickstreamLogger)
     api(projects.clickstreamHealthMetricsNoop)
+    api(projects.clickstreamEventListener)
     compileOnly(projects.clickstreamApi)
     compileOnly(projects.clickstreamHealthMetricsApi)
     compileOnly(projects.clickstreamLifecycle)
-    api(projects.clickstreamEventListener)
 
     // Proto
     api(deps.utils.protoLite)

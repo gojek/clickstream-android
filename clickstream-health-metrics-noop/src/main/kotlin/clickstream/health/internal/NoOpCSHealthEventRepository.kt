@@ -16,10 +16,6 @@ internal class NoOpCSHealthEventRepository : CSHealthEventRepository {
         return emptyList()
     }
 
-    override suspend fun getBucketEvents(): List<CSHealthEventDTO> {
-        return emptyList()
-    }
-
     override suspend fun getAggregateEvents(): List<CSHealthEventDTO> {
         return emptyList()
     }

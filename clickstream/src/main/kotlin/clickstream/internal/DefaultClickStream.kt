@@ -28,7 +28,7 @@ internal class DefaultClickStream private constructor(
 
     private val handler: CoroutineExceptionHandler by lazy {
         CoroutineExceptionHandler { _, throwable ->
-            logger.debug { throwable.message.toString() }
+            logger.debug { "DefaultClickStream#error : ${throwable.message}" }
         }
     }
     private val scope: CoroutineScope by lazy {
@@ -110,7 +110,7 @@ internal class DefaultClickStream private constructor(
                         healthEventProcessor = configuration.healthEventProcessor,
                         healthEventFactory = configuration.healthEventFactory,
                         appLifeCycle = configuration.appLifeCycle,
-                        eventListeners = configuration.eventListeners
+                        eventListener = configuration.eventListeners
                     )
 
                     CSServiceLocator.setServiceLocator(serviceLocator)
@@ -138,6 +138,7 @@ internal class DefaultClickStream private constructor(
             synchronized(lock) {
                 if (sInstance != null) {
                     sInstance = null
+                    CSServiceLocator.release()
                 }
             }
         }

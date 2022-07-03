@@ -1,4 +1,4 @@
-package clickstream.lifecycle
+package clickstream.lifecycle.internal
 
 import android.app.Activity
 import android.app.Application.ActivityLifecycleCallbacks

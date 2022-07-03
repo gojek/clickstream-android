@@ -120,6 +120,7 @@ dependencies {
 
     // Clickstream
     implementation(projects.clickstream)
+    implementation(projects.clickstreamHealthMetrics)
     implementation(projects.clickstreamEventVisualiser)
     implementation(projects.clickstreamEventVisualiserUi)
     implementation(files("$rootDir/libs/proto-consumer-1.18.6.jar"))

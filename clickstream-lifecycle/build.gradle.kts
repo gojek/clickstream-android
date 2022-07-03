@@ -10,7 +10,7 @@ ext {
     set("PUBLISH_VERSION", ext.get("gitVersionName"))
 }
 
-if(!project.hasProperty("isLocal")) {
+if (!project.hasProperty("isLocal")) {
     apply(from = "$rootDir/scripts/publish-module.gradle")
 }
 
@@ -38,4 +38,7 @@ dependencies {
 
     // Networking
     implementation(deps.networkLibs.scarlet)
+
+    // ClickStream
+    implementation(projects.clickstreamLogger)
 }

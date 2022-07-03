@@ -1,5 +1,6 @@
 package clickstream.lifecycle
 
+import androidx.annotation.RestrictTo
 import com.tinder.scarlet.Lifecycle
 import com.tinder.scarlet.Lifecycle.State.Started
 import com.tinder.scarlet.Lifecycle.State.Stopped.WithReason
@@ -13,8 +14,9 @@ private const val SHUTDOWN_REASON_CODE = 1001
  * Start -> Called when app goes to background
  * Stop -> Called `connectionTerminationTimerWaitTimeInMillis` after app moves to background
  */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public class CSBackgroundLifecycleManager(
-    private val lifecycleRegistry: LifecycleRegistry
+    public val lifecycleRegistry: LifecycleRegistry
 ) : Lifecycle by lifecycleRegistry {
 
     public constructor() : this(LifecycleRegistry())

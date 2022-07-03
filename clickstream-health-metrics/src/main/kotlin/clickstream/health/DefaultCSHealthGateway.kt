@@ -59,7 +59,7 @@ public object DefaultCSHealthGateway {
                     healthEventConfig = healthEventConfig,
                     info = csInfo,
                     logger = logger,
-                    healthEventLogger = healthEventLogger,
+                    healthEventLoggerListener = healthEventLogger,
                     healthEventFactory = healthEventFactory,
                     appVersion = appVersion,
                     appVersionPreference = appVersionPreference

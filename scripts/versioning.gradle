@@ -1,3 +1,3 @@
 ext {
-    gitVersionName = "0.2.40"
+    gitVersionName = "1.0.0-alpha-3"
 }

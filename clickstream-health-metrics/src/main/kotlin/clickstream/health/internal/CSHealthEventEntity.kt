@@ -3,10 +3,9 @@ package clickstream.health.internal
 import androidx.annotation.RestrictTo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import clickstream.health.constant.CSEventNamesConstant.ClickStreamEventBatchCreated
-import clickstream.health.model.CSHealthEventDTO
-import clickstream.health.constant.CSHealthKeysConstant
 import clickstream.health.constant.CSEventTypesConstant
+import clickstream.health.model.CSHealthEvent
+import clickstream.health.model.CSHealthEventDTO
 
 /**
  * The data class for health events which will be stored to the DB
@@ -29,7 +28,7 @@ import clickstream.health.constant.CSEventTypesConstant
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 @Entity(tableName = "HealthStats")
-public data class CSHealthEvent(
+public data class CSHealthEventEntity(
     @PrimaryKey(autoGenerate = true)
     val healthEventID: Int = 0,
     val eventName: String,
@@ -45,20 +44,21 @@ public data class CSHealthEvent(
     val stopTime: Long = 0L,
     val bucketType: String = "",
     val batchSize: Long = 0L,
-    val appVersion: String
+    val appVersion: String,
+    val timeToConnection: Long = 0L
 ) {
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public companion object {
         @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-        public fun CSHealthEventDTO.dtoMapTo(): CSHealthEvent {
-            return CSHealthEvent(
+        public fun CSHealthEventDTO.dtoMapTo(): CSHealthEventEntity {
+            return CSHealthEventEntity(
                 healthEventID = healthEventID,
                 eventName = eventName,
                 eventType = eventType,
                 timestamp = timestamp,
-                eventId = eventId,
-                eventBatchId = eventBatchId,
+                eventId = eventGuid,
+                eventBatchId = eventBatchGuid,
                 error = error,
                 sessionId = sessionId,
                 count = count,
@@ -67,19 +67,20 @@ public data class CSHealthEvent(
                 stopTime = stopTime,
                 bucketType = bucketType,
                 batchSize = batchSize,
-                appVersion = appVersion
+                appVersion = appVersion,
+                timeToConnection = timeToConnection
             )
         }
 
         @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-        public fun CSHealthEvent.mapToDto(): CSHealthEventDTO {
+        public fun CSHealthEventEntity.mapToDto(): CSHealthEventDTO {
             return CSHealthEventDTO(
                 healthEventID = healthEventID,
                 eventName = eventName,
                 eventType = eventType,
                 timestamp = timestamp,
-                eventId = eventId,
-                eventBatchId = eventBatchId,
+                eventGuid = eventId,
+                eventBatchGuid = eventBatchId,
                 error = error,
                 sessionId = sessionId,
                 count = count,
@@ -88,80 +89,31 @@ public data class CSHealthEvent(
                 stopTime = stopTime,
                 bucketType = bucketType,
                 batchSize = batchSize,
-                appVersion = appVersion
+                appVersion = appVersion,
+                timeToConnection = timeToConnection
             )
         }
 
         @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-        public fun List<CSHealthEvent>.mapToDtos(): List<CSHealthEventDTO> {
+        public fun List<CSHealthEventEntity>.mapToDtos(): List<CSHealthEventDTO> {
             return this.map { healthEvent -> healthEvent.mapToDto() }
         }
 
         @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-        public fun List<CSHealthEventDTO>.dtosMapTo(): List<CSHealthEvent> {
+        public fun List<CSHealthEventDTO>.dtosMapTo(): List<CSHealthEventEntity> {
             return this.map { healthEvent -> healthEvent.dtoMapTo() }
         }
     }
 
-    /**
-     * Returns HashMap of event data which is used for health & performance tracking.     *
-     */
-    public fun eventData(): HashMap<String, Any> {
-        val eventData: HashMap<String, Any> = hashMapOf()
-
-        if (eventType.isNotBlank()) {
-            eventData[CSHealthKeysConstant.EVENT_TYPE] = eventType
-        }
-
-        if (sessionId.isNotBlank()) {
-            eventData[CSHealthKeysConstant.SESSION_ID] = sessionId
-        }
-
-        if (error.isNotBlank()) {
-            eventData[CSHealthKeysConstant.REASON] = error
-        }
-
-        if (eventId.isNotBlank()) {
-            eventData[getEventIdKey()] = eventId
-        }
-
-        if (eventBatchId.isNotBlank()) {
-            eventData[getEvenBatchIdKey()] = eventBatchId
-        }
-        if (timestamp.isNotBlank()) {
-            eventData[CSHealthKeysConstant.TIMESTAMP] = timestamp
-        }
-
-        if (count != 0) {
-            eventData[CSHealthKeysConstant.COUNT] = count
-        }
-
-        if (bucketType.isNotBlank()) {
-            eventData[CSHealthKeysConstant.BUCKET] = bucketType
-        }
-
-        return eventData
+    public fun mapToHealthEventDTO(): CSHealthEvent {
+        return CSHealthEvent(
+            eventName = eventName,
+            sessionId = sessionId,
+            eventGuids = if (eventId.isNotBlank()) eventId.split(",") else null,
+            eventBatchGuids = if (eventBatchId.isNotBlank()) eventBatchId.split(",") else null,
+            failureReason = error,
+            timeToConnection = timeToConnection,
+            eventCount = count
+        )
     }
-
-    private fun getEventIdKey(): String =
-        when (eventType) {
-            CSEventTypesConstant.INSTANT -> {
-                if (eventName == ClickStreamEventBatchCreated.value) {
-                    CSHealthKeysConstant.EVENTS
-                } else {
-                    CSHealthKeysConstant.EVENT_ID
-                }
-            }
-            CSEventTypesConstant.AGGREGATE -> CSHealthKeysConstant.EVENTS
-            CSEventTypesConstant.BUCKET -> CSHealthKeysConstant.EVENTS
-            else -> CSHealthKeysConstant.EVENTS
-        }
-
-    private fun getEvenBatchIdKey(): String =
-        when (eventType) {
-            CSEventTypesConstant.INSTANT -> CSHealthKeysConstant.EVENT_BATCH_ID
-            CSEventTypesConstant.AGGREGATE -> CSHealthKeysConstant.EVENT_BATCHES
-            CSEventTypesConstant.BUCKET -> CSHealthKeysConstant.EVENT_BATCHES
-            else -> CSHealthKeysConstant.EVENT_BATCHES
-        }
 }

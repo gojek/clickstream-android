@@ -17,8 +17,12 @@ public class CSLogger(
      *
      * @param message which will be printed
      */
-    public fun debug(message: () -> String) {
+    public inline fun debug(message: () -> String) {
         if (isDebug()) Log.d(CLICK_STREAM_LOG_TAG, message())
+    }
+
+    public inline fun error(message: () -> String) {
+        if (isDebug()) Log.e(CLICK_STREAM_LOG_TAG, message())
     }
 
     /**
@@ -43,5 +47,5 @@ public class CSLogger(
         if (isDebug()) Log.d("$CLICK_STREAM_LOG_TAG:${suffix()}", message(), t())
     }
 
-    private fun isDebug() = logLevel.getValue() > CSLogLevel.INFO.getValue()
+    public fun isDebug(): Boolean = logLevel.getValue() > CSLogLevel.INFO.getValue()
 }

@@ -76,6 +76,10 @@ public fun MessageLite.eventName(): String? {
     }.getOrNull()
 }
 
+public fun MessageLite.messageName(): String {
+    return this::class.qualifiedName.orEmpty()
+}
+
 /**
  * Converts [MessageLite] to [Map<String,Any?>] using reflection.
  * */
