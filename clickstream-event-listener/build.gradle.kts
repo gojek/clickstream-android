@@ -1,3 +1,5 @@
+import com.android.build.gradle.internal.tasks.factory.dependsOn
+
 plugins {
     id("java-library")
     id("org.jetbrains.kotlin.jvm")
@@ -16,7 +18,10 @@ if (!project.hasProperty("isLocal")) {
     apply(from = "$rootDir/scripts/publish-module.gradle")
 }
 
+tasks.assemble.dependsOn("javadocJar")
+
 java {
+    withJavadocJar()
     withSourcesJar()
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
