@@ -21,14 +21,7 @@ if (!project.hasProperty("isLocal")) {
 tasks.assemble.dependsOn("javadocJar")
 
 java {
-    // publishing to artifactory
-    if (project.hasProperty("artifactory")) {
-        withSourcesJar()
-        withJavadocJar()
-    } else {
-    // publishing to maven central
-        withJavadocJar()
-    }
+    withJavadocJar()
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
 }
