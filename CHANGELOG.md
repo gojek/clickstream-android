@@ -2,7 +2,7 @@
 
 Based on https://keepachangelog.com/en/1.0.0/
 
-## 1.0.0-alpha-1
+## 1.0.0-alpha-10
 
 ### Update
 - [[Feature] : Clickstream health observation v2](https://github.com/gojek/clickstream-android/discussions/18)
