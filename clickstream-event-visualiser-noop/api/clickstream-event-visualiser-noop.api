@@ -1,0 +1,29 @@
+public abstract interface class clickstream/eventvisualiser/CSEVEventObserver {
+	public abstract fun addObserver (Lkotlin/jvm/functions/Function1;)V
+	public abstract fun onCall (Ljava/util/List;)V
+	public abstract fun removeObserver (Lkotlin/jvm/functions/Function1;)V
+}
+
+public final class clickstream/eventvisualiser/CSEventVisualiser : clickstream/eventvisualiser/CSEVEventObserver {
+	public static final field INSTANCE Lclickstream/eventvisualiser/CSEventVisualiser;
+	public fun addObserver (Lkotlin/jvm/functions/Function1;)V
+	public fun onCall (Ljava/util/List;)V
+	public fun removeObserver (Lkotlin/jvm/functions/Function1;)V
+}
+
+public final class clickstream/eventvisualiser/CSEventVisualiserListener : clickstream/listener/CSEventListener {
+	public static final field Companion Lclickstream/eventvisualiser/CSEventVisualiserListener$Companion;
+	public fun onCall (Ljava/util/List;)V
+}
+
+public final class clickstream/eventvisualiser/CSEventVisualiserListener$Companion {
+	public final fun getInstance ()Lclickstream/eventvisualiser/CSEventVisualiserListener;
+}
+
+public final class clickstream/eventvisualiser/noop/BuildConfig {
+	public static final field BUILD_TYPE Ljava/lang/String;
+	public static final field DEBUG Z
+	public static final field LIBRARY_PACKAGE_NAME Ljava/lang/String;
+	public fun <init> ()V
+}
+

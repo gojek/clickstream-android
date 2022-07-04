@@ -1,0 +1,18 @@
+public final class clickstream/eventvisualiser/ui/BuildConfig {
+	public static final field BUILD_TYPE Ljava/lang/String;
+	public static final field DEBUG Z
+	public static final field LIBRARY_PACKAGE_NAME Ljava/lang/String;
+	public fun <init> ()V
+}
+
+public final class clickstream/eventvisualiser/ui/CSEventVisualiserUI {
+	public static final field Companion Lclickstream/eventvisualiser/ui/CSEventVisualiserUI$Companion;
+	public final fun close ()V
+	public final fun show ()V
+}
+
+public final class clickstream/eventvisualiser/ui/CSEventVisualiserUI$Companion {
+	public final fun getInstance ()Lclickstream/eventvisualiser/ui/CSEventVisualiserUI;
+	public final fun initialise (Landroid/app/Application;)V
+}
+

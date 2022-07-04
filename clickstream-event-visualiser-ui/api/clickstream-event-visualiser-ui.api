@@ -1,0 +1,200 @@
+public final class clickstream/eventvisualiser/ui/BuildConfig {
+	public static final field BUILD_TYPE Ljava/lang/String;
+	public static final field DEBUG Z
+	public static final field LIBRARY_PACKAGE_NAME Ljava/lang/String;
+	public fun <init> ()V
+}
+
+public final class clickstream/eventvisualiser/ui/CSEventVisualiserUI {
+	public static final field Companion Lclickstream/eventvisualiser/ui/CSEventVisualiserUI$Companion;
+	public synthetic fun <init> (Landroid/app/Application;Lclickstream/eventvisualiser/ui/internal/data/repository/CSEvRepository;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun close ()V
+	public final fun show ()V
+}
+
+public final class clickstream/eventvisualiser/ui/CSEventVisualiserUI$Companion {
+	public final fun getInstance ()Lclickstream/eventvisualiser/ui/CSEventVisualiserUI;
+	public final fun initialise (Landroid/app/Application;)V
+}
+
+public final class clickstream/eventvisualiser/ui/databinding/ActivityCsEvHomeBinding : androidx/viewbinding/ViewBinding {
+	public final field navHostFragment Landroidx/fragment/app/FragmentContainerView;
+	public static fun bind (Landroid/view/View;)Lclickstream/eventvisualiser/ui/databinding/ActivityCsEvHomeBinding;
+	public synthetic fun getRoot ()Landroid/view/View;
+	public fun getRoot ()Landroidx/fragment/app/FragmentContainerView;
+	public static fun inflate (Landroid/view/LayoutInflater;)Lclickstream/eventvisualiser/ui/databinding/ActivityCsEvHomeBinding;
+	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lclickstream/eventvisualiser/ui/databinding/ActivityCsEvHomeBinding;
+}
+
+public final class clickstream/eventvisualiser/ui/databinding/FragmentCsEvActionBottomsheetBinding : androidx/viewbinding/ViewBinding {
+	public final field tvCsEvClearData Landroid/widget/TextView;
+	public final field tvCsEvClose Landroid/widget/TextView;
+	public final field tvCsEvStartCapture Landroid/widget/TextView;
+	public final field tvCsEvStopCapture Landroid/widget/TextView;
+	public static fun bind (Landroid/view/View;)Lclickstream/eventvisualiser/ui/databinding/FragmentCsEvActionBottomsheetBinding;
+	public synthetic fun getRoot ()Landroid/view/View;
+	public fun getRoot ()Landroid/widget/LinearLayout;
+	public static fun inflate (Landroid/view/LayoutInflater;)Lclickstream/eventvisualiser/ui/databinding/FragmentCsEvActionBottomsheetBinding;
+	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lclickstream/eventvisualiser/ui/databinding/FragmentCsEvActionBottomsheetBinding;
+}
+
+public final class clickstream/eventvisualiser/ui/databinding/FragmentCsEvDetailBinding : androidx/viewbinding/ViewBinding {
+	public final field rvCsEventProperties Landroidx/recyclerview/widget/RecyclerView;
+	public final field tvCsHeader Landroid/widget/TextView;
+	public static fun bind (Landroid/view/View;)Lclickstream/eventvisualiser/ui/databinding/FragmentCsEvDetailBinding;
+	public synthetic fun getRoot ()Landroid/view/View;
+	public fun getRoot ()Landroidx/constraintlayout/widget/ConstraintLayout;
+	public static fun inflate (Landroid/view/LayoutInflater;)Lclickstream/eventvisualiser/ui/databinding/FragmentCsEvDetailBinding;
+	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lclickstream/eventvisualiser/ui/databinding/FragmentCsEvDetailBinding;
+}
+
+public final class clickstream/eventvisualiser/ui/databinding/FragmentCsEvFilterBinding : androidx/viewbinding/ViewBinding {
+	public final field btnCsEvAdd Landroidx/appcompat/widget/AppCompatButton;
+	public final field btnCsEvDone Landroidx/appcompat/widget/AppCompatButton;
+	public final field llCsEvFilterContainer Landroidx/appcompat/widget/LinearLayoutCompat;
+	public final field tvFilterHeader Landroid/widget/TextView;
+	public static fun bind (Landroid/view/View;)Lclickstream/eventvisualiser/ui/databinding/FragmentCsEvFilterBinding;
+	public synthetic fun getRoot ()Landroid/view/View;
+	public fun getRoot ()Landroidx/constraintlayout/widget/ConstraintLayout;
+	public static fun inflate (Landroid/view/LayoutInflater;)Lclickstream/eventvisualiser/ui/databinding/FragmentCsEvFilterBinding;
+	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lclickstream/eventvisualiser/ui/databinding/FragmentCsEvFilterBinding;
+}
+
+public final class clickstream/eventvisualiser/ui/databinding/FragmentCsEvHomeBinding : androidx/viewbinding/ViewBinding {
+	public final field etCsSearch Landroidx/appcompat/widget/AppCompatEditText;
+	public final field rvCsHome Landroidx/recyclerview/widget/RecyclerView;
+	public final field tvHomeFilter Landroid/widget/TextView;
+	public final field tvHomeHeader Landroid/widget/TextView;
+	public static fun bind (Landroid/view/View;)Lclickstream/eventvisualiser/ui/databinding/FragmentCsEvHomeBinding;
+	public synthetic fun getRoot ()Landroid/view/View;
+	public fun getRoot ()Landroidx/constraintlayout/widget/ConstraintLayout;
+	public static fun inflate (Landroid/view/LayoutInflater;)Lclickstream/eventvisualiser/ui/databinding/FragmentCsEvHomeBinding;
+	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lclickstream/eventvisualiser/ui/databinding/FragmentCsEvHomeBinding;
+}
+
+public final class clickstream/eventvisualiser/ui/databinding/FragmentCsEvListBinding : androidx/viewbinding/ViewBinding {
+	public final field rvEventList Landroidx/recyclerview/widget/RecyclerView;
+	public final field tvCsHeader Landroid/widget/TextView;
+	public static fun bind (Landroid/view/View;)Lclickstream/eventvisualiser/ui/databinding/FragmentCsEvListBinding;
+	public synthetic fun getRoot ()Landroid/view/View;
+	public fun getRoot ()Landroidx/constraintlayout/widget/ConstraintLayout;
+	public static fun inflate (Landroid/view/LayoutInflater;)Lclickstream/eventvisualiser/ui/databinding/FragmentCsEvListBinding;
+	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lclickstream/eventvisualiser/ui/databinding/FragmentCsEvListBinding;
+}
+
+public final class clickstream/eventvisualiser/ui/databinding/ItemCsEvFilterBinding : androidx/viewbinding/ViewBinding {
+	public final field etCsEvKey Landroidx/appcompat/widget/AppCompatEditText;
+	public final field etCsEvValue Landroidx/appcompat/widget/AppCompatEditText;
+	public static fun bind (Landroid/view/View;)Lclickstream/eventvisualiser/ui/databinding/ItemCsEvFilterBinding;
+	public synthetic fun getRoot ()Landroid/view/View;
+	public fun getRoot ()Landroidx/appcompat/widget/LinearLayoutCompat;
+	public static fun inflate (Landroid/view/LayoutInflater;)Lclickstream/eventvisualiser/ui/databinding/ItemCsEvFilterBinding;
+	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lclickstream/eventvisualiser/ui/databinding/ItemCsEvFilterBinding;
+}
+
+public final class clickstream/eventvisualiser/ui/databinding/ItemCsEvLayoutBinding : androidx/viewbinding/ViewBinding {
+	public final field tvSubtitle Landroid/widget/TextView;
+	public final field tvTitle Landroid/widget/TextView;
+	public static fun bind (Landroid/view/View;)Lclickstream/eventvisualiser/ui/databinding/ItemCsEvLayoutBinding;
+	public synthetic fun getRoot ()Landroid/view/View;
+	public fun getRoot ()Landroidx/appcompat/widget/LinearLayoutCompat;
+	public static fun inflate (Landroid/view/LayoutInflater;)Lclickstream/eventvisualiser/ui/databinding/ItemCsEvLayoutBinding;
+	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lclickstream/eventvisualiser/ui/databinding/ItemCsEvLayoutBinding;
+}
+
+public final class clickstream/eventvisualiser/ui/databinding/LayoutCsEvWindowBinding : androidx/viewbinding/ViewBinding {
+	public final field ivSettings Landroidx/appcompat/widget/AppCompatImageView;
+	public final field tvEvWindow Landroid/widget/TextView;
+	public static fun bind (Landroid/view/View;)Lclickstream/eventvisualiser/ui/databinding/LayoutCsEvWindowBinding;
+	public fun getRoot ()Landroid/view/View;
+	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;)Lclickstream/eventvisualiser/ui/databinding/LayoutCsEvWindowBinding;
+}
+
+public final class clickstream/eventvisualiser/ui/internal/ui/CSEvListItem {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lclickstream/eventvisualiser/ui/internal/ui/CSEvListItem;
+	public static synthetic fun copy$default (Lclickstream/eventvisualiser/ui/internal/ui/CSEvListItem;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lclickstream/eventvisualiser/ui/internal/ui/CSEvListItem;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getEventId ()Ljava/lang/String;
+	public final fun getSubTitle ()Ljava/lang/String;
+	public final fun getTitle ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public class clickstream/eventvisualiser/ui/internal/ui/fragment/CSEvDetailListFragmentArgs : androidx/navigation/NavArgs {
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun fromBundle (Landroid/os/Bundle;)Lclickstream/eventvisualiser/ui/internal/ui/fragment/CSEvDetailListFragmentArgs;
+	public static fun fromSavedStateHandle (Landroidx/lifecycle/SavedStateHandle;)Lclickstream/eventvisualiser/ui/internal/ui/fragment/CSEvDetailListFragmentArgs;
+	public fun getEventId ()Ljava/lang/String;
+	public fun getEventName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toBundle ()Landroid/os/Bundle;
+	public fun toSavedStateHandle ()Landroidx/lifecycle/SavedStateHandle;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class clickstream/eventvisualiser/ui/internal/ui/fragment/CSEvDetailListFragmentArgs$Builder {
+	public fun <init> (Lclickstream/eventvisualiser/ui/internal/ui/fragment/CSEvDetailListFragmentArgs;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public fun build ()Lclickstream/eventvisualiser/ui/internal/ui/fragment/CSEvDetailListFragmentArgs;
+	public fun getEventId ()Ljava/lang/String;
+	public fun getEventName ()Ljava/lang/String;
+	public fun setEventId (Ljava/lang/String;)Lclickstream/eventvisualiser/ui/internal/ui/fragment/CSEvDetailListFragmentArgs$Builder;
+	public fun setEventName (Ljava/lang/String;)Lclickstream/eventvisualiser/ui/internal/ui/fragment/CSEvDetailListFragmentArgs$Builder;
+}
+
+public class clickstream/eventvisualiser/ui/internal/ui/fragment/CSEvEventListFragmentArgs : androidx/navigation/NavArgs {
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun fromBundle (Landroid/os/Bundle;)Lclickstream/eventvisualiser/ui/internal/ui/fragment/CSEvEventListFragmentArgs;
+	public static fun fromSavedStateHandle (Landroidx/lifecycle/SavedStateHandle;)Lclickstream/eventvisualiser/ui/internal/ui/fragment/CSEvEventListFragmentArgs;
+	public fun getEventName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toBundle ()Landroid/os/Bundle;
+	public fun toSavedStateHandle ()Landroidx/lifecycle/SavedStateHandle;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class clickstream/eventvisualiser/ui/internal/ui/fragment/CSEvEventListFragmentArgs$Builder {
+	public fun <init> (Lclickstream/eventvisualiser/ui/internal/ui/fragment/CSEvEventListFragmentArgs;)V
+	public fun <init> (Ljava/lang/String;)V
+	public fun build ()Lclickstream/eventvisualiser/ui/internal/ui/fragment/CSEvEventListFragmentArgs;
+	public fun getEventName ()Ljava/lang/String;
+	public fun setEventName (Ljava/lang/String;)Lclickstream/eventvisualiser/ui/internal/ui/fragment/CSEvEventListFragmentArgs$Builder;
+}
+
+public class clickstream/eventvisualiser/ui/internal/ui/fragment/CSEvEventListFragmentDirections {
+	public static fun actionCSEventListFragmentToCSEventDetailFragment (Ljava/lang/String;Ljava/lang/String;)Lclickstream/eventvisualiser/ui/internal/ui/fragment/CSEvEventListFragmentDirections$ActionCSEventListFragmentToCSEventDetailFragment;
+}
+
+public class clickstream/eventvisualiser/ui/internal/ui/fragment/CSEvEventListFragmentDirections$ActionCSEventListFragmentToCSEventDetailFragment : androidx/navigation/NavDirections {
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getActionId ()I
+	public fun getArguments ()Landroid/os/Bundle;
+	public fun getEventId ()Ljava/lang/String;
+	public fun getEventName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun setEventId (Ljava/lang/String;)Lclickstream/eventvisualiser/ui/internal/ui/fragment/CSEvEventListFragmentDirections$ActionCSEventListFragmentToCSEventDetailFragment;
+	public fun setEventName (Ljava/lang/String;)Lclickstream/eventvisualiser/ui/internal/ui/fragment/CSEvEventListFragmentDirections$ActionCSEventListFragmentToCSEventDetailFragment;
+	public fun toString ()Ljava/lang/String;
+}
+
+public class clickstream/eventvisualiser/ui/internal/ui/fragment/CSEvHomeListFragmentDirections {
+	public static fun actionCSHomeFragmentToCSEvFilterFragment ()Landroidx/navigation/NavDirections;
+	public static fun actionCSHomeFragmentToCSEventListFragment (Ljava/lang/String;)Lclickstream/eventvisualiser/ui/internal/ui/fragment/CSEvHomeListFragmentDirections$ActionCSHomeFragmentToCSEventListFragment;
+}
+
+public class clickstream/eventvisualiser/ui/internal/ui/fragment/CSEvHomeListFragmentDirections$ActionCSHomeFragmentToCSEventListFragment : androidx/navigation/NavDirections {
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getActionId ()I
+	public fun getArguments ()Landroid/os/Bundle;
+	public fun getEventName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun setEventName (Ljava/lang/String;)Lclickstream/eventvisualiser/ui/internal/ui/fragment/CSEvHomeListFragmentDirections$ActionCSHomeFragmentToCSEventListFragment;
+	public fun toString ()Ljava/lang/String;
+}
+
