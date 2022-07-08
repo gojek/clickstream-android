@@ -2,6 +2,11 @@
 
 Based on https://keepachangelog.com/en/1.0.0/
 
+## 1.0.0-alpha-11
+
+### Update
+- [Bug] : Asking for ACTION_MANAGE_OVERLAY_PERMISSION for Event visualiser
+
 ## 1.0.0-alpha-10
 
 ### Update

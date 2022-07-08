@@ -3,7 +3,9 @@ package clickstream.eventvisualiser.ui
 import android.app.Application
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
+import android.provider.Settings
 import android.view.*
 import androidx.annotation.RequiresApi
 import clickstream.eventvisualiser.ui.internal.CSEvActivityLifecycleCallback
@@ -50,7 +52,7 @@ public class CSEventVisualiserUI private constructor(
         if (!isEvWindowAlreadyShowing()) {
             initialiseCoroutinesScope()
             startCapture()
-            createFloatingWindow()
+            openFloatingWindowWithPermission()
         }
     }
 
@@ -109,7 +111,16 @@ public class CSEventVisualiserUI private constructor(
         }
     }
 
-    private fun createFloatingWindow() =
+    private fun openFloatingWindowWithPermission() {
+        if (Settings.canDrawOverlays(application)) {
+            createAndShowFloatingWindow()
+        } else {
+            csEvStateFlow.update { CSEvFloatingWindow.State.CLOSE }
+            openDisplayOverOtherAppsSettings()
+        }
+    }
+
+    private fun createAndShowFloatingWindow() {
         CSEvFloatingWindow(application).apply {
             layoutParams = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -124,6 +135,7 @@ public class CSEventVisualiserUI private constructor(
                 goToCSEvHomeScreen(activityLifecycleCallback.getCurrentActivity())
             }
         }.addToWindow()
+    }
 
     private fun goToCSEvHomeScreen(context: Context) {
         context.startActivity(Intent(context, CSEvHomeActivity::class.java))
@@ -146,6 +158,16 @@ public class CSEventVisualiserUI private constructor(
             isActionBottomSheetShown = true
             showActionBottomSheet()
         }
+    }
+
+    private fun openDisplayOverOtherAppsSettings() {
+        val currentActivity = activityLifecycleCallback.getCurrentActivity()
+        val intent = Intent(
+            Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse(
+                "package:${currentActivity.packageName}"
+            )
+        )
+        currentActivity.startActivity(intent)
     }
 
     private fun showActionBottomSheet() {

@@ -14,13 +14,14 @@ internal class CSEvActivityLifecycleCallback : Application.ActivityLifecycleCall
     }
 
     override fun onActivityStarted(p0: Activity) {
-        currentActivity = WeakReference(p0)
     }
 
     override fun onActivityResumed(p0: Activity) {
+        currentActivity = WeakReference(p0)
     }
 
     override fun onActivityPaused(p0: Activity) {
+        currentActivity = null
     }
 
     override fun onActivityStopped(p0: Activity) {
