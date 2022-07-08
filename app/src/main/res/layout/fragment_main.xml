@@ -96,7 +96,7 @@
         android:layout_marginRight="8dp"
         android:backgroundTint="#65c367"
         android:text="connect"
-        app:layout_constraintBottom_toTopOf="@+id/sendEvent"
+        app:layout_constraintBottom_toTopOf="@+id/showEv"
         app:layout_constraintEnd_toStartOf="@+id/guideline"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -107,9 +107,19 @@
         android:layout_marginLeft="8dp"
         android:backgroundTint="#ea4e3d"
         android:text="disconnect"
-        app:layout_constraintBottom_toTopOf="@+id/sendEvent"
+        app:layout_constraintBottom_toTopOf="@+id/showEv"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guideline" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/showEv"
+        android:layout_width="379dp"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#307cf6"
+        android:text="Show event visualiser"
+        app:layout_constraintBottom_toTopOf="@+id/sendEvent"
+        app:layout_constraintEnd_toEndOf="@+id/disconnect"
+        app:layout_constraintStart_toStartOf="@+id/connect" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/sendEvent"
