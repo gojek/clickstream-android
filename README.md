@@ -70,6 +70,13 @@ dependencies {
 
 ```
 -keep class * extends com.google.protobuf.GeneratedMessageLite { *; }
+
+# Scarlet
+-if interface * { @com.tinder.scarlet.ws.* <methods>; }
+-keep,allowobfuscation interface <1>
+-keepclassmembers,allowshrinking,allowobfuscation interface * {
+    @com.tinder.scarlet.ws.* <methods>;
+}
 ```
 
 Once you’ve added the dependencies and synchronized your Gradle project, the next step is to initialize Clickstream.
