@@ -1,4 +1,4 @@
-import plugin.AndroidLibraryConfigurationPlugin
+    import plugin.AndroidLibraryConfigurationPlugin
 
 apply<AndroidLibraryConfigurationPlugin>()
 apply(from = "$rootDir/scripts/versioning.gradle")
@@ -29,6 +29,7 @@ android {
     defaultConfig {
         multiDexEnabled = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles("$rootDir/proguard/consumer-proguard-rules.pro")
     }
 }
 

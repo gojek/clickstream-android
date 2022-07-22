@@ -66,7 +66,7 @@ dependencies {
 }
 ```
 
-3. Add the following rule in proguard.pro or dexguard-project.txt
+By default ClickStream embedded the rules, so not necessary client added the rules explicitly
 
 ```
 -keep class * extends com.google.protobuf.GeneratedMessageLite { *; }
@@ -77,6 +77,10 @@ dependencies {
 -keepclassmembers,allowshrinking,allowobfuscation interface * {
     @com.tinder.scarlet.ws.* <methods>;
 }
+
+# Keep the ProcessLifecycleInitializer meta
+-keepresourcexmlelements manifest/application/provider/meta-data@name=androidx.lifecycle.ProcessLifecycleInitializer
+-keepresourcexmlelements manifest/application/provider/meta-data@value=androidx.startup
 ```
 
 Once you’ve added the dependencies and synchronized your Gradle project, the next step is to initialize Clickstream.
