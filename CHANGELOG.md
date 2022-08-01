@@ -2,6 +2,11 @@
 
 Based on https://keepachangelog.com/en/1.0.0/
 
+## 1.0.0-alpha-12
+
+### Update
+- [Bug] : Fix event visualiser click
+
 ## 1.0.0-alpha-11
 
 ### Update
