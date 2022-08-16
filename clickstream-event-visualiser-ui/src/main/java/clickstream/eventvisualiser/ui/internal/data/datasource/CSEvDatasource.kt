@@ -1,8 +1,11 @@
 package clickstream.eventvisualiser.ui.internal.data.datasource
 
 import clickstream.eventvisualiser.ui.internal.data.model.CSEvEvent
+import kotlinx.coroutines.flow.Flow
 
 internal interface CSEvDatasource {
+
+    val isConnected: Flow<Boolean>
 
     fun startObserving()
 
@@ -14,6 +17,8 @@ internal interface CSEvDatasource {
         keys: List<String> = listOf(),
         values: List<String> = listOf()
     ): List<String>
+
+    suspend fun getEventByNameAndId(eventId: String, eventName: String): CSEvEvent?
 
     suspend fun getEventDetailList(eventName: String): List<CSEvEvent>
 

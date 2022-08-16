@@ -19,6 +19,7 @@
         android:maxLines="2"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="@android:color/black"
+        android:textIsSelectable="true"
         android:textSize="14sp"
         android:textStyle="bold"
         tools:text="PubSub health" />
@@ -29,6 +30,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:textColor="@color/cs_ev_red"
+        android:textIsSelectable="true"
         tools:text="event_detail {\n}" />
 
 

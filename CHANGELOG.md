@@ -2,6 +2,13 @@
 
 Based on https://keepachangelog.com/en/1.0.0/
 
+## 2.0.0-alpha
+
+### Update
+- [Bug] : Fix event visualiser click
+- [Feature] : Adding clickstream connection status on Event visualiser
+- [Feature] : Adding search on events detail page 
+
 ## 1.0.0-alpha-11
 
 ### Update

@@ -132,7 +132,7 @@ public class CSForegroundEventSchedulerTest {
 
             verify(networkManager).processEvent(any(), any())
             verify(networkManager).eventGuidFlow
-            verify(networkManager).isSocketConnected()
+            verify(networkManager, times(2)).isSocketConnected()
 
             verify(eventRepository, times(2)).insertEventDataList(any())
             verify(eventRepository).getEventDataList()
@@ -140,7 +140,7 @@ public class CSForegroundEventSchedulerTest {
             verify(eventRepository).deleteEventDataByGuId("2")
             verify(eventRepository).getEventsOnGuId(any())
 
-            verifyNoMoreInteractions(networkManager, eventRepository)
+            verifyNoMoreInteractions(eventRepository)
         }
     }
 
@@ -162,14 +162,13 @@ public class CSForegroundEventSchedulerTest {
 
             verify(networkManager, never()).processEvent(any(), any())
             verify(networkManager).eventGuidFlow
-            verify(networkManager, never()).isSocketConnected()
 
             verify(eventRepository, never()).insertEventDataList(any())
             verify(eventRepository).getEventDataList()
             verify(eventRepository).getOnGoingEvents()
             verify(eventRepository, never()).deleteEventDataByGuId("2")
 
-            verifyNoMoreInteractions(networkManager, eventRepository)
+            verifyNoMoreInteractions(eventRepository)
         }
     }
 

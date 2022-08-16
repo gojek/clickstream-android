@@ -147,12 +147,12 @@ internal class CSEvRepositoryImplTest {
     ) {
         csObserver.onEventChanged(
             listOf(
-                CSEventModel.Scheduled(
+                CSEventModel.Event.Scheduled(
                     eventName = eventName,
                     eventId = eventId,
                     productName = productName,
                     properties = properties,
-                    timeStamp = System.currentTimeMillis()
+                    timeStamp = System.currentTimeMillis(),
                 )
             )
         )
@@ -161,7 +161,7 @@ internal class CSEvRepositoryImplTest {
     private fun emitAckEvents(eventName: String, eventId: String) {
         csObserver.onEventChanged(
             listOf(
-                CSEventModel.Acknowledged(
+                CSEventModel.Event.Acknowledged(
                     eventName = eventName,
                     eventId = eventId,
                     productName = "Product$eventId",

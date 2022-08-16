@@ -90,7 +90,7 @@ internal open class CSBaseEventScheduler(
 
         dispatchToEventListener {
             batch.map { csEvent ->
-                CSEventModel.Dispatched(
+                CSEventModel.Event.Dispatched(
                     eventId = csEvent.eventGuid,
                     eventName = getEventOrProtoName(csEvent.event()),
                     productName = csEvent.event().protoName(),
@@ -129,7 +129,7 @@ internal open class CSBaseEventScheduler(
         }
         dispatchToEventListener {
             batch.map { csEvent ->
-                CSEventModel.Dispatched(
+                CSEventModel.Event.Dispatched(
                     eventId = csEvent.eventGuid,
                     eventName = getEventOrProtoName(csEvent.event()),
                     productName = csEvent.event().protoName(),
@@ -159,7 +159,7 @@ internal open class CSBaseEventScheduler(
             val currentRequestIdEvents = eventRepository.getEventsOnGuId(requestId)
             dispatchToEventListener {
                 currentRequestIdEvents.map { csEvent ->
-                    CSEventModel.Acknowledged(
+                    CSEventModel.Event.Acknowledged(
                         eventId = csEvent.eventGuid,
                         eventName = getEventOrProtoName(csEvent.event()),
                         productName = csEvent.event().protoName(),
@@ -296,5 +296,13 @@ internal open class CSBaseEventScheduler(
         }
 
         return eventGuids
+    }
+
+    protected fun dispatchConnectionEventToEventListener(isConnected: Boolean) {
+        if (eventListeners.isNotEmpty()) {
+            eventListeners.forEach {
+                it.onCall(listOf(CSEventModel.Connection(isConnected)))
+            }
+        }
     }
 }

@@ -7,6 +7,16 @@
     android:background="@color/cs_ev_white1"
     tools:context=".internal.ui.fragment.CSEvHomeListFragment">
 
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_connection"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_home_header"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tv_home_header"
+        app:srcCompat="@drawable/ic_baseline_wifi_off_24" />
+
     <TextView
         android:id="@+id/tv_home_header"
         android:layout_width="wrap_content"

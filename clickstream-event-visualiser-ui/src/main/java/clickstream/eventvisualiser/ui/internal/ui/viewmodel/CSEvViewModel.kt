@@ -14,6 +14,7 @@ import clickstream.eventvisualiser.ui.internal.ui.update
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.util.*
 
@@ -26,8 +27,18 @@ internal class CSEvViewModel constructor(private val csRepo: CSEvRepository) :
     private val _eventListFragmentUiStateFlow = MutableStateFlow(CSEvUIState())
     val eventListFragmentUiStateFlow = _eventListFragmentUiStateFlow.asStateFlow()
 
-    private val _eventDetailFragmentUiStateFlow = MutableStateFlow(CSEvUIState())
+    private val _eventDetailFragmentUiStateFlow = MutableStateFlow(CSEvDetailUIState())
     val eventDetailFragmentUiStateFlow = _eventDetailFragmentUiStateFlow.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            csRepo.isConnected.collect { isConnected ->
+                _homeFragmentUiStateFlow.update {
+                    it.copy(isConnected = isConnected)
+                }
+            }
+        }
+    }
 
     fun getAllEventNames(
         keyList: List<String> = emptyList(),
@@ -63,30 +74,54 @@ internal class CSEvViewModel constructor(private val csRepo: CSEvRepository) :
             val eventProperties = csRepo.getEventProperties(eventName, eventId)
                 .map { CSEvListItem(title = it.key, subTitle = it.value.toString()) }
             _eventDetailFragmentUiStateFlow.update {
-                CSEvUIState(events = eventProperties, header = "$eventName details")
-
+                CSEvDetailUIState(
+                    originalList = eventProperties,
+                    events = eventProperties,
+                    header = "$eventName details",
+                )
             }
         }
 
-    fun filterEvents(text: String) = viewModelScope.launch(Dispatchers.Default) {
+    fun filterEventsOnKeyword(text: String) = viewModelScope.launch(Dispatchers.Default) {
         _homeFragmentUiStateFlow.run {
-            val events = if (text.isEmpty()) {
-                value.originalList
-            } else {
+            val events = filter(value, text) {
                 val properKey = text.trim().toLowerCase()
-                value.originalList.filter {
-                    it.title.toLowerCase().contains(properKey)
-                }
+                it.title.toLowerCase().contains(properKey)
+
             }
             update { it.copy(events = events) }
         }
     }
 
+    fun filterPropertiesOnKeyword(keyword: String) = viewModelScope.launch(Dispatchers.Default) {
+        _eventDetailFragmentUiStateFlow.run {
+            val events = filter(value, keyword) {
+                val properKey = keyword.trim().toLowerCase()
+                it.title.toLowerCase().contains(properKey) or (it.subTitle?.toLowerCase()
+                    ?.contains(properKey) ?: false)
+            }
+            update { it.copy(events = events) }
+        }
+    }
+
+
+    private fun filter(
+        uiState: CSEvUIState,
+        keyword: String,
+        filterLogic: (CSEvListItem) -> Boolean
+    ): List<CSEvListItem> {
+        return if (keyword.isEmpty()) {
+            uiState.originalList
+        } else {
+            uiState.originalList.filter(filterLogic)
+        }
+    }
+
     fun clearEventDetailList() {
         _eventDetailFragmentUiStateFlow.update {
-            CSEvUIState(
+            CSEvDetailUIState(
                 events = listOf(),
-                header = it.header
+                header = it.header,
             )
         }
     }
