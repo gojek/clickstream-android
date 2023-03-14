@@ -4,8 +4,15 @@ import clickstream.eventvisualiser.CSEVEventObserver
 import clickstream.eventvisualiser.ui.internal.data.model.CSEvEvent
 import clickstream.eventvisualiser.ui.internal.data.model.CSEvState
 import clickstream.eventvisualiser.CSEventVisualiser
+import clickstream.eventvisualiser.ui.internal.data.toCsEvent
+import clickstream.eventvisualiser.ui.internal.ui.update
 import clickstream.listener.CSEventModel
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import java.io.BufferedReader
+import java.io.StringReader
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
@@ -15,23 +22,27 @@ internal class CSEvDatasourceImpl private constructor(private val evObserver: CS
 
     private val eventDataMap = ConcurrentHashMap<String, CopyOnWriteArrayList<CSEvEvent>>()
     private var coroutineScope = CoroutineScope(SupervisorJob())
+    private val internalConnectionFlow = MutableStateFlow(false)
 
     private val eventCallback: (List<CSEventModel>) -> Unit = {
         coroutineScope.launch { addInterceptedEvent(it) }
     }
+
+    override val isConnected: Flow<Boolean>
+        get() = internalConnectionFlow.asStateFlow()
 
     override fun stopObserving() {
         coroutineScope.cancel()
         evObserver.removeObserver(eventCallback)
     }
 
+    override suspend fun addEvents(eventList: List<CSEvEvent>) {
+        throw Exception("Cannot call addEvents method")
+    }
+
     override fun startObserving() {
         coroutineScope = CoroutineScope(SupervisorJob())
         evObserver.addObserver(eventCallback)
-    }
-
-    override suspend fun addEvents(eventList: List<CSEvEvent>) {
-
     }
 
     override suspend fun getAllEventNames(
@@ -46,6 +57,10 @@ internal class CSEvDatasourceImpl private constructor(private val evObserver: CS
             }
             else -> filterEventsOnKeyAndValues(keys, values)
         }
+    }
+
+    override suspend fun getEventByNameAndId(eventId: String, eventName: String): CSEvEvent? {
+        return eventDataMap[eventName]?.find { it.eventId == eventId }
     }
 
     override suspend fun getEventDetailList(eventName: String): List<CSEvEvent> {
@@ -67,43 +82,41 @@ internal class CSEvDatasourceImpl private constructor(private val evObserver: CS
 
     private suspend fun addInterceptedEvent(eventList: List<CSEventModel>) =
         withContext(Dispatchers.Default) {
-            eventList.forEach {
-                when (it) {
-                    is CSEventModel.Instant -> addNewValueInCurrentList(
-                        CSEvEvent(
-                            eventName = it.eventName ?: "Empty event",
-                            eventId = it.eventId,
-                            properties = it.properties,
-                            state = CSEvState.ACKNOWLEDGED,
-                            timeStampInMillis = it.timeStamp * 1000L
-                        )
-                    )
-
-
-                    is CSEventModel.Scheduled ->
-                        addNewValueInCurrentList(
-                            CSEvEvent(
-                                eventName = it.eventName ?: "Empty event",
-                                eventId = it.eventId,
-                                properties = it.properties,
-                                state = CSEvState.SCHEDULED,
-                                timeStampInMillis = it.timeStamp * 1000L
-                            )
-                        )
-
-                    is CSEventModel.Acknowledged -> changeEventStatusInCurrentList(
-                        it,
-                        CSEvState.ACKNOWLEDGED
-                    )
-
-                    is CSEventModel.Dispatched -> changeEventStatusInCurrentList(
-                        it,
-                        CSEvState.DISPATCHED
-                    )
+            eventList.forEach { csEvent ->
+                when (csEvent) {
+                    is CSEventModel.Event -> {
+                        handleEventData(csEvent)
+                    }
+                    is CSEventModel.Connection -> {
+                        internalConnectionFlow.update {
+                            csEvent.isConnected
+                        }
+                    }
+                    else -> {
+                        // No-op
+                    }
                 }
             }
         }
 
+    private fun handleEventData(csEvent: CSEventModel.Event) {
+        when (csEvent) {
+
+            is CSEventModel.Event.Instant, is CSEventModel.Event.Scheduled -> addNewValueInCurrentList(
+                csEvent.toCsEvent()
+            )
+
+            is CSEventModel.Event.Acknowledged -> changeEventStatusInCurrentList(
+                csEvent,
+                CSEvState.ACKNOWLEDGED
+            )
+
+            is CSEventModel.Event.Dispatched -> changeEventStatusInCurrentList(
+                csEvent,
+                CSEvState.DISPATCHED
+            )
+        }
+    }
 
     private fun addNewValueInCurrentList(csEvent: CSEvEvent) {
         val eventName = csEvent.eventName
@@ -116,7 +129,7 @@ internal class CSEvDatasourceImpl private constructor(private val evObserver: CS
     }
 
     private fun changeEventStatusInCurrentList(
-        csInterceptedEvent: CSEventModel,
+        csInterceptedEvent: CSEventModel.Event,
         newState: CSEvState
     ) {
         eventDataMap.forEach {
@@ -146,7 +159,11 @@ internal class CSEvDatasourceImpl private constructor(private val evObserver: CS
         return eventList
     }
 
-    private fun isEntryValid(entry: String, keys: List<String>, values: List<String>): Boolean {
+    private fun isEntryValid(
+        entry: String,
+        keys: List<String>,
+        values: List<String>
+    ): Boolean {
         val value = eventDataMap[entry]
         val eventProps = value?.firstOrNull()?.properties ?: mapOf()
         for ((propKey, propValue) in eventProps) {
@@ -161,7 +178,8 @@ internal class CSEvDatasourceImpl private constructor(private val evObserver: CS
         return false
     }
 
-    private fun sanitizeStringForFilter(string: String) = string.toLowerCase(Locale.ENGLISH).trim()
+    private fun sanitizeStringForFilter(string: String) =
+        string.toLowerCase(Locale.ENGLISH).trim()
 
     companion object {
         private lateinit var INSTANCE: CSEvDatasourceImpl

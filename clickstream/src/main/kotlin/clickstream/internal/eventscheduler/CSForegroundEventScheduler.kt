@@ -137,12 +137,12 @@ internal class CSForegroundEventScheduler(
         eventRepository.insertEventData(eventData)
         dispatchToEventListener {
             listOf(
-                CSEventModel.Scheduled(
+                CSEventModel.Event.Scheduled(
                     eventId = eventData.eventGuid,
                     eventName = getEventOrProtoName(event.message),
                     productName = event.message.protoName(),
                     properties = event.message.toFlatMap(),
-                    timeStamp = eventData.eventTimeStamp
+                    timeStamp = eventData.eventTimeStamp,
                 )
             )
         }
@@ -172,12 +172,12 @@ internal class CSForegroundEventScheduler(
         eventHealthListener.onEventCreated(eventHealthData)
         dispatchToEventListener {
             listOf(
-                CSEventModel.Instant(
+                CSEventModel.Event.Instant(
                     eventId = eventData.eventGuid,
                     eventName = getEventOrProtoName(event.message),
                     productName = event.message.protoName(),
                     properties = event.message.toFlatMap(),
-                    timeStamp = eventData.eventTimeStamp
+                    timeStamp = eventData.eventTimeStamp,
                 )
             )
         }
@@ -196,6 +196,7 @@ internal class CSForegroundEventScheduler(
         flowableTicker(initialDelay = 10, delayMillis = config.batchPeriod)
             .onEach {
                 logger.debug { "CSForegroundEventScheduler#setupTicker : tick" }
+                dispatchConnectionEventToEventListener(networkManager.isSocketConnected())
             }
             .catch {
                 logger.error { "CSForegroundEventScheduler#setupTicker : catch ${it.message}" }

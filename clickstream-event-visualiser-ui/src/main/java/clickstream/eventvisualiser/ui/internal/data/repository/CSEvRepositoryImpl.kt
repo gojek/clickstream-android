@@ -3,11 +3,17 @@ package clickstream.eventvisualiser.ui.internal.data.repository
 import clickstream.eventvisualiser.ui.internal.data.datasource.CSEvDatasource
 import clickstream.eventvisualiser.ui.internal.data.model.CSEvEvent
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 
 
-internal class CSEvRepositoryImpl constructor(private val csEvDatasource: CSEvDatasource) :
-    CSEvRepository {
+internal class CSEvRepositoryImpl(
+    private val csEvDatasource: CSEvDatasource
+) : CSEvRepository {
+
+    override val isConnected: Flow<Boolean>
+        get() = csEvDatasource.isConnected
+
     override fun startObserving() {
         csEvDatasource.startObserving()
     }
@@ -21,6 +27,10 @@ internal class CSEvRepositoryImpl constructor(private val csEvDatasource: CSEvDa
         values: List<String>
     ): List<String> {
         return csEvDatasource.getAllEventNames(keys, values)
+    }
+
+    override suspend fun getEventByNameAndId(eventId: String, eventName: String): CSEvEvent? {
+        return csEvDatasource.getEventByNameAndId(eventId, eventName)
     }
 
     override suspend fun getEventDetailList(eventName: String): List<CSEvEvent> {

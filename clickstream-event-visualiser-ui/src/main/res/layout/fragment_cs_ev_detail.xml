@@ -22,14 +22,26 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Event name details" />
 
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/et_sw_search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/bg_cs_event_item"
+        android:hint="Search"
+        android:padding="16dp"
+        android:singleLine="true"
+        android:textColor="@android:color/black"
+        app:layout_constraintTop_toBottomOf="@id/tv_cs_header" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_cs_event_properties"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_cs_header"
+        app:layout_constraintTop_toBottomOf="@id/et_sw_search"
         tools:listitem="@layout/item_cs_ev_layout" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

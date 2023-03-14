@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
+import clickstream.eventvisualiser.ui.R
 import clickstream.eventvisualiser.ui.databinding.FragmentCsEvHomeBinding
 import clickstream.eventvisualiser.ui.internal.ui.CSEvListItem
 import kotlinx.coroutines.flow.collect
@@ -45,6 +46,17 @@ internal class CSEvHomeListFragment : CSEvBaseListFragment<FragmentCsEvHomeBindi
         super.onViewCreated(view, savedInstanceState)
         setUpSearch()
         setUpFilter()
+        observeConnection()
+    }
+
+    private fun observeConnection() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.homeFragmentUiStateFlow.map { it.isConnected }.collect { isConnected ->
+                val connectionColorDrawableRes =
+                    if (isConnected) R.drawable.ic_baseline_wifi_24 else R.drawable.ic_baseline_wifi_off_24
+                binding?.ivConnection?.setImageResource(connectionColorDrawableRes)
+            }
+        }
     }
 
     private fun setUpFilter() {
@@ -69,7 +81,7 @@ internal class CSEvHomeListFragment : CSEvBaseListFragment<FragmentCsEvHomeBindi
 
     private fun setUpSearch() {
         binding?.etCsSearch?.doOnTextChanged { newText, _, _, _ ->
-            viewModel.filterEvents(newText.toString())
+            viewModel.filterEventsOnKeyword(newText.toString())
         }
     }
 

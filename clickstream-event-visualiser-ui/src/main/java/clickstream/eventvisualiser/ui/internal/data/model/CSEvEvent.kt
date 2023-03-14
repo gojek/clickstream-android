@@ -5,5 +5,5 @@ internal data class CSEvEvent(
     val eventId: String,
     val timeStampInMillis: Long,
     val properties: Map<String, Any?>,
-    val state: CSEvState
+    val state: CSEvState,
 )

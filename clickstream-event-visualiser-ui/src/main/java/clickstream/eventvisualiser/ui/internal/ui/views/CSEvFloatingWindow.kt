@@ -17,6 +17,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
+private const val CLICK_THRESHOLD = 5
+
 @RequiresApi(Build.VERSION_CODES.O)
 internal class CSEvFloatingWindow @JvmOverloads constructor(
     context: Context,
@@ -117,9 +119,9 @@ internal class CSEvFloatingWindow @JvmOverloads constructor(
                 return hasMoved
             }
             MotionEvent.ACTION_MOVE -> {
-                hasMoved = true
                 val xDiff = (event.rawX - initialTouchPoint.x).toInt()
                 val yDiff = (event.rawY - initialTouchPoint.y).toInt()
+                hasMoved = xDiff > CLICK_THRESHOLD && yDiff > CLICK_THRESHOLD
                 paramsF.x = initialPoint.x + xDiff
                 paramsF.y = initialPoint.y + yDiff
                 getWindowManger().updateViewLayout(this, paramsF)
