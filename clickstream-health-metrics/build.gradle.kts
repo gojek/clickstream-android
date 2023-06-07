@@ -10,7 +10,7 @@ ext {
     set("PUBLISH_VERSION", ext.get("gitVersionName"))
 }
 
-if(!project.hasProperty("isLocal")) {
+if (!project.hasProperty("isLocal")) {
     apply(from = "$rootDir/scripts/publish-module.gradle")
 }
 
@@ -33,6 +33,7 @@ android {
 }
 
 dependencies {
+
     // Clickstream
     compileOnly(files("$rootDir/libs/proto-sdk-1.18.6.jar"))
     compileOnly(projects.clickstreamLogger)
@@ -40,6 +41,9 @@ dependencies {
     api(projects.clickstreamApi)
     api(projects.clickstreamLifecycle)
     api(projects.clickstreamUtil)
+
+    testImplementation(project(mapOf("path" to ":clickstream-logger")))
+    testImplementation(files("$rootDir/libs/proto-sdk-1.18.6.jar"))
 
     // Common
     deps.common.list.forEach(::implementation)

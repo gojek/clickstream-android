@@ -1,18 +1,18 @@
 package clickstream.internal.eventprocessor.impl
 
-import clickstream.api.CSMetaProvider
-import clickstream.extension.protoName
-import clickstream.health.time.CSTimeStampGenerator
-import clickstream.health.identity.CSGuIdGenerator
-import clickstream.health.internal.DefaultCSHealthEventFactory
+import clickstream.api.CSAppInfo
+import clickstream.api.CSDeviceInfo
+import clickstream.api.CSInfo
+import clickstream.api.CSLocationInfo
+import clickstream.api.CSSessionInfo
+import clickstream.api.CSUserInfo
+import clickstream.health.internal.CSGuIdGenerator
+import clickstream.health.internal.factory.DefaultCSHealthEventFactory
+import clickstream.health.time.CSHealthTimeStampGenerator
+import clickstream.protoName
 import com.gojek.clickstream.internal.Health
 import com.gojek.clickstream.internal.HealthDetails
 import com.gojek.clickstream.internal.HealthMeta
-import com.gojek.clickstream.internal.HealthMeta.App
-import com.gojek.clickstream.internal.HealthMeta.Customer
-import com.gojek.clickstream.internal.HealthMeta.Device
-import com.gojek.clickstream.internal.HealthMeta.Location
-import com.gojek.clickstream.internal.HealthMeta.Session
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -26,13 +26,17 @@ import org.mockito.kotlin.whenever
 public class DefaultCSHealthEventFactoryTest {
 
     private val csGuIdGenerator = mock(CSGuIdGenerator::class.java)
-    private val csTimeStampGenerator = mock(CSTimeStampGenerator::class.java)
-    private val csMetaProvider = mock(CSMetaProvider::class.java)
+    private val csTimeStampGenerator = mock(CSHealthTimeStampGenerator::class.java)
+    private val csMetaProvider = mock(CSInfo::class.java)
     private lateinit var sut: DefaultCSHealthEventFactory
 
     @Before
     public fun setup() {
-        sut = DefaultCSHealthEventFactory(csGuIdGenerator, csTimeStampGenerator, csMetaProvider)
+        sut = DefaultCSHealthEventFactory(
+            csGuIdGenerator,
+            csTimeStampGenerator,
+            csInfo = csMetaProvider
+        )
     }
 
     @Test
@@ -44,11 +48,11 @@ public class DefaultCSHealthEventFactoryTest {
         val session = getHealthMetaSession()
         val device = getHealthMetaDevice()
 
-        whenever(csMetaProvider.app).thenReturn(app)
-        whenever(csMetaProvider.location()).thenReturn(location)
-        whenever(csMetaProvider.customer).thenReturn(customer)
-        whenever(csMetaProvider.session).thenReturn(session)
-        whenever(csMetaProvider.device).thenReturn(device)
+        whenever(csMetaProvider.appInfo).thenReturn(app)
+        whenever(csMetaProvider.locationInfo).thenReturn(location)
+        whenever(csMetaProvider.userInfo).thenReturn(customer)
+        whenever(csMetaProvider.sessionInfo).thenReturn(session)
+        whenever(csMetaProvider.deviceInfo).thenReturn(device)
 
         // When
         val health = getHealth().build()
@@ -67,7 +71,6 @@ public class DefaultCSHealthEventFactoryTest {
         assertTrue(event.healthMeta.device.deviceMake == "Samsung")
         assertTrue(event.healthMeta.device.deviceModel == "SM-900")
         assertTrue(event.healthMeta.device.operatingSystem == "Android")
-        assertTrue(event.healthMeta.device.operatingSystemVersion == "10")
         assertTrue(event.healthMeta.eventGuid == "123456")
         assertTrue(event.healthMeta.location.latitude == -6.1753924)
         assertTrue(event.healthMeta.location.longitude == 106.8249641)
@@ -87,30 +90,34 @@ public class DefaultCSHealthEventFactoryTest {
                 .build()
         )
 
-    private fun getHealthMetaDevice() = Device.newBuilder()
-        .setDeviceMake("Samsung")
-        .setDeviceModel("SM-900")
-        .setOperatingSystem("Android")
-        .setOperatingSystemVersion("10")
-        .build()
+    private fun getHealthMetaDevice() = object : CSDeviceInfo {
+        override fun getDeviceManufacturer() = "Samsung"
 
-    private fun getHealthMetaSession() = Session.newBuilder()
-        .setSessionId("12345678910")
-        .build()
+        override fun getDeviceModel() = "SM-900"
 
-    private fun getHealthMetaCustomer() = Customer.newBuilder()
-        .setCurrentCountry("ID")
-        .setEmail("test@gmail.com")
-        .setIdentity(12)
-        .setSignedUpCountry("ID")
-        .build()
+        override fun getSDKVersion() = "30"
 
-    private fun getHealthMetaLocation() = Location.newBuilder()
-        .setLatitude(-6.1753924)
-        .setLongitude(106.8249641)
-        .build()
+        override fun getOperatingSystem() = "Android"
 
-    private fun getHealthMetaApp() = App.newBuilder()
-        .setVersion("4.37.0")
-        .build()
+        override fun getDeviceHeight() = "300"
+
+        override fun getDeviceWidth() = "400"
+
+    }
+
+    private fun getHealthMetaSession() = CSSessionInfo("12345678910")
+
+    private fun getHealthMetaCustomer() =
+        CSUserInfo(
+            currentCountry = "ID",
+            email = "test@gmail.com",
+            identity = 12,
+            signedUpCountry = "ID"
+        )
+
+    private fun getHealthMetaLocation() =
+        CSLocationInfo(latitude = -6.1753924, longitude = 106.8249641, mapOf())
+
+    private fun getHealthMetaApp() = CSAppInfo(appVersion = "4.37.0")
+
 }

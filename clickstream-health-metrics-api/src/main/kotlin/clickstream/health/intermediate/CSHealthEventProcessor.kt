@@ -1,41 +1,64 @@
 package clickstream.health.intermediate
 
-import androidx.annotation.RestrictTo
+import clickstream.health.model.CSEventForHealth
+import clickstream.health.model.CSHealthEvent
 import com.gojek.clickstream.internal.Health
+import kotlinx.coroutines.flow.Flow
 
 /**
- * [CSHealthEventProcessor] is the Heart of the Clickstream Library. The [CSHealthEventProcessor]
- * is only for pushing events to the backend. [CSHealthEventProcessor] is respect to the
- * Application lifecycle where on the active state, we have a ticker that will collect events from database
- * and the send that to the backend. The ticker will run on every 10seconds and will be stopped
- * whenever application on the inactive state.
+ * Class dealing with health events. It has following responsibilities :
  *
- * On the inactive state we will running flush for both Events and HealthEvents, where
- * it would be transformed and send to the backend.
+ * 1) Logging clickstream health events.
+ * 2) Returning stream of health events for processing.
+ * 3) Sending health event data to upstream listener.
  *
- * **Sequence Diagram**
- * ```
- *            App                               Clickstream
- * +---+---+---+---+---+---+           +---+---+---+---+---+---+
- * |     Sending Events    | --------> |  Received the Events  |
- * +---+---+---+---+---+---+           +---+---+---+---+---+---+
- *                                                 |
- *                                                 |
- *                                                 |                         +---+---+---+---+---+---+---+---+----+
- *                                         if app on active state ---------> |   - run the ticker with 10s delay  |
- *                                                 |                         |   - collect events from db         |
- *                                                 |                         |   - transform and send to backend  |
- *                                                 |                         +---+---+---+---+---+---+---+---+----+
- *                                                 |
- *                                                 |                         +---+---+---+---+---+---+---+---+---+---+----+
- *                                         else if app on inactive state --> |   - run flushEvents and flushHealthMetrics |
- *                                                                           |   - transform and send to backend          |
- *                                                                           +---+---+---+---+---+---+---+---+---+----+---+
- *```
- */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+ *
+ * */
 public interface CSHealthEventProcessor {
-    public suspend fun getAggregateEvents(): List<Health>
 
-    public suspend fun getInstantEvents(): List<Health>
+    /**
+     * Process non batch health events (like socket connection).
+     * These events do not require batchSize related data.
+     *
+     * @param csEvent: [CSHealthEvent] instance to be logged.
+     * */
+    public suspend fun insertNonBatchEvent(csEvent: CSHealthEvent): Boolean
+
+    /**
+     * Process batch events health events (like batch failed, success).
+     *
+     * @param csEvent: [CSHealthEvent] instance to be logged.
+     * @param list: [CSEventForHealth] list required for tracking data like eventCount, guids etc.
+     *
+     * */
+    public suspend fun insertBatchEvent(
+        csEvent: CSHealthEvent,
+        list: List<CSEventForHealth>
+    ): Boolean
+
+    /**
+     * Process batch events health events (like batch failed, success). Call this if only batchSize
+     * matters.
+     *
+     * @param csEvent: [CSHealthEvent] instance to be logged.
+     * @param eventCount: number of events in the batch.
+     *
+     * */
+    public suspend fun insertBatchEvent(
+        csEvent: CSHealthEvent,
+        eventCount: Long,
+    ): Boolean
+
+    /**
+     * Returns flow of health events with type.
+     *
+     * */
+    public fun getHealthEventFlow(type: String, deleteEvents: Boolean): Flow<List<Health>>
+
+
+    /**
+     * Pushing events to upstream listener.
+     *
+     */
+    public suspend fun pushEventToUpstream(type: String, deleteEvents: Boolean)
 }

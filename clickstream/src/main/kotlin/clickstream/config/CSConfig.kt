@@ -1,7 +1,5 @@
 package clickstream.config
 
-import clickstream.health.model.CSHealthEventConfig
-
 /**
  * The config which holds the configuration for processor, scheduler & network manager
  *
@@ -13,5 +11,4 @@ public data class CSConfig(
     val eventProcessorConfiguration: CSEventProcessorConfig,
     val eventSchedulerConfig: CSEventSchedulerConfig,
     val networkConfig: CSNetworkConfig,
-    val healthEventConfig: CSHealthEventConfig
 )

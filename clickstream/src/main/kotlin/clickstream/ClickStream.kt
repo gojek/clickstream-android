@@ -5,7 +5,6 @@ import clickstream.ClickStream.Companion.initialize
 import clickstream.config.CSConfiguration
 import clickstream.internal.DefaultClickStream
 import clickstream.internal.DefaultClickStream.Companion.initialize
-import clickstream.model.CSEvent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 /**
@@ -28,6 +27,26 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
  * // get the instance
  * val clickstream = ClickStream.getInstance()
  * ```
+ *
+ *  **Sequence Diagram**
+ * ```
+ *            App                               Clickstream
+ * +---+---+---+---+---+---+           +---+---+---+---+---+---+
+ * |     Sending Events    | --------> |  Received the Events  |
+ * +---+---+---+---+---+---+           +---+---+---+---+---+---+
+ *                                                 |
+ *                                                 |
+ *                                                 |                         +---+---+---+---+---+---+---+---+----+
+ *                                         if app on active state ---------> |   - run the ticker with 10s delay  |
+ *                                                 |                         |   - collect events from db         |
+ *                                                 |                         |   - transform and send to backend  |
+ *                                                 |                         +---+---+---+---+---+---+---+---+----+
+ *                                                 |
+ *                                                 |                         +---+---+---+---+---+---+---+---+---+---+----+
+ *                                         else if app on inactive state --> |   - run flushEvents and flushHealthMetrics |
+ *                                                                           |   - transform and send to backend          |
+ *                                                                           +---+---+---+---+---+---+---+---+---+----+---+
+ *```
  */
 public interface ClickStream {
 
@@ -38,6 +57,15 @@ public interface ClickStream {
      * @param expedited a flag to determine whether [CSEvent] should be sent expedited.
      */
     public fun trackEvent(event: CSEvent, expedited: Boolean)
+
+    /**
+     * Push an event with event name and byte array of proto.
+     * Tracking events through this method does not support event visualiser
+     *
+     * @param event a [CSBytesEvent] to be sent.
+     * @param expedited a flag to determine whether [CSEvent] should be sent expedited.
+     */
+    public fun trackEvent(event: CSBytesEvent, expedited: Boolean)
 
     @ExperimentalCoroutinesApi
     public companion object {

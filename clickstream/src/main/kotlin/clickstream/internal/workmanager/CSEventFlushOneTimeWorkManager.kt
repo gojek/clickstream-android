@@ -1,6 +1,7 @@
 package clickstream.internal.workmanager
 
 import android.content.Context
+import android.util.Log
 import androidx.work.BackoffPolicy
 import androidx.work.Constraints
 import androidx.work.ExistingWorkPolicy.KEEP
@@ -28,7 +29,9 @@ internal class CSEventFlushOneTimeWorkManager private constructor(
         private const val CLICKSTREAM_TASK_TAG = "Clickstream_Event_Flushing_Task"
 
         fun enqueueWork(context: Context) {
-            CSServiceLocator.getInstance().logger.debug { "CSEventFlushOneTimeWorkManager#enqueueWork" }
+            if (CSServiceLocator.getInstance().logLevel >= INFO) {
+                Log.d("ClickStream", "CSEventFlushOneTimeWorkManager#enqueueWork")
+            }
 
             OneTimeWorkRequestBuilder<CSBaseEventFlushWorkManager>()
                 .setConstraints(
@@ -44,7 +47,8 @@ internal class CSEventFlushOneTimeWorkManager private constructor(
                 )
                 .build()
                 .let { request ->
-                    WorkManager.getInstance(context).enqueueUniqueWork(CLICKSTREAM_TASK_TAG, KEEP, request)
+                    WorkManager.getInstance(context)
+                        .enqueueUniqueWork(CLICKSTREAM_TASK_TAG, KEEP, request)
                 }
 
             if (CSServiceLocator.getInstance().logLevel >= INFO) {

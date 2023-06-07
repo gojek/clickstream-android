@@ -5,7 +5,6 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.isActive
 
 /**
  * Creates a flow that produces the first item after
@@ -19,14 +18,14 @@ import kotlinx.coroutines.isActive
  * will be produced (it is equal to [delayMillis] by default) in milliseconds.
  */
 @ExperimentalCoroutinesApi
-internal suspend fun flowableTicker(
+internal fun flowableTicker(
     delayMillis: Long,
     initialDelay: Long = delayMillis
 ): Flow<Unit> = callbackFlow {
     delay(initialDelay)
-    while (this.isClosedForSend.not()) {
+    while (!this.isClosedForSend) {
         send(Unit)
         delay(delayMillis)
     }
-    awaitClose { }
+    awaitClose {}
 }

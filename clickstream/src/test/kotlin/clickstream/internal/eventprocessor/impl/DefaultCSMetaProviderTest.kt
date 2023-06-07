@@ -1,12 +1,12 @@
 package clickstream.internal.eventprocessor.impl
 
 import clickstream.api.CSDeviceInfo
-import clickstream.api.CSMetaProvider
 import clickstream.fake.fakeAppInfo
 import clickstream.fake.fakeCSInfo
 import clickstream.fake.fakeCSSessionInfo
 import clickstream.fake.fakeLocationInfo
 import clickstream.fake.fakeUserInfo
+import clickstream.internal.eventprocessor.CSMetaProvider
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -31,7 +31,7 @@ public class DefaultCSMetaProviderTest {
 
     @Before
     public fun setup() {
-        metaProvider = DefaultCSMetaProvider(fakeCSInfo(deviceInfo = deviceInfo))
+        metaProvider = DefaultCSMetaProvider(fakeCSInfo(deviceInfo))
         whenever(deviceInfo.getDeviceModel()).thenReturn(testDeviceModel)
         whenever(deviceInfo.getDeviceManufacturer()).thenReturn(testDeviceMake)
         whenever(deviceInfo.getOperatingSystem()).thenReturn(testOS)

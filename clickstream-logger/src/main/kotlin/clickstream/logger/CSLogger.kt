@@ -17,7 +17,7 @@ public class CSLogger(
      *
      * @param message which will be printed
      */
-    public inline fun debug(message: () -> String) {
+    public inline fun debug(crossinline message: () -> String) {
         if (isDebug()) Log.d(CLICK_STREAM_LOG_TAG, message())
     }
 
@@ -31,7 +31,7 @@ public class CSLogger(
      * @param suffix which holds some additional info or tag
      * @param message which will be printed
      */
-    public fun debug(suffix: () -> String, message: () -> String) {
+    public inline fun debug(suffix: () -> String, message: () -> String) {
         if (isDebug()) Log.d("$CLICK_STREAM_LOG_TAG:${suffix()}", message())
     }
 
@@ -43,9 +43,10 @@ public class CSLogger(
      * @param message which will be printed
      * @param t which holds the exception
      */
-    public fun debug(suffix: () -> String, message: () -> String, t: () -> Throwable) {
+    public inline fun debug(suffix: () -> String, message: () -> String, t: () -> Throwable) {
         if (isDebug()) Log.d("$CLICK_STREAM_LOG_TAG:${suffix()}", message(), t())
     }
 
-    public fun isDebug(): Boolean = logLevel.getValue() > CSLogLevel.INFO.getValue()
+    @PublishedApi
+    internal fun isDebug(): Boolean = logLevel.getValue() > CSLogLevel.INFO.getValue()
 }

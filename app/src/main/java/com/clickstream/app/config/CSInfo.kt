@@ -7,7 +7,7 @@ import clickstream.api.CSSessionInfo
 import clickstream.api.CSUserInfo
 
 fun csInfo() = CSInfo(
-    appInfo = CSAppInfo(appVersion = "1.1.0"),
+    appInfo = CSAppInfo(appVersion = "2.1.0"),
     locationInfo = CSLocationInfo(
         latitude = -6.1753871,
         longitude = 106.8249641,

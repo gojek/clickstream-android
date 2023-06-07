@@ -1,7 +1,8 @@
 package clickstream.fake
 
+import clickstream.CSBytesEvent
+import clickstream.CSEvent
 import clickstream.internal.utils.CSTimeStampMessageBuilder
-import clickstream.model.CSEvent
 import com.gojek.clickstream.common.Customer
 import com.gojek.clickstream.common.Device
 import com.gojek.clickstream.common.Location
@@ -16,12 +17,12 @@ import java.util.UUID
  * Generates a ClickStreamEventWrapper data
  * with default data every time invoked.
  */
-public fun defaultEventWrapperData(): CSEvent {
+public fun defaultEventWrapperData(uuid: String = UUID.randomUUID().toString()): CSEvent {
     val event = AdCardEvent.newBuilder().apply {
         meta = meta.toBuilder().apply {
-            val objectID = UUID.randomUUID().toString()
-            eventGuid = objectID
+            eventGuid = uuid
             eventTimestamp = CSTimeStampMessageBuilder.build(System.currentTimeMillis())
+
             location = Location.getDefaultInstance()
             device = Device.getDefaultInstance()
             customer = Customer.getDefaultInstance()
@@ -36,5 +37,29 @@ public fun defaultEventWrapperData(): CSEvent {
         guid = event.meta.eventGuid,
         timestamp = event.eventTimestamp,
         message = event
+    )
+}
+
+public fun defaultBytesEventWrapperData(uuid: String = UUID.randomUUID().toString()): CSBytesEvent {
+    val event = AdCardEvent.newBuilder().apply {
+        meta = meta.toBuilder().apply {
+            eventGuid = uuid
+            eventTimestamp = CSTimeStampMessageBuilder.build(System.currentTimeMillis())
+
+            location = Location.getDefaultInstance()
+            device = Device.getDefaultInstance()
+            customer = Customer.getDefaultInstance()
+            session = Session.getDefaultInstance()
+        }.build()
+        type = AdCardType.Clicked
+        shuffleCard = ShuffleCard.getDefaultInstance()
+        serviceInfo = ServiceInfo.getDefaultInstance()
+    }.build()
+
+    return CSBytesEvent(
+        guid = event.meta.eventGuid,
+        timestamp = event.eventTimestamp,
+        eventName = "AdCardEvent",
+        eventData = event.toByteArray()
     )
 }

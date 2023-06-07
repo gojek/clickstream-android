@@ -1,8 +1,8 @@
 package clickstream.config
 
 import com.google.gson.annotations.SerializedName
-import java.util.concurrent.TimeUnit.SECONDS
 import okhttp3.OkHttpClient
+import java.util.concurrent.TimeUnit.SECONDS
 
 private const val CONNECT_TIMEOUT = 10L
 private const val READ_TIMEOUT = 10L
@@ -22,13 +22,10 @@ private const val MAX_REQUEST_ACK_TIMEOUT = 10L
  * @param readTimeout Read timeout to be used by okhttp (in seconds)
  * @param writeTimeout Write timeout to be used by okhttp (in seconds)
  * @param pingInterval Interval between pings initiated by client (in seconds)
- * @param initialRetryDurationInMs
- *        Initial retry duration to be used for retry backoff strategy (in milliseconds)
- * @param maxConnectionRetryDurationInMs
- *        Maximum retry duration for retry backoff strategy (in milliseconds)
+ * @param initialRetryDurationInMs Initial retry duration to be used for retry backoff strategy (in milliseconds)
+ * @param maxConnectionRetryDurationInMs Maximum retry duration for retry backoff strategy (in milliseconds)
  * @param maxRetriesPerBatch Maximum retries per batch request
  * @param maxRequestAckTimeout Maximum timeout for a request to receive Ack (in milliseconds)
- * @param okHttpClient OkHttpClient instance that passed from client
  */
 public data class CSNetworkConfig(
     @SerializedName("endPoint") val endPoint: String,
@@ -41,26 +38,32 @@ public data class CSNetworkConfig(
     @SerializedName("minBatteryLevel") val minBatteryLevel: Int,
     @SerializedName("maxRetriesPerBatch") val maxRetriesPerBatch: Int,
     @SerializedName("maxRequestAckTimeout") val maxRequestAckTimeout: Long,
-    @SerializedName("okHttpClient") val okHttpClient: OkHttpClient
+    @SerializedName("headers") val headers: Map<String, String> = mapOf(),
+    @SerializedName("okHttpClient") val okHttpClient: OkHttpClient? = null
 ) {
 
     public companion object {
-
         /**
-         * Helper method to create instance of NetworkConfiguration with default values
+         * A default configuration for CSNetworkConfig
          */
-        public fun default(okHttpClient: OkHttpClient): CSNetworkConfig = CSNetworkConfig(
-            "",
-            SECONDS.toSeconds(CONNECT_TIMEOUT),
-            SECONDS.toSeconds(READ_TIMEOUT),
-            SECONDS.toSeconds(WRITE_TIMEOUT),
-            SECONDS.toSeconds(PING_INTERVAL),
-            SECONDS.toMillis(INITIAL_RETRY_DURATION),
-            SECONDS.toMillis(MAX_RETRY_DURATION),
-            MIN_BATTERY_LEVEL,
-            MAX_RETRIES_PER_BATCH,
-            SECONDS.toMillis(MAX_REQUEST_ACK_TIMEOUT),
-            okHttpClient
-        )
+        public fun default(
+            url: String,
+            headers: Map<String, String>,
+            okHttpClient: OkHttpClient? = null
+        ): CSNetworkConfig =
+            CSNetworkConfig(
+                endPoint = url,
+                connectTimeout = SECONDS.toSeconds(CONNECT_TIMEOUT),
+                readTimeout = SECONDS.toSeconds(READ_TIMEOUT),
+                writeTimeout = SECONDS.toSeconds(WRITE_TIMEOUT),
+                pingInterval = SECONDS.toSeconds(PING_INTERVAL),
+                initialRetryDurationInMs = SECONDS.toMillis(INITIAL_RETRY_DURATION),
+                maxConnectionRetryDurationInMs = SECONDS.toMillis(MAX_RETRY_DURATION),
+                minBatteryLevel = MIN_BATTERY_LEVEL,
+                maxRetriesPerBatch = MAX_RETRIES_PER_BATCH,
+                maxRequestAckTimeout = SECONDS.toMillis(MAX_REQUEST_ACK_TIMEOUT),
+                headers = headers,
+                okHttpClient = okHttpClient,
+            )
     }
 }

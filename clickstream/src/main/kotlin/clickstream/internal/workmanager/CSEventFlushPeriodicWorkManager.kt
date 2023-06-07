@@ -28,8 +28,6 @@ internal class CSEventFlushPeriodicWorkManager private constructor(
         private const val REPEATED_INTERVAL = 6L
 
         fun enqueueWork(context: Context) {
-            CSServiceLocator.getInstance().logger.debug { "CSEventFlushPeriodicWorkManager#enqueueWork" }
-
             PeriodicWorkRequest.Builder(
                 CSBaseEventFlushWorkManager::class.java,
                 REPEATED_INTERVAL,
