@@ -1,25 +1,23 @@
 package com.clickstream.app
 
 import android.app.Application
+import android.provider.Settings
+import android.util.Base64
 import clickstream.ClickStream
 import clickstream.config.CSConfiguration
 import clickstream.connection.CSConnectionEvent
 import clickstream.connection.CSSocketConnectionListener
 import clickstream.eventvisualiser.CSEventVisualiserListener
 import clickstream.eventvisualiser.ui.CSEventVisualiserUI
-import clickstream.health.constant.CSTrackedVia
-import clickstream.lifecycle.impl.DefaultCSAppLifeCycleObserver
+import clickstream.health.DefaultCSHealthGateway
 import clickstream.logger.CSLogLevel
-import clickstream.logger.CSLogger
-import com.clickstream.app.config.AccountId
-import com.clickstream.app.config.EndPoint
-import com.clickstream.app.config.SecretKey
-import com.clickstream.app.config.StubBearer
 import com.clickstream.app.config.csConfig
 import com.clickstream.app.config.csInfo
+import com.clickstream.app.config.getHealthGateway
 import com.clickstream.app.helper.printMessage
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import java.util.*
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltAndroidApp
@@ -28,25 +26,25 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        val csLogger = CSLogger(CSLogLevel.DEBUG)
-
         ClickStream.initialize(
             configuration = CSConfiguration.Builder(
                 context = this,
-                info = csInfo(),
                 config = csConfig(
-                    AccountId(BuildConfig.ACCOUNT_ID),
-                    SecretKey(BuildConfig.SECRET_KEY),
-                    EndPoint(BuildConfig.ENDPOINT),
-                    StubBearer(BuildConfig.STUB_BEARER),
-                    CSTrackedVia.Both
+                    url = BuildConfig.ENDPOINT,
+                    deviceId = deviceId(),
+                    apiKey = String(
+                        Base64.encode(
+                            BuildConfig.API_KEY.toByteArray(),
+                            Base64.NO_WRAP
+                        )
+                    )
                 ),
-                appLifeCycle = DefaultCSAppLifeCycleObserver(csLogger)
-            )
-            .applyLogLevel()
-            .applyEventListener()
-            .applySocketConnectionListener()
-            .build()
+                info = csInfo()
+            ).applyLogLevel()
+                .applyEventListener()
+                .applyHealthFactory()
+                .applySocketConnectionListener()
+                .build()
         )
 
         CSEventVisualiserUI.initialise(this)
@@ -76,5 +74,17 @@ class App : Application() {
             }
         })
         return this
+    }
+
+    private fun CSConfiguration.Builder.applyHealthFactory(): CSConfiguration.Builder {
+        setHealthGateway(getHealthGateway(this@App))
+        return this
+    }
+
+    private fun deviceId(): String {
+        return Settings.Secure.getString(
+            contentResolver,
+            Settings.Secure.ANDROID_ID
+        ) ?: UUID.randomUUID().toString()
     }
 }

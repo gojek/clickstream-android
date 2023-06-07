@@ -131,6 +131,13 @@ public enum class CSEventNamesConstant(public val value: String) {;
          */
         ClickStreamFlushOnBackground("ClickStream Flush On Background"),
 
+        /**
+         * Tracks the instances when the clickstream batches are flushed on background.
+         *
+         * Type: Aggregated and Flushed
+         * Priority: Critical
+         */
+        ClickStreamFlushOnForeground("ClickStream Flush On Foreground"),
     }
 }
 

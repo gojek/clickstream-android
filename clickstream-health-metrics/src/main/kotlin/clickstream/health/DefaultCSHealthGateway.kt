@@ -2,7 +2,6 @@ package clickstream.health
 
 import android.content.Context
 import clickstream.api.CSInfo
-import clickstream.api.CSMetaProvider
 import clickstream.health.identity.CSGuIdGenerator
 import clickstream.health.identity.DefaultCSGuIdGenerator
 import clickstream.health.intermediate.CSEventHealthListener
@@ -15,7 +14,7 @@ import clickstream.health.internal.DefaultCSHealthEventFactory
 import clickstream.health.internal.DefaultCSHealthEventProcessor
 import clickstream.health.internal.DefaultCSHealthEventRepository
 import clickstream.health.model.CSHealthEventConfig
-import clickstream.health.time.CSTimeStampGenerator
+import clickstream.health.time.CSHealthTimeStampGenerator
 import clickstream.lifecycle.CSAppLifeCycle
 import clickstream.logger.CSLogger
 import clickstream.util.CSAppVersionSharedPref
@@ -33,8 +32,7 @@ public object DefaultCSHealthGateway {
         csInfo: CSInfo,
         logger: CSLogger,
         healthEventLogger: CSHealthEventLoggerListener,
-        timeStampGenerator: CSTimeStampGenerator,
-        metaProvider: CSMetaProvider,
+        timeStampGenerator: CSHealthTimeStampGenerator,
         eventHealthListener: CSEventHealthListener,
         appLifeCycle: CSAppLifeCycle,
         guIdGenerator: CSGuIdGenerator = DefaultCSGuIdGenerator(),
@@ -69,7 +67,7 @@ public object DefaultCSHealthGateway {
                 DefaultCSHealthEventFactory(
                     guIdGenerator = guIdGenerator,
                     timeStampGenerator = timeStampGenerator,
-                    metaProvider = metaProvider
+                    csInfo = csInfo
                 )
             }
         }

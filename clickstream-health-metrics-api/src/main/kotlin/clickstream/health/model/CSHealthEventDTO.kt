@@ -1,5 +1,7 @@
 package clickstream.health.model
 
+import java.util.UUID
+
 public data class CSHealthEventDTO(
     val healthEventID: Int = 0,
     val eventName: String,

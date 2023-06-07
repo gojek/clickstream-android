@@ -1,22 +1,24 @@
 package clickstream.config
 
 import android.content.Context
-import clickstream.api.CSDeviceInfo
 import clickstream.api.CSInfo
+import clickstream.config.timestamp.CSEventGeneratedTimestampListener
 import clickstream.config.timestamp.DefaultCSEventGeneratedTimestampListener
 import clickstream.connection.CSSocketConnectionListener
 import clickstream.connection.NoOpCSConnectionListener
-import clickstream.health.intermediate.CSEventHealthListener
-import clickstream.health.intermediate.CSHealthEventFactory
-import clickstream.health.intermediate.CSHealthEventProcessor
-import clickstream.health.intermediate.CSHealthEventRepository
 import clickstream.health.CSHealthGateway
 import clickstream.health.NoOpCSHealthGateway
-import clickstream.health.time.CSEventGeneratedTimestampListener
+import clickstream.health.intermediate.CSEventHealthListener
+import clickstream.health.intermediate.CSHealthEventLoggerListener
 import clickstream.internal.di.CSServiceLocator
-import clickstream.lifecycle.CSAppLifeCycle
-import clickstream.logger.CSLogLevel
+import clickstream.internal.eventscheduler.CSEventSchedulerErrorListener
+import clickstream.internal.eventscheduler.impl.NoOpEventSchedulerErrorListener
+import clickstream.internal.health.NoOpCSHealthEventListener
+import clickstream.internal.health.NoOpCSHealthEventLoggerListener
 import clickstream.listener.CSEventListener
+import clickstream.logger.CSLogLevel
+import clickstream.report.CSReportDataListener
+import clickstream.report.CSReportDataTracker
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -32,6 +34,7 @@ import kotlinx.coroutines.Dispatchers
  * @param dispatcher A [CoroutineDispatcher] object for threading related work.
  * @param info An object that wraps [CSAppInfo], [CSLocationInfo], [CSUserInfo], [CSSessionInfo], [CSDeviceInfo]
  * @param config An object which holds the configuration for processor, scheduler & network manager
+ * @param healthLogger An object which hold the configuration for Health Metrics.
  * @param logLevel ClickStream Loglevel for debugging purposes.
  * @param eventGeneratedTimeStamp An object which provide a plugin for exposes a timestamp where call side able to use
  *        for provides NTP timestamp
@@ -44,16 +47,17 @@ public class CSConfiguration private constructor(
     internal val dispatcher: CoroutineDispatcher,
     internal val info: CSInfo,
     internal val config: CSConfig,
+    internal val healthLogger: CSHealthEventLoggerListener,
     internal val logLevel: CSLogLevel,
     internal val eventGeneratedTimeStamp: CSEventGeneratedTimestampListener,
     internal val socketConnectionListener: CSSocketConnectionListener,
     internal val remoteConfig: CSRemoteConfig,
     internal val eventHealthListener: CSEventHealthListener,
-    internal val healthEventRepository: CSHealthEventRepository,
-    internal val healthEventProcessor: CSHealthEventProcessor,
-    internal val healthEventFactory: CSHealthEventFactory,
-    internal val appLifeCycle: CSAppLifeCycle,
+    internal val healthGateway: CSHealthGateway,
     internal val eventListeners: List<CSEventListener> = listOf(),
+    internal val eventSchedulerErrorListener: CSEventSchedulerErrorListener,
+    internal val csReportDataTracker: CSReportDataTracker?
+
 ) {
     /**
      * A Builder for [CSConfiguration]'s.
@@ -85,21 +89,19 @@ public class CSConfiguration private constructor(
          *  - NetworkConfig, to define endpoint and timout related things.
          *  - HealthConfig, to define verbosity and health related things.
          */
-        private val config: CSConfig,
-
-        /**
-         * Specify Clicstream lifecycle, this is needed in order to send events
-         * to the backend.
-         */
-        private val appLifeCycle: CSAppLifeCycle
+        private val config: CSConfig
     ) {
         private lateinit var dispatcher: CoroutineDispatcher
         private lateinit var eventGeneratedListener: CSEventGeneratedTimestampListener
         private lateinit var socketConnectionListener: CSSocketConnectionListener
-        private lateinit var remoteConfig: CSRemoteConfig
+        private lateinit var eventHealthListener: CSEventHealthListener
+        private lateinit var healthListener: CSHealthEventLoggerListener
         private lateinit var healthGateway: CSHealthGateway
+        private lateinit var remoteConfig: CSRemoteConfig
         private var logLevel: CSLogLevel = CSLogLevel.OFF
         private val eventListeners = mutableListOf<CSEventListener>()
+        private lateinit var eventSchedulerErrorListener: CSEventSchedulerErrorListener
+        private var csReportDataTracker: CSReportDataTracker? = null
 
         /**
          * Specifies a custom [CoroutineDispatcher] for [ClickStream].
@@ -109,6 +111,26 @@ public class CSConfiguration private constructor(
          */
         public fun setDispatcher(dispatcher: CoroutineDispatcher): Builder = apply {
             this.dispatcher = dispatcher
+        }
+
+        /**
+         * Specifies a custom [CSHealthEventLogger] for [ClickStream].
+         *
+         * @param health A [CSHealthEventLogger] for creating custom health tracker's.
+         * @return This [Builder] instance
+         */
+        public fun setHealthListener(health: CSHealthEventLoggerListener): Builder = apply {
+            this.healthListener = health
+        }
+
+        /**
+         * Specifies a custom [CSEventHealthListener] for [ClickStream].
+         *
+         * @param health A [CSEventHealthListener] for creating custom health tracker's.
+         * @return This [Builder] instance
+         */
+        public fun setEventHealthListener(health: CSEventHealthListener): Builder = apply {
+            this.eventHealthListener = health
         }
 
         /**
@@ -148,6 +170,15 @@ public class CSConfiguration private constructor(
             }
 
         /**
+         * Add any [CSEventInterceptor] to intercept clickstream events.
+         *
+         * @return This [Builder] instance
+         */
+        public fun addEventListener(listener: CSEventListener): Builder = apply {
+            this.eventListeners.add(listener)
+        }
+
+        /**
          * Specifies a custom [CSRemoteConfig] for [ClickStream].
          *
          * @param remoteConfig A [CSRemoteConfig] for remote config.
@@ -159,27 +190,39 @@ public class CSConfiguration private constructor(
             }
 
         /**
-         * Specify implementation of [CSHealthGateway], by default it would use
-         * [NoOpCSHealthGateway]
+         * Specifies a custom [CSEventSchedulerErrorListener] for Event schedulers.
          *
+         * @param eventSchedulerErrorListener A [CSEventSchedulerErrorListener]
          * @return This [Builder] instance
          */
-        public fun setHealthGateway(healthGateway: CSHealthGateway): Builder =
+        public fun setEventSchedulerErrorListener(eventSchedulerErrorListener: CSEventSchedulerErrorListener): Builder =
             apply {
-                this.healthGateway = healthGateway
+                this.eventSchedulerErrorListener = eventSchedulerErrorListener
+            }
+
+        /**
+         * Specifies a custom [CSReportDataListener] for Clickstream.
+         * This should only be set on non prod build for generating reports because of memory overhead.
+         *
+         * @param csBatchReportListener A [CSReportDataListener]
+         * @return This [Builder] instance
+         */
+        public fun setReportDataListener(csBatchReportListener: CSReportDataListener): Builder =
+            apply {
+                this.csReportDataTracker = CSReportDataTracker(csBatchReportListener)
+            }
+
+        public fun setHealthGateway(csHealthGateway: CSHealthGateway): Builder =
+            apply {
+                this.healthGateway = csHealthGateway
             }
 
 
         /**
-         * Configure a single client scoped listener that will receive all analytic events
-         * for this client.
+         * Builds a [CSConfiguration] object.
          *
-         * @see CSEventListener for semantics and restrictions on listener implementations.
+         * @return A [CSConfiguration] object with this [Builder]'s parameters.
          */
-        public fun addEventListener(eventListener: CSEventListener): Builder = apply {
-            this.eventListeners.add(eventListener)
-        }
-
         public fun build(): CSConfiguration {
             if (::dispatcher.isInitialized.not()) {
                 dispatcher = Dispatchers.Default
@@ -187,28 +230,37 @@ public class CSConfiguration private constructor(
             if (::eventGeneratedListener.isInitialized.not()) {
                 eventGeneratedListener = DefaultCSEventGeneratedTimestampListener()
             }
+            if (::healthListener.isInitialized.not()) {
+                healthListener = NoOpCSHealthEventLoggerListener()
+            }
             if (::socketConnectionListener.isInitialized.not()) {
                 socketConnectionListener = NoOpCSConnectionListener()
             }
             if (::remoteConfig.isInitialized.not()) {
                 remoteConfig = NoOpCSRemoteConfig()
             }
+            if (::eventHealthListener.isInitialized.not()) {
+                eventHealthListener = NoOpCSHealthEventListener()
+            }
+            if (::eventSchedulerErrorListener.isInitialized.not()) {
+                eventSchedulerErrorListener = NoOpEventSchedulerErrorListener()
+            }
+
             if (::healthGateway.isInitialized.not()) {
                 healthGateway = NoOpCSHealthGateway.factory()
             }
             return CSConfiguration(
                 context, dispatcher,
                 info, config,
-                logLevel,
+                healthListener, logLevel,
                 eventGeneratedListener,
                 socketConnectionListener,
                 remoteConfig,
-                healthGateway.eventHealthListener,
-                healthGateway.healthEventRepository,
-                healthGateway.healthEventProcessor,
-                healthGateway.healthEventFactory,
-                appLifeCycle,
-                eventListeners
+                eventHealthListener,
+                healthGateway,
+                eventListeners,
+                eventSchedulerErrorListener,
+                csReportDataTracker
             )
         }
     }

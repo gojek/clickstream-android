@@ -1,8 +1,8 @@
 package clickstream.health.internal
 
 import androidx.annotation.RestrictTo
-import clickstream.api.CSMetaProvider
-import clickstream.health.time.CSTimeStampGenerator
+import clickstream.api.CSInfo
+import clickstream.health.time.CSHealthTimeStampGenerator
 import clickstream.health.identity.CSGuIdGenerator
 import clickstream.health.intermediate.CSHealthEventFactory
 import com.gojek.clickstream.internal.Health
@@ -18,8 +18,8 @@ import com.gojek.clickstream.internal.HealthMeta
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public class DefaultCSHealthEventFactory(
     private val guIdGenerator: CSGuIdGenerator,
-    private val timeStampGenerator: CSTimeStampGenerator,
-    private val metaProvider: CSMetaProvider
+    private val timeStampGenerator: CSHealthTimeStampGenerator,
+    private val csInfo: CSInfo
 ) : CSHealthEventFactory {
 
     override suspend fun create(message: Health): Health {
@@ -30,17 +30,45 @@ public class DefaultCSHealthEventFactory(
     }
 
     @Throws(Exception::class)
-    private suspend fun updateMeta(message: Health.Builder) {
+    private fun updateMeta(message: Health.Builder) {
         val guid = message.healthMeta.eventGuid
         message.healthMeta = HealthMeta.newBuilder().apply {
             eventGuid = if (guid.isNullOrBlank()) guIdGenerator.getId() else guid
-            location = metaProvider.location()
-            customer = metaProvider.customer
-            session = metaProvider.session
-            device = metaProvider.device
-            app = metaProvider.app
+            location = location()
+            customer = customer()
+            session = session()
+            device = device()
+            app = app()
         }.build()
     }
+
+    private fun location() = HealthMeta.Location.newBuilder().apply {
+        latitude = csInfo.locationInfo.latitude
+        longitude = csInfo.locationInfo.latitude
+    }.build()
+
+    private fun customer() = HealthMeta.Customer.newBuilder().apply {
+        signedUpCountry = csInfo.userInfo.signedUpCountry
+        currentCountry = csInfo.userInfo.currentCountry
+        email = csInfo.userInfo.email
+        identity = csInfo.userInfo.identity
+    }.build()
+
+    private fun session() = HealthMeta.Session.newBuilder().apply {
+        sessionId = csInfo.sessionInfo.sessionID
+    }.build()
+
+    private fun device() = HealthMeta.Device.newBuilder().apply {
+        operatingSystem = csInfo.deviceInfo.getOperatingSystem()
+        operatingSystemVersion = csInfo.deviceInfo.getOperatingSystem()
+        deviceMake = csInfo.deviceInfo.getDeviceManufacturer()
+        deviceModel = csInfo.deviceInfo.getDeviceModel()
+
+    }.build()
+
+    private fun app() = HealthMeta.App.newBuilder().apply {
+        version = csInfo.appInfo.appVersion
+    }.build()
 
     @Throws(Exception::class)
     private fun updateTimeStamp(message: Health.Builder) {

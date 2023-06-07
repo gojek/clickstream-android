@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -88,7 +89,53 @@ internal interface CSEventDataDao {
     @Query("DELETE FROM EventData WHERE eventRequestGuid = :eventBatchGuId")
     suspend fun deleteByGuId(eventBatchGuId: String)
 
-
+    /**
+     * Load event by request id
+     *
+     * @param guid
+     * @return
+     */
     @Query("SELECT * FROM EventData WHERE eventRequestGuid =:guid")
     suspend fun loadEventByRequestId(guid: String): List<CSEventData>
+
+    /**
+     * A function [updateAll] that accommodate an action to update a [List] of [T] object to persistence of choice.
+     *
+     * **Note:**
+     * Thread switching must be handled by the caller side. e.g wrapped in form of [IO]
+     *
+     * @param eventDataList - List of Event Data to be updated
+     */
+    @Update
+    suspend fun updateAll(eventDataList: List<CSEventData>)
+
+    /**
+     * A function [getUnprocessedEventsWithLimit] that accommodate an action to retrieve first n events of [T] object from persistence of choice.
+     *
+     * **Note:**
+     * Thread switching must be handled by the caller side. e.g wrapped in form of [IO]
+     *
+     */
+    @Query("SELECT * FROM EventData where isOnGoing = 0 ORDER BY eventTimeStamp DESC limit:limit")
+    suspend fun getUnprocessedEventsWithLimit(limit: Int): List<CSEventData>
+
+    /**
+     * A function [getAllUnprocessedEvents] that accommodate an action to retrieve all unprocessed events from DB.
+     *
+     * **Note:**
+     * Thread switching must be handled by the caller side. e.g wrapped in form of [IO]
+     *
+     */
+    @Query("SELECT * FROM EventData where isOnGoing = 0")
+    suspend fun getAllUnprocessedEvents(): List<CSEventData>
+
+    /**
+     * A function [getAllUnprocessedEventsCount] that accommodate an action to retrieve the count of all unprocessed events from DB.
+     *
+     * **Note:**
+     * Thread switching must be handled by the caller side. e.g wrapped in form of [IO]
+     *
+     */
+    @Query("SELECT COUNT(*) FROM EventData where isOnGoing = 0")
+    suspend fun getAllUnprocessedEventsCount(): Int
 }

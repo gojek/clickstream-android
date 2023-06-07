@@ -6,6 +6,7 @@ import clickstream.health.intermediate.CSHealthEventRepository
 import clickstream.health.internal.CSHealthEventEntity.Companion.dtoMapTo
 import clickstream.health.internal.CSHealthEventEntity.Companion.dtosMapTo
 import clickstream.health.internal.CSHealthEventEntity.Companion.mapToDtos
+import clickstream.health.model.CSHealthEvent
 import clickstream.health.model.CSHealthEventDTO
 
 /**
@@ -51,6 +52,10 @@ internal class DefaultCSHealthEventRepository(
                 )
         }.toList()
         healthEventDao.insertAll(healthEventList = eventList)
+    }
+
+    override suspend fun getBucketEvents(): List<CSHealthEventDTO> {
+        return healthEventDao.getEventByType(BUCKET_EVENT_TYPE).mapToDtos()
     }
 
     override suspend fun getInstantEvents(): List<CSHealthEventDTO> {

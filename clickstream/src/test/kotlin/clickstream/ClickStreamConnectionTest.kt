@@ -4,7 +4,6 @@ import clickstream.internal.eventscheduler.CSEventData
 import clickstream.internal.networklayer.CSEventService
 import clickstream.internal.utils.CSFlowStreamAdapterFactory
 import clickstream.internal.utils.CSTimeStampMessageBuilder
-import clickstream.model.CSEvent
 import clickstream.utils.TestFlowObserver
 import clickstream.utils.any
 import clickstream.utils.containingBytes

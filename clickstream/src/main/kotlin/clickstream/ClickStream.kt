@@ -5,7 +5,6 @@ import clickstream.ClickStream.Companion.initialize
 import clickstream.config.CSConfiguration
 import clickstream.internal.DefaultClickStream
 import clickstream.internal.DefaultClickStream.Companion.initialize
-import clickstream.model.CSEvent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 /**
@@ -38,6 +37,15 @@ public interface ClickStream {
      * @param expedited a flag to determine whether [CSEvent] should be sent expedited.
      */
     public fun trackEvent(event: CSEvent, expedited: Boolean)
+
+    /**
+     * Push an event with event name and byte array of proto.
+     * Tracking events through this method does not support event visualiser
+     *
+     * @param event a [CSBytesEvent] to be sent.
+     * @param expedited a flag to determine whether [CSEvent] should be sent expedited.
+     */
+    public fun trackEvent(event: CSBytesEvent, expedited: Boolean)
 
     @ExperimentalCoroutinesApi
     public companion object {

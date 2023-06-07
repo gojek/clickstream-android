@@ -1,5 +1,7 @@
 package clickstream.health.model
 
+import clickstream.health.constant.CSEventNamesConstant
+import clickstream.health.constant.CSEventTypesConstant
 import clickstream.health.constant.CSTrackedVia
 
 /**

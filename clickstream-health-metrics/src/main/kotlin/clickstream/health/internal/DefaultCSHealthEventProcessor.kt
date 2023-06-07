@@ -7,6 +7,7 @@ import clickstream.health.intermediate.CSHealthEventLoggerListener
 import clickstream.health.intermediate.CSHealthEventProcessor
 import clickstream.health.intermediate.CSHealthEventRepository
 import clickstream.health.internal.CSHealthEventEntity.Companion.dtosMapTo
+import clickstream.health.internal.CSHealthEventEntity.Companion.mapToDtos
 import clickstream.health.model.CSHealthEventConfig
 import clickstream.health.model.CSHealthEventDTO
 import clickstream.lifecycle.CSAppLifeCycle
@@ -72,7 +73,7 @@ public class DefaultCSHealthEventProcessor(
     private val appVersionPreference: CSAppVersionSharedPref
 ) : CSLifeCycleManager(appLifeCycleObserver), CSHealthEventProcessor {
 
-    private var scope: CoroutineScope? = CoroutineScope(SupervisorJob() + dispatcher)
+    private var scope: CoroutineScope = CoroutineScope(SupervisorJob() + dispatcher)
     private val scopeForAppUpgrading = CoroutineScope(SupervisorJob() + dispatcher)
 
     init {
@@ -83,14 +84,16 @@ public class DefaultCSHealthEventProcessor(
 
     override fun onStart() {
         logger.debug { "DefaultCSHealthEventProcessor#onStart" }
-
-        scope?.cancel()
-        scope = null
+        if (scope.isActive) {
+            scope.cancel()
+        }
     }
 
     override fun onStop() {
         logger.debug { "DefaultCSHealthEventProcessor#onStop" }
-
+        if (scope.isActive) {
+            scope.cancel()
+        }
         scope = CoroutineScope(SupervisorJob() + dispatcher)
         trySendEventsToAnalyticsUpstream()
     }
@@ -121,7 +124,7 @@ public class DefaultCSHealthEventProcessor(
                         .setTimeToConnection(event.timeToConnection.toString())
                         .setErrorDetails(
                             ErrorDetails.newBuilder()
-                                .setReason(event.error)
+                                //.setReason(event.error)
                                 .build()
                         )
                         .build()
@@ -161,7 +164,6 @@ public class DefaultCSHealthEventProcessor(
                     .setEventName(entry.key)
                     .setNumberOfEvents(eventGuids.size.toLong())
                     .setNumberOfBatches(eventBatchGuids.size.toLong())
-                    //.setHealthMeta() will be override through healthEventFactory.create below
                     .setEventTimestamp(Timestamp.getDefaultInstance())
                     .setDeviceTimestamp(Timestamp.getDefaultInstance())
                     .setHealthDetails(
@@ -190,7 +192,7 @@ public class DefaultCSHealthEventProcessor(
     private fun trySendEventsToAnalyticsUpstream() {
         logger.debug { "CSHealthEventProcessor#sendEvents" }
 
-        scope!!.launch {
+        scope.launch {
             logger.debug { "CSHealthEventProcessor#sendEvents : isCoroutineActive $isActive" }
 
             if (isActive.not()) {
@@ -201,6 +203,7 @@ public class DefaultCSHealthEventProcessor(
                 logger.debug { "CSHealthEventProcessor#sendEvents : Health Event condition is not satisfied for this user" }
                 return@launch
             }
+
             if (healthEventConfig.isTrackedForBoth()) {
                 logger.debug { "CSHealthEventProcessor#sendEvents : sendEventsToAnalytics" }
                 trySendUpstream()

@@ -47,6 +47,7 @@ internal fun fakeSessionInfo(
 }
 
 internal fun fakeDeviceInfo(): CSDeviceInfo {
+
     return object : CSDeviceInfo {
         override fun getDeviceManufacturer(): String = "Samsung"
         override fun getDeviceModel(): String = "IPhone X"

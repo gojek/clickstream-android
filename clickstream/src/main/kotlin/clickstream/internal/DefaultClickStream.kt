@@ -2,6 +2,8 @@ package clickstream.internal
 
 import androidx.annotation.GuardedBy
 import androidx.annotation.RestrictTo
+import clickstream.CSBytesEvent
+import clickstream.CSEvent
 import clickstream.ClickStream
 import clickstream.config.CSConfiguration
 import clickstream.internal.di.CSServiceLocator
@@ -9,7 +11,7 @@ import clickstream.internal.di.impl.DefaultCServiceLocator
 import clickstream.internal.eventprocessor.CSEventProcessor
 import clickstream.internal.workmanager.CSWorkManager
 import clickstream.logger.CSLogger
-import clickstream.model.CSEvent
+import clickstream.toInternal
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -28,7 +30,7 @@ internal class DefaultClickStream private constructor(
 
     private val handler: CoroutineExceptionHandler by lazy {
         CoroutineExceptionHandler { _, throwable ->
-            logger.debug { "DefaultClickStream#error : ${throwable.message}" }
+            logger.debug { throwable.message.toString() }
         }
     }
     private val scope: CoroutineScope by lazy {
@@ -36,6 +38,14 @@ internal class DefaultClickStream private constructor(
     }
 
     override fun trackEvent(event: CSEvent, expedited: Boolean) {
+        trackEventInternal(event.toInternal(), expedited)
+    }
+
+    override fun trackEvent(event: CSBytesEvent, expedited: Boolean) {
+        trackEventInternal(event.toInternal(), expedited)
+    }
+
+    private fun trackEventInternal(event: CSEventInternal, expedited: Boolean) {
         scope.launch {
             processor.trackEvent(event)
             if (expedited) {
@@ -86,31 +96,31 @@ internal class DefaultClickStream private constructor(
                 if (sInstance != null) {
                     throw IllegalStateException(
                         "ClickStream is already initialized. " +
-                        "If you want to re-initialize ClickStream with new CSConfiguration, " +
-                        "please call ClickStream#release first. " +
-                        "See ClickStream#initialize(Context, CSConfiguration) or " +
-                        "the class level. " +
-                        "KotlinDoc for more information."
+                                "If you want to re-initialize ClickStream with new CSConfiguration, " +
+                                "please call ClickStream#release first. " +
+                                "See ClickStream#initialize(Context, CSConfiguration) or " +
+                                "the class level. " +
+                                "KotlinDoc for more information."
                     )
                 }
 
                 if (sInstance == null) {
-                    val ctx = configuration.context.applicationContext
+                    val ctx = configuration.context
                     val serviceLocator = DefaultCServiceLocator(
                         context = ctx,
                         info = configuration.info,
                         config = configuration.config,
                         logLevel = configuration.logLevel,
+                        healthEventLogger = configuration.healthLogger,
                         dispatcher = configuration.dispatcher,
                         eventGeneratedTimestampListener = configuration.eventGeneratedTimeStamp,
                         socketConnectionListener = configuration.socketConnectionListener,
                         remoteConfig = configuration.remoteConfig,
                         eventHealthListener = configuration.eventHealthListener,
-                        healthEventRepository = configuration.healthEventRepository,
-                        healthEventProcessor = configuration.healthEventProcessor,
-                        healthEventFactory = configuration.healthEventFactory,
-                        appLifeCycle = configuration.appLifeCycle,
-                        eventListener = configuration.eventListeners
+                        eventListeners = configuration.eventListeners,
+                        eventSchedulerErrorListener = configuration.eventSchedulerErrorListener,
+                        csReportDataTracker = configuration.csReportDataTracker,
+                        healthGateway = configuration.healthGateway
                     )
 
                     CSServiceLocator.setServiceLocator(serviceLocator)
@@ -138,7 +148,6 @@ internal class DefaultClickStream private constructor(
             synchronized(lock) {
                 if (sInstance != null) {
                     sInstance = null
-                    CSServiceLocator.release()
                 }
             }
         }

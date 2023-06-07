@@ -2,8 +2,8 @@ package com.clickstream.app.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import clickstream.CSEvent
 import clickstream.ClickStream
-import clickstream.model.CSEvent
 import com.clickstream.app.helper.Dispatcher
 import com.clickstream.app.helper.printMessage
 import com.clickstream.app.main.MainIntent.ConnectIntent

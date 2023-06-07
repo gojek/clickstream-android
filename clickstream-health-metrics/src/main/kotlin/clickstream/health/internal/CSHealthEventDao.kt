@@ -8,6 +8,7 @@ import androidx.room.Query
 
 internal const val INSTANT_EVENT_TYPE = "instant"
 internal const val AGGREGATE_EVENT_TYPE = "aggregate"
+internal const val BUCKET_EVENT_TYPE = "bucket"
 
 /**
  * A collection of function to accommodate and Communicates with the implementation of DAO.

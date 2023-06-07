@@ -3,8 +3,8 @@ package clickstream.internal.networklayer
 import clickstream.api.CSInfo
 import clickstream.config.CSNetworkConfig
 import clickstream.health.intermediate.CSHealthEventRepository
-import clickstream.health.time.CSTimeStampGenerator
 import clickstream.internal.utils.CSCallback
+import clickstream.internal.utils.CSTimeStampGenerator
 import clickstream.logger.CSLogger
 import com.gojek.clickstream.de.EventRequest
 import com.gojek.clickstream.de.common.EventResponse
@@ -36,7 +36,6 @@ internal interface CSNetworkRepository {
      */
     public fun sendEvents(
         eventRequest: EventRequest,
-        eventGuids: String,
         callback: CSCallback<String>
     )
 
@@ -77,7 +76,6 @@ internal class CSNetworkRepositoryImpl(
 
     override fun sendEvents(
         eventRequest: EventRequest,
-        eventGuids: String,
         callback: CSCallback<String>
     ) {
         logger.debug { "CSNetworkRepositoryImpl#sendEvents" }
@@ -86,7 +84,6 @@ internal class CSNetworkRepositoryImpl(
             networkConfig = networkConfig,
             eventService = eventService,
             eventRequest = eventRequest,
-            eventGuids = eventGuids,
             dispatcher = dispatcher,
             timeStampGenerator = timeStampGenerator,
             logger = logger,
@@ -100,7 +97,7 @@ internal class CSNetworkRepositoryImpl(
             }
 
             override fun onFailure(throwable: Throwable, guid: String) {
-                logger.debug { "CSNetworkRepositoryImpl#sendEvents#onFailure - $guid ${throwable.stackTraceToString()}" }
+                logger.debug { "CSNetworkRepositoryImpl#sendEvents#onFailure - $guid ${throwable.message}" }
 
                 callback.onError(throwable, guid)
             }

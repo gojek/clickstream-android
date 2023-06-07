@@ -29,8 +29,14 @@ public interface CSHealthEventRepository {
     public suspend fun insertHealthEventList(healthEventList: List<CSHealthEventDTO>)
 
     /**
+     * A function to retrieve all the bucket health events in the DB
+     */
+    public suspend fun getBucketEvents(): List<CSHealthEventDTO>
+
+    /**
      * A function to retrieve all the instant health events in the DB
      */
+
     public suspend fun getInstantEvents(): List<CSHealthEventDTO>
 
     /**

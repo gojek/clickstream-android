@@ -1,7 +1,7 @@
 package clickstream.fake
 
+import clickstream.CSEvent
 import clickstream.ClickStream
-import clickstream.model.CSEvent
 
 public class FakeClickStream(
     private val clickStream: ClickStream

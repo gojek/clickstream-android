@@ -1,6 +1,7 @@
 package clickstream.health.internal
 
 import clickstream.health.intermediate.CSHealthEventRepository
+import clickstream.health.model.CSHealthEvent
 import clickstream.health.model.CSHealthEventDTO
 
 internal class NoOpCSHealthEventRepository : CSHealthEventRepository {
@@ -13,6 +14,10 @@ internal class NoOpCSHealthEventRepository : CSHealthEventRepository {
     }
 
     override suspend fun getInstantEvents(): List<CSHealthEventDTO> {
+        return emptyList()
+    }
+
+    override suspend fun getBucketEvents(): List<CSHealthEventDTO> {
         return emptyList()
     }
 

@@ -1,10 +1,9 @@
 package clickstream.internal.eventprocessor.impl
 
-import clickstream.api.CSMetaProvider
-import clickstream.extension.protoName
-import clickstream.health.time.CSTimeStampGenerator
-import clickstream.health.identity.CSGuIdGenerator
-import clickstream.health.internal.DefaultCSHealthEventFactory
+import clickstream.protoName
+import clickstream.internal.eventprocessor.CSMetaProvider
+import clickstream.internal.utils.CSGuIdGenerator
+import clickstream.internal.utils.CSTimeStampGenerator
 import com.gojek.clickstream.internal.Health
 import com.gojek.clickstream.internal.HealthDetails
 import com.gojek.clickstream.internal.HealthMeta

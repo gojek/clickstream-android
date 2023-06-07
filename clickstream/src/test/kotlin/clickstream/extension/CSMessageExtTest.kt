@@ -1,10 +1,13 @@
 package clickstream.extension
 
-import com.gojek.clickstream.products.common.*
+import com.gojek.clickstream.products.common.Address
+import com.gojek.clickstream.products.common.AppType
+import com.gojek.clickstream.products.common.Outlet
 import com.gojek.clickstream.products.telemetry.Protocol
 import com.gojek.clickstream.products.telemetry.PubSubHealth
 import com.gojek.clickstream.products.telemetry.QOS
 import com.gojek.clickstream.products.telemetry.Topic
+import clickstream.toFlatMap
 import org.junit.Test
 
 internal class CSMessageExtTest {
@@ -27,7 +30,6 @@ internal class CSMessageExtTest {
         assert(addressMap["pillPosition"] == 5)
         assert(addressMap["changedAddressSourceOnUi"] == true)
         assert(addressMap["locationDetails"] == "location details")
-
     }
 
     @Test
@@ -42,7 +44,6 @@ internal class CSMessageExtTest {
             setTopic(topic)
             protocol = Protocol.PROTOCOL_MQTT
             appType = AppType.Consumer
-
         }.build()
 
         pubSubHealth.toFlatMap().run {

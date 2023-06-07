@@ -3,9 +3,10 @@ package clickstream.internal.eventscheduler
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import clickstream.extension.eventName
+import clickstream.CSEvent
+import clickstream.eventName
 import clickstream.health.model.CSEventHealth
-import clickstream.model.CSEvent
+import clickstream.internal.CSEventInternal
 import com.gojek.clickstream.de.Event
 import com.google.protobuf.ByteString
 import com.google.protobuf.MessageLite
@@ -37,8 +38,14 @@ public data class CSEventData(
      *
      * @return [Event]
      */
-    public fun event(): Event {
-        val messageType = messageName.split(".").last().toLowerCase(Locale.getDefault())
+    public fun event(appPrefix: String? = null): Event {
+        val messageType = with(messageName.split(".").last().toLowerCase(Locale.getDefault())) {
+            if (!appPrefix.isNullOrEmpty()) {
+                "$appPrefix-$this"
+            } else {
+                this
+            }
+        }
         return Event.newBuilder().apply {
             eventBytes = ByteString.copyFrom(messageAsBytes)
             type = messageType
@@ -99,6 +106,46 @@ public data class CSEventData(
                 messageName = messageName,
                 eventName = eventName
             )
+        }
+
+        /**
+         * Creates a new instance of EventData with the given [CSEventInternal]
+         */
+        internal fun create(event: CSEventInternal): Pair<CSEventData, CSEventHealth> {
+            when (event) {
+                is CSEventInternal.CSEvent -> {
+                    return CSEventData(
+                        eventGuid = event.guid,
+                        eventRequestGuid = null,
+                        eventTimeStamp = event.timestamp.seconds,
+                        messageAsBytes = event.message.toByteArray(),
+                        messageName = event.message::class.qualifiedName.orEmpty(),
+                        isOnGoing = false
+                    ) to CSEventHealth(
+                        eventGuid = event.guid,
+                        eventTimeStamp = event.timestamp.seconds,
+                        messageSerializedSizeInBytes = event.message.serializedSize,
+                        messageName = event.message::class.qualifiedName.orEmpty(),
+                        eventName = event.message.eventName() ?: ""
+                    )
+                }
+                is CSEventInternal.CSBytesEvent -> {
+                    return CSEventData(
+                        eventGuid = event.guid,
+                        eventRequestGuid = null,
+                        eventTimeStamp = event.timestamp.seconds,
+                        messageAsBytes = event.eventData,
+                        messageName = event.eventName,
+                        isOnGoing = false
+                    ) to CSEventHealth(
+                        eventGuid = event.guid,
+                        eventTimeStamp = event.timestamp.seconds,
+                        messageSerializedSizeInBytes = event.eventData.size,
+                        messageName = event.eventName,
+                        eventName = event.eventName
+                    )
+                }
+            }
         }
 
         private const val IN_KB = 1024

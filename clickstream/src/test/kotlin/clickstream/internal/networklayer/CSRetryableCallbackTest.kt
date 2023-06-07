@@ -3,8 +3,8 @@ package clickstream.internal.networklayer
 import clickstream.config.CSNetworkConfig
 import clickstream.fake.fakeCSInfo
 import clickstream.health.intermediate.CSHealthEventRepository
-import clickstream.health.time.CSTimeStampGenerator
 import clickstream.internal.utils.CSFlowStreamAdapterFactory
+import clickstream.internal.utils.CSTimeStampGenerator
 import clickstream.logger.CSLogLevel.OFF
 import clickstream.logger.CSLogger
 import clickstream.utils.CoroutineTestRule
@@ -62,7 +62,7 @@ public class CSRetryableCallbackTest {
 
         // Then
         object : CSRetryableCallback(
-            networkConfig = CSNetworkConfig.default(OkHttpClient()),
+            networkConfig = CSNetworkConfig.default("", mapOf()),
             eventService = client,
             eventRequest = eventRequest,
             dispatcher = coroutineRule.testDispatcher,
@@ -70,14 +70,11 @@ public class CSRetryableCallbackTest {
             logger = CSLogger(OFF),
             healthEventRepository = health,
             info = fakeCSInfo(),
-            coroutineScope = coroutineRule.scope,
-            eventGuids = "1234"
+            coroutineScope = coroutineRule.scope
         ) {
-            override fun onSuccess(guid: String) { /*No Op*/
-            }
+            override fun onSuccess(guid: String) { /*No Op*/ }
 
-            override fun onFailure(throwable: Throwable, guid: String) { /*No Op*/
-            }
+            override fun onFailure(throwable: Throwable, guid: String) { /*No Op*/ }
         }
     }
 
