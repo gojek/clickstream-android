@@ -1,6 +1,8 @@
 package clickstream.internal.networklayer
 
 import clickstream.internal.eventscheduler.CSEventData
+import clickstream.internal.networklayer.proto.raccoon.SendEventRequest
+import clickstream.internal.networklayer.proto.raccoon.SendEventResponse
 import clickstream.internal.utils.CSFlowStreamAdapterFactory
 import clickstream.internal.utils.CSTimeStampMessageBuilder
 import clickstream.model.CSEvent
@@ -11,8 +13,6 @@ import clickstream.utils.flowTest
 import clickstream.utils.newWebSocketFactory
 import com.gojek.clickstream.common.App
 import com.gojek.clickstream.common.EventMeta
-import com.gojek.clickstream.de.EventRequest
-import com.gojek.clickstream.de.common.EventResponse
 import com.gojek.clickstream.products.events.AdCardEvent
 import com.google.protobuf.Timestamp
 import com.tinder.scarlet.Lifecycle
@@ -53,10 +53,10 @@ internal class CSConnectionDroppedTest {
     public fun send_givenConnectionIsEstablished_shouldBeReceivedByTheServer() {
         // Given
         givenConnectionIsEstablished()
-        val testResponse: TestFlowObserver<EventResponse> = server.observeResponse().flowTest()
+        val testResponse: TestFlowObserver<SendEventResponse> = server.observeResponse().flowTest()
 
-        val eventRequest1: EventRequest = generatedEvent("1")
-        val eventRequest2: EventRequest = generatedEvent("2")
+        val eventRequest1: SendEventRequest = generatedEvent("1")
+        val eventRequest2: SendEventRequest = generatedEvent("2")
 
         // When
         val event1 = client.sendEvent(eventRequest1)
@@ -71,7 +71,7 @@ internal class CSConnectionDroppedTest {
         Assertions.assertThat(event4).isTrue
 
         Assertions.assertThat(testResponse.values).allSatisfy { e ->
-            e is EventResponse
+            e is SendEventResponse
         }
 
         serverLifecycleRegistry.onNext(Lifecycle.State.Stopped.WithReason(ShutdownReason.GRACEFUL))
@@ -86,7 +86,7 @@ internal class CSConnectionDroppedTest {
         )
     }
 
-    private fun generatedEvent(guid: String): EventRequest {
+    private fun generatedEvent(guid: String): SendEventRequest {
         val event = CSEvent(
             guid = guid,
             timestamp = Timestamp.getDefaultInstance(),
@@ -151,8 +151,8 @@ internal class CSConnectionDroppedTest {
         )
     }
 
-    private fun transformToEventRequest(eventData: List<CSEventData>): EventRequest {
-        return EventRequest.newBuilder().apply {
+    private fun transformToEventRequest(eventData: List<CSEventData>): SendEventRequest {
+        return SendEventRequest.newBuilder().apply {
             reqGuid = "1011"
             sentTime = CSTimeStampMessageBuilder.build(System.currentTimeMillis())
             addAllEvents(eventData.map { it.event() })

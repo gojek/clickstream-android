@@ -5,14 +5,14 @@ import clickstream.extension.protoName
 import clickstream.health.time.CSTimeStampGenerator
 import clickstream.health.identity.CSGuIdGenerator
 import clickstream.health.internal.DefaultCSHealthEventFactory
-import com.gojek.clickstream.internal.Health
-import com.gojek.clickstream.internal.HealthDetails
-import com.gojek.clickstream.internal.HealthMeta
-import com.gojek.clickstream.internal.HealthMeta.App
-import com.gojek.clickstream.internal.HealthMeta.Customer
-import com.gojek.clickstream.internal.HealthMeta.Device
-import com.gojek.clickstream.internal.HealthMeta.Location
-import com.gojek.clickstream.internal.HealthMeta.Session
+import clickstream.health.proto.Health
+import clickstream.health.proto.HealthDetails
+import clickstream.health.proto.HealthMeta.Location
+import clickstream.health.proto.HealthMeta.Device
+import clickstream.health.proto.HealthMeta.App
+import clickstream.health.proto.HealthMeta.Customer
+import clickstream.health.proto.HealthMeta.Session
+import clickstream.health.proto.HealthMeta.newBuilder
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -82,7 +82,7 @@ public class DefaultCSHealthEventFactoryTest {
                 .build()
         )
         .setHealthMeta(
-            HealthMeta.newBuilder()
+            newBuilder()
                 .setEventGuid("123456")
                 .build()
         )

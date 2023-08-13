@@ -1,7 +1,7 @@
 package clickstream.internal.networklayer
 
-import com.gojek.clickstream.de.EventRequest
-import com.gojek.clickstream.de.common.EventResponse
+import clickstream.internal.networklayer.proto.raccoon.SendEventRequest
+import clickstream.internal.networklayer.proto.raccoon.SendEventResponse
 import com.tinder.scarlet.WebSocket
 import com.tinder.scarlet.ws.Receive
 import com.tinder.scarlet.ws.Send
@@ -17,7 +17,7 @@ internal interface CSEventService {
      * @return Flow<> - Stream of event data containing the ID of successful events
      */
     @Receive
-    fun observeResponse(): Flow<EventResponse>
+    fun observeResponse(): Flow<SendEventResponse>
 
     /**
      * Observes the socket connection - Opened, closed, IsClosing, Failed, MessageReceived
@@ -31,5 +31,5 @@ internal interface CSEventService {
      * @param streamBatchEvents - The analytic data which is to be sent
      */
     @Send
-    fun sendEvent(streamBatchEvents: EventRequest): Boolean
+    fun sendEvent(streamBatchEvents: SendEventRequest): Boolean
 }

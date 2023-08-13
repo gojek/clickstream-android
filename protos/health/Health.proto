@@ -1,0 +1,40 @@
+//platform="ios,android"
+syntax = "proto3";
+
+package clickstream.health.proto;
+
+option java_multiple_files = true;
+option java_package = "clickstream.health.proto";
+option java_outer_classname = "HealthProto";
+
+option go_package = "source.golabs.io/mobile/clickstream-go-proto/sdk-internal/clickstream";
+
+import "HealthMeta.proto";
+import "google/protobuf/timestamp.proto";
+
+message HealthDetails {
+  // Array of event guids.
+  repeated string event_guids = 1;
+  // Array of event batch guids.
+  repeated string event_batch_guids = 2;
+}
+
+message Health {
+
+  // Name of the health event.
+  string event_name = 1;
+  // Health details, captured by the SDK when the mode is verbose.
+  HealthDetails healthDetails = 2;
+  // Number of events tracked.
+  int64 number_of_events = 3;
+  // Number of event batches tracked.
+  int64 number_of_batches = 4;
+
+  // Note: Auto-filled by the ClickStream SDK, need not be set by the products for every event! If set, will be overridden.
+  google.protobuf.Timestamp event_timestamp = 101;
+  // Note: Auto-filled by the ClickStream SDK, need not be set by the products for every event! If set, will be overridden.
+
+  clickstream.health.proto.HealthMeta healthMeta = 103;
+  // Note: Auto-filled by the ClickStream SDK, need not be set by the products for every event! If set, will be overridden.
+  google.protobuf.Timestamp device_timestamp = 104;
+}

@@ -19,7 +19,6 @@ import clickstream.lifecycle.CSBackgroundLifecycleManager
 import clickstream.listener.CSEventListener
 import clickstream.logger.CSLogLevel
 import clickstream.logger.CSLogger
-import com.gojek.clickstream.internal.Health
 import com.tinder.scarlet.lifecycle.LifecycleRegistry
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi

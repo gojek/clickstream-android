@@ -1,7 +1,7 @@
 package clickstream.health.intermediate
 
 import androidx.annotation.RestrictTo
-import com.gojek.clickstream.internal.Health
+import clickstream.health.proto.Health
 
 /**
  * [CSHealthEventProcessor] is the Heart of the Clickstream Library. The [CSHealthEventProcessor]

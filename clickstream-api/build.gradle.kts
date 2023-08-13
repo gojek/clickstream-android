@@ -34,7 +34,7 @@ android {
 
 dependencies {
     // Clickstream
-    compileOnly(files("$rootDir/libs/proto-sdk-1.18.6.jar"))
+    compileOnly(projects.clickstreamHealthProto)
 
     // Common
     implementation(deps.utils.protoLite)

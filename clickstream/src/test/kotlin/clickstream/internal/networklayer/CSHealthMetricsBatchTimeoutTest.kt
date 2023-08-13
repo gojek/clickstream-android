@@ -7,6 +7,8 @@ import clickstream.health.constant.CSEventTypesConstant
 import clickstream.health.intermediate.CSHealthEventRepository
 import clickstream.health.model.CSHealthEventDTO
 import clickstream.health.time.CSTimeStampGenerator
+import clickstream.internal.networklayer.proto.raccoon.Event
+import clickstream.internal.networklayer.proto.raccoon.SendEventRequest
 import clickstream.internal.utils.CSFlowStreamAdapterFactory
 import clickstream.logger.CSLogLevel
 import clickstream.logger.CSLogger
@@ -14,8 +16,6 @@ import clickstream.utils.CoroutineTestRule
 import clickstream.utils.TestFlowObserver
 import clickstream.utils.flowTest
 import clickstream.utils.newWebSocketFactory
-import com.gojek.clickstream.de.Event
-import com.gojek.clickstream.de.EventRequest
 import com.gojek.clickstream.products.events.AdCardEvent
 import com.google.protobuf.Timestamp
 import com.nhaarman.mockitokotlin2.mock
@@ -68,7 +68,7 @@ internal class CSHealthMetricsBatchTimeoutTest {
         givenConnectionIsEstablished()
 
         // When
-        val eventRequest = EventRequest.newBuilder()
+        val eventRequest = SendEventRequest.newBuilder()
             .setReqGuid("1234")
             .setSentTime(Timestamp.getDefaultInstance())
             .addEvents(

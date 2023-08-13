@@ -1,10 +1,12 @@
 package clickstream.api
 
-import com.gojek.clickstream.internal.HealthMeta.App
-import com.gojek.clickstream.internal.HealthMeta.Customer
-import com.gojek.clickstream.internal.HealthMeta.Device
-import com.gojek.clickstream.internal.HealthMeta.Location
-import com.gojek.clickstream.internal.HealthMeta.Session
+
+import clickstream.health.proto.HealthMeta.Location
+import clickstream.health.proto.HealthMeta.Customer
+import clickstream.health.proto.HealthMeta.App
+import clickstream.health.proto.HealthMeta.Device
+import clickstream.health.proto.HealthMeta.Session
+
 
 /**
  * This data source is responsible for providing values for those common keys

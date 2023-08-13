@@ -5,8 +5,8 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import clickstream.extension.eventName
 import clickstream.health.model.CSEventHealth
+import clickstream.internal.networklayer.proto.raccoon.Event
 import clickstream.model.CSEvent
-import com.gojek.clickstream.de.Event
 import com.google.protobuf.ByteString
 import com.google.protobuf.MessageLite
 import java.util.Locale

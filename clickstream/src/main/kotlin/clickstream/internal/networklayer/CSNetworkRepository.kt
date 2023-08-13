@@ -4,10 +4,10 @@ import clickstream.api.CSInfo
 import clickstream.config.CSNetworkConfig
 import clickstream.health.intermediate.CSHealthEventRepository
 import clickstream.health.time.CSTimeStampGenerator
+import clickstream.internal.networklayer.proto.raccoon.SendEventRequest
+import clickstream.internal.networklayer.proto.raccoon.SendEventResponse
 import clickstream.internal.utils.CSCallback
 import clickstream.logger.CSLogger
-import com.gojek.clickstream.de.EventRequest
-import com.gojek.clickstream.de.common.EventResponse
 import com.tinder.scarlet.WebSocket
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -22,7 +22,7 @@ internal interface CSNetworkRepository {
      * Observes the acknowledgement from the BE
      * @return Flow<> - Stream of event data containing the ID of successful events
      */
-    public fun observeResponse(): Flow<EventResponse>
+    public fun observeResponse(): Flow<SendEventResponse>
 
     /**
      * Observes the socket connection - Opened, closed, IsClosing, Failed, MessageReceived
@@ -35,7 +35,7 @@ internal interface CSNetworkRepository {
      * @param eventRequest - The analytic data which is to be sent
      */
     public fun sendEvents(
-        eventRequest: EventRequest,
+        eventRequest: SendEventRequest,
         eventGuids: String,
         callback: CSCallback<String>
     )
@@ -45,7 +45,7 @@ internal interface CSNetworkRepository {
      * @param eventRequest - The analytic data which is to be sent
      */
     public fun sendInstantEvents(
-        eventRequest: EventRequest
+        eventRequest: SendEventRequest
     )
 }
 
@@ -63,7 +63,7 @@ internal class CSNetworkRepositoryImpl(
     private val info: CSInfo
 ) : CSNetworkRepository {
 
-    override fun observeResponse(): Flow<EventResponse> {
+    override fun observeResponse(): Flow<SendEventResponse> {
         logger.debug { "CSNetworkRepositoryImpl#observeResponse" }
 
         return eventService.observeResponse()
@@ -76,7 +76,7 @@ internal class CSNetworkRepositoryImpl(
     }
 
     override fun sendEvents(
-        eventRequest: EventRequest,
+        eventRequest: SendEventRequest,
         eventGuids: String,
         callback: CSCallback<String>
     ) {
@@ -107,7 +107,7 @@ internal class CSNetworkRepositoryImpl(
         }
     }
 
-    override fun sendInstantEvents(eventRequest: EventRequest) {
+    override fun sendInstantEvents(eventRequest: SendEventRequest) {
         logger.debug { "CSNetworkRepositoryImpl#sendInstantEvents - eventRequest $eventRequest" }
         logger.debug { "CSNetworkRepositoryImpl#sendInstantEvents - eventRequestType ${eventRequest.eventsList[0].type}" }
 

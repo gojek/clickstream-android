@@ -9,12 +9,13 @@ import clickstream.health.intermediate.CSHealthEventRepository
 import clickstream.health.model.CSHealthEventDTO
 import clickstream.health.time.CSTimeStampGenerator
 import clickstream.internal.analytics.CSErrorReasons
+import clickstream.internal.networklayer.proto.raccoon.Code
+import clickstream.internal.networklayer.proto.raccoon.Code.*
+import clickstream.internal.networklayer.proto.raccoon.SendEventRequest
+import clickstream.internal.networklayer.proto.raccoon.SendEventResponse
+import clickstream.internal.networklayer.proto.raccoon.Status
 import clickstream.internal.utils.CSTimeStampMessageBuilder
 import clickstream.logger.CSLogger
-import com.gojek.clickstream.de.EventRequest
-import com.gojek.clickstream.de.common.Code
-import com.gojek.clickstream.de.common.EventResponse
-import com.gojek.clickstream.de.common.Status
 import java.util.concurrent.atomic.AtomicInteger
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -40,7 +41,7 @@ private const val REQUEST_GUID_KEY = "req_guid"
 internal abstract class CSRetryableCallback(
     private val networkConfig: CSNetworkConfig,
     private val eventService: CSEventService,
-    private var eventRequest: EventRequest,
+    private var eventRequest: SendEventRequest,
     private val eventGuids: String,
     private val dispatcher: CoroutineDispatcher,
     private val timeStampGenerator: CSTimeStampGenerator,
@@ -104,7 +105,7 @@ internal abstract class CSRetryableCallback(
             logger.debug { "CSRetryableCallback#observeCallback - Message received from the server: ${it.dataMap[REQUEST_GUID_KEY]}" }
             val guid = it.dataMap[REQUEST_GUID_KEY]!!
             when {
-                it.status == Status.SUCCESS -> {
+                it.status == Status.STATUS_SUCCESS -> {
                     logger.debug { "CSRetryableCallback#observeCallback - Success" }
 
                     onSuccess(guid)
@@ -250,13 +251,13 @@ internal abstract class CSRetryableCallback(
         timeOutJob.cancel()
     }
 
-    private suspend fun trackEventResponse(eventResponse: EventResponse, eventRequestGuid: String) {
+    private suspend fun trackEventResponse(eventResponse: SendEventResponse, eventRequestGuid: String) {
         logger.debug {
             "CSRetryableCallback#trackEventResponse - eventResponse $eventResponse"
         }
 
         when (eventResponse.code.ordinal) {
-            Code.MAX_CONNECTION_LIMIT_REACHED.ordinal -> {
+            CODE_MAX_CONNECTION_LIMIT_REACHED.ordinal -> {
                 logger.debug { "CSRetryableCallback#trackEventResponse - eventResponse MAX_CONNECTION_LIMIT_REACHED" }
 
                 recordHealthEvent(
@@ -266,7 +267,7 @@ internal abstract class CSRetryableCallback(
                     eventBatchGuid = eventRequestGuid
                 )
             }
-            Code.MAX_USER_LIMIT_REACHED.ordinal -> {
+            CODE_MAX_USER_LIMIT_REACHED.ordinal -> {
                 logger.debug { "CSRetryableCallback#trackEventResponse - eventResponse MAX_USER_LIMIT_REACHED" }
 
                 recordHealthEvent(
@@ -276,7 +277,7 @@ internal abstract class CSRetryableCallback(
                     eventBatchGuid = eventRequestGuid
                 )
             }
-            Code.BAD_REQUEST.ordinal -> {
+            CODE_BAD_REQUEST.ordinal -> {
                 logger.debug { "CSRetryableCallback#trackEventResponse : eventResponse BAD_REQUEST" }
 
                 recordHealthEvent(

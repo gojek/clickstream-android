@@ -35,7 +35,7 @@ android {
 
 dependencies {
     // Clickstream
-    implementation(files("$rootDir/libs/proto-sdk-1.18.6.jar"))
+    implementation(projects.clickstreamHealthProto)
     api(projects.clickstreamLogger)
     api(projects.clickstreamHealthMetricsNoop)
     api(projects.clickstreamEventListener)

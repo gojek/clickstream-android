@@ -18,6 +18,7 @@ import clickstream.health.intermediate.CSEventHealthListener
 import clickstream.health.intermediate.CSHealthEventProcessor
 import clickstream.health.intermediate.CSHealthEventRepository
 import clickstream.health.model.CSEventHealth
+import clickstream.health.proto.Health
 import clickstream.health.time.CSEventGeneratedTimestampListener
 import clickstream.health.time.CSTimeStampGenerator
 import clickstream.internal.di.CSServiceLocator
@@ -29,7 +30,6 @@ import clickstream.lifecycle.CSBackgroundLifecycleManager
 import clickstream.logger.CSLogLevel
 import clickstream.logger.CSLogger
 import clickstream.utils.CoroutineTestRule
-import com.gojek.clickstream.internal.Health
 import com.gojek.clickstream.products.events.AdCardEvent
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.never

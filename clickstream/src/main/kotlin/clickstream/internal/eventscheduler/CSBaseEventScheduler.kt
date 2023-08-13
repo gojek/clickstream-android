@@ -8,9 +8,11 @@ import clickstream.health.constant.CSEventTypesConstant
 import clickstream.health.identity.CSGuIdGenerator
 import clickstream.health.intermediate.CSHealthEventRepository
 import clickstream.health.model.CSHealthEventDTO
+import clickstream.health.proto.Health
 import clickstream.health.time.CSTimeStampGenerator
 import clickstream.internal.analytics.CSErrorReasons
 import clickstream.internal.networklayer.CSNetworkManager
+import clickstream.internal.networklayer.proto.raccoon.SendEventRequest
 import clickstream.internal.utils.CSBatteryLevel
 import clickstream.internal.utils.CSBatteryStatusObserver
 import clickstream.internal.utils.CSNetworkStatusObserver
@@ -21,8 +23,6 @@ import clickstream.lifecycle.CSLifeCycleManager
 import clickstream.listener.CSEventListener
 import clickstream.listener.CSEventModel
 import clickstream.logger.CSLogger
-import com.gojek.clickstream.de.EventRequest
-import com.gojek.clickstream.internal.Health
 import com.google.protobuf.MessageLite
 import java.util.concurrent.CopyOnWriteArrayList
 import kotlinx.coroutines.CoroutineDispatcher
@@ -214,10 +214,10 @@ internal open class CSBaseEventScheduler(
         healthEventRepository.insertHealthEvent(event)
     }
 
-    protected fun transformToEventRequest(eventData: List<CSEventData>): EventRequest {
+    protected fun transformToEventRequest(eventData: List<CSEventData>): SendEventRequest {
         logger.debug { "CSBaseEventScheduler#transformToEventRequest" }
 
-        return EventRequest.newBuilder().apply {
+        return SendEventRequest.newBuilder().apply {
             reqGuid = guIdGenerator.getId()
             sentTime = CSTimeStampMessageBuilder.build(timeStampGenerator.getTimeStamp())
             addAllEvents(eventData.map { it.event() })
@@ -229,7 +229,7 @@ internal open class CSBaseEventScheduler(
     }
 
     private suspend fun updateEventsGuidAndInsertToDb(
-        eventRequest: EventRequest,
+        eventRequest: SendEventRequest,
         eventData: List<CSEventData>
     ) {
         logger.debug { "CSBaseEventScheduler#updateEventsGuidAndInsertToDb" }
@@ -277,7 +277,7 @@ internal open class CSBaseEventScheduler(
 
     private suspend fun recordEventBatchCreated(
         batch: List<CSEventData>,
-        eventRequest: EventRequest
+        eventRequest: SendEventRequest
     ): String {
         var eventGuids = ""
         if (batch.isNotEmpty() && batch[0].messageName != Health::class.qualifiedName.orEmpty()) {

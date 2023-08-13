@@ -1,7 +1,7 @@
 package clickstream.extension
 
-import com.gojek.clickstream.de.Event
-import com.gojek.clickstream.internal.Health
+import clickstream.health.proto.Health
+import clickstream.internal.networklayer.proto.raccoon.Event
 import com.google.protobuf.Internal.isValidUtf8
 import com.google.protobuf.MessageLite
 import java.lang.reflect.Field
