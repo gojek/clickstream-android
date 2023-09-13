@@ -74,7 +74,12 @@ public class CSBackgroundSchedulerTest {
             healthEventProcessor.insertBatchEvent(any(), any<List<CSEventForHealth>>())
         ).thenReturn(true)
         whenever(networkManager.isSocketAvailable()).thenReturn(true)
-        whenever(healthEventProcessor.getHealthEventFlow(any())).thenReturn(flowOf(emptyList()))
+        whenever(
+            healthEventProcessor.getHealthEventFlow(
+                any(),
+                any()
+            )
+        ).thenReturn(flowOf(emptyList()))
         scheduler = CSBackgroundScheduler(
             appLifeCycleObserver = appLifeCycle,
             networkManager = networkManager,
@@ -198,7 +203,7 @@ public class CSBackgroundSchedulerTest {
         runBlockingTest {
             whenever(batteryStatusObserver.getBatteryStatus()).thenReturn(CSBatteryLevel.ADEQUATE_POWER)
             whenever(networkStatusObserver.isNetworkAvailable()).thenReturn(true)
-            whenever(healthEventProcessor.getHealthEventFlow(any())).thenReturn(
+            whenever(healthEventProcessor.getHealthEventFlow(any(), any())).thenReturn(
                 flowOf(listOf(Health.getDefaultInstance()))
             )
             whenever(guIdGenerator.getId()).thenReturn(UUID.randomUUID().toString())
@@ -227,7 +232,7 @@ public class CSBackgroundSchedulerTest {
 
             val eventData = CSEventData.create(defaultEventWrapperData())
             eventRepository.insertEventData(eventData)
-            whenever(healthEventProcessor.getHealthEventFlow(any())).thenReturn(
+            whenever(healthEventProcessor.getHealthEventFlow(any(), any())).thenReturn(
                 flowOf(listOf(Health.getDefaultInstance()))
             )
             whenever(guIdGenerator.getId()).thenReturn(UUID.randomUUID().toString())
@@ -257,7 +262,7 @@ public class CSBackgroundSchedulerTest {
             val eventData = CSEventData.create(defaultEventWrapperData())
             eventRepository.insertEventData(eventData)
             eventRepository.insertEventData(eventData)
-            whenever(healthEventProcessor.getHealthEventFlow(any())).thenReturn(
+            whenever(healthEventProcessor.getHealthEventFlow(any(), any())).thenReturn(
                 flowOf((0..3).map { Health.getDefaultInstance() })
             )
             whenever(guIdGenerator.getId()).thenReturn(UUID.randomUUID().toString())
@@ -371,7 +376,7 @@ public class CSBackgroundSchedulerTest {
 
             val eventData = CSEventData.create(defaultEventWrapperData())
             eventRepository.insertEventData(eventData)
-            whenever(healthEventProcessor.getHealthEventFlow(any())).thenReturn(
+            whenever(healthEventProcessor.getHealthEventFlow(any(), any())).thenReturn(
                 flowOf(emptyList())
             )
             whenever(guIdGenerator.getId()).thenReturn(UUID.randomUUID().toString())
