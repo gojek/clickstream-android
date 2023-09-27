@@ -158,7 +158,7 @@ internal open class CSBackgroundScheduler(
     }
 
     private suspend fun flushHealthEvents() {
-        healthProcessor?.getHealthEventFlow(CSEventTypesConstant.AGGREGATE, false)?.collect {
+        healthProcessor?.getHealthEventFlow(CSEventTypesConstant.AGGREGATE)?.collect {
             val healthMappedEvent = it.map { health ->
                 CSEvent(
                     guid = health.healthMeta.eventGuid,

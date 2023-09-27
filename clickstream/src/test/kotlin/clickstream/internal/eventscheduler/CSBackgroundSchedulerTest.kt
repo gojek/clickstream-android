@@ -22,6 +22,7 @@ import clickstream.internal.utils.CSNetworkStatusObserver
 import clickstream.internal.utils.CSTimeStampGenerator
 import clickstream.lifecycle.CSAppLifeCycle
 import clickstream.lifecycle.CSBackgroundLifecycleManager
+import clickstream.logger.CSLogLevel
 import clickstream.logger.CSLogger
 import com.gojek.clickstream.internal.Health
 import java.util.UUID
@@ -36,6 +37,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.kotlin.any
 import org.mockito.kotlin.atLeastOnce
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.times
@@ -44,6 +46,7 @@ import org.mockito.kotlin.verifyNoMoreInteractions
 import org.mockito.kotlin.whenever
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import kotlin.math.log
 
 @ExperimentalCoroutinesApi
 @RunWith(RobolectricTestRunner::class)
@@ -134,7 +137,7 @@ public class CSBackgroundSchedulerTest {
             verify(networkManager, atLeastOnce()).isSocketAvailable()
             verify(networkManager, never()).processEvent(any())
             verify(networkManager, atLeastOnce()).isSocketAvailable()
-            verify(logger, atLeastOnce()).debug(any())
+            verify(logger, atLeastOnce()).debug { "" }
             verify(healthEventProcessor, never()).insertBatchEvent(
                 any(),
                 any<List<CSEventForHealth>>()
@@ -160,7 +163,7 @@ public class CSBackgroundSchedulerTest {
             verify(timeStampGenerator, times(1)).getTimeStamp()
             verify(networkManager, times(1)).processEvent(any())
             verify(networkManager, atLeastOnce()).isSocketAvailable()
-            verify(logger, atLeastOnce()).debug(any())
+            verify(logger, atLeastOnce()).debug { "" }
             verify(networkManager, atLeastOnce()).isSocketAvailable()
             verify(healthEventProcessor, atLeastOnce()).insertBatchEvent(
                 any(),
@@ -190,7 +193,7 @@ public class CSBackgroundSchedulerTest {
             verify(networkManager, atLeastOnce()).isSocketAvailable()
             verify(guIdGenerator).getId()
             verify(timeStampGenerator).getTimeStamp()
-            verify(logger, atLeastOnce()).debug(any())
+            verify(logger, atLeastOnce()).debug { "" }
             verify(healthEventProcessor, atLeastOnce()).insertBatchEvent(
                 any(),
                 any<List<CSEventForHealth>>()
@@ -203,7 +206,7 @@ public class CSBackgroundSchedulerTest {
         runBlockingTest {
             whenever(batteryStatusObserver.getBatteryStatus()).thenReturn(CSBatteryLevel.ADEQUATE_POWER)
             whenever(networkStatusObserver.isNetworkAvailable()).thenReturn(true)
-            whenever(healthEventProcessor.getHealthEventFlow(any(), any())).thenReturn(
+            whenever(healthEventProcessor.getHealthEventFlow(any(), eq(false))).thenReturn(
                 flowOf(listOf(Health.getDefaultInstance()))
             )
             whenever(guIdGenerator.getId()).thenReturn(UUID.randomUUID().toString())
@@ -216,7 +219,7 @@ public class CSBackgroundSchedulerTest {
             verify(guIdGenerator, times(1)).getId()
             verify(timeStampGenerator, times(1)).getTimeStamp()
             verify(networkManager, times(1)).processEvent(any())
-            verify(logger, atLeastOnce()).debug(any())
+            verify(logger, atLeastOnce()).debug { "" }
             verify(networkManager, atLeastOnce()).isSocketAvailable()
             verify(healthEventProcessor, never()).insertBatchEvent(
                 any(),
@@ -232,7 +235,7 @@ public class CSBackgroundSchedulerTest {
 
             val eventData = CSEventData.create(defaultEventWrapperData())
             eventRepository.insertEventData(eventData)
-            whenever(healthEventProcessor.getHealthEventFlow(any(), any())).thenReturn(
+            whenever(healthEventProcessor.getHealthEventFlow(any(), eq(false))).thenReturn(
                 flowOf(listOf(Health.getDefaultInstance()))
             )
             whenever(guIdGenerator.getId()).thenReturn(UUID.randomUUID().toString())
@@ -245,7 +248,7 @@ public class CSBackgroundSchedulerTest {
             verify(guIdGenerator, times(2)).getId()
             verify(timeStampGenerator, times(2)).getTimeStamp()
             verify(networkManager, times(2)).processEvent(any())
-            verify(logger, atLeastOnce()).debug(any())
+            verify(logger, atLeastOnce()).debug { "" }
             verify(networkManager, atLeastOnce()).isSocketAvailable()
             verify(healthEventProcessor, times(1)).insertBatchEvent(
                 any(),
@@ -262,7 +265,7 @@ public class CSBackgroundSchedulerTest {
             val eventData = CSEventData.create(defaultEventWrapperData())
             eventRepository.insertEventData(eventData)
             eventRepository.insertEventData(eventData)
-            whenever(healthEventProcessor.getHealthEventFlow(any(), any())).thenReturn(
+            whenever(healthEventProcessor.getHealthEventFlow(any(), eq(false))).thenReturn(
                 flowOf((0..3).map { Health.getDefaultInstance() })
             )
             whenever(guIdGenerator.getId()).thenReturn(UUID.randomUUID().toString())
@@ -275,7 +278,7 @@ public class CSBackgroundSchedulerTest {
             verify(guIdGenerator, times(2)).getId()
             verify(timeStampGenerator, times(2)).getTimeStamp()
             verify(networkManager, times(2)).processEvent(any())
-            verify(logger, atLeastOnce()).debug(any())
+            verify(logger, atLeastOnce()).debug { "" }
             verify(networkManager, atLeastOnce()).isSocketAvailable()
             verify(healthEventProcessor, times(1)).insertBatchEvent(
                 any(),
@@ -301,7 +304,7 @@ public class CSBackgroundSchedulerTest {
             verify(guIdGenerator, times(1)).getId()
             verify(timeStampGenerator, times(1)).getTimeStamp()
             verify(networkManager, times(1)).processEvent(any())
-            verify(logger, atLeastOnce()).debug(any())
+            verify(logger, atLeastOnce()).debug { "" }
             verify(networkManager, atLeastOnce()).isSocketAvailable()
             verify(healthEventProcessor, times(1)).insertBatchEvent(
                 any(),
@@ -328,7 +331,7 @@ public class CSBackgroundSchedulerTest {
             verify(guIdGenerator, times(1)).getId()
             verify(timeStampGenerator, times(1)).getTimeStamp()
             verify(networkManager, times(1)).processEvent(any())
-            verify(logger, atLeastOnce()).debug(any())
+            verify(logger, atLeastOnce()).debug { "" }
             verify(networkManager, atLeastOnce()).isSocketAvailable()
             verify(healthEventProcessor, times(1)).insertBatchEvent(
                 any(),
@@ -360,7 +363,7 @@ public class CSBackgroundSchedulerTest {
             verify(networkManager, times(2)).processEvent(any())
             verify(guIdGenerator, times(2)).getId()
             verify(timeStampGenerator, times(2)).getTimeStamp()
-            verify(logger, atLeastOnce()).debug(any())
+            verify(logger, atLeastOnce()).debug { "" }
             verify(healthEventProcessor, atLeastOnce()).insertBatchEvent(
                 any(),
                 any<List<CSEventForHealth>>()
@@ -376,7 +379,7 @@ public class CSBackgroundSchedulerTest {
 
             val eventData = CSEventData.create(defaultEventWrapperData())
             eventRepository.insertEventData(eventData)
-            whenever(healthEventProcessor.getHealthEventFlow(any(), any())).thenReturn(
+            whenever(healthEventProcessor.getHealthEventFlow(any(), eq(false))).thenReturn(
                 flowOf(emptyList())
             )
             whenever(guIdGenerator.getId()).thenReturn(UUID.randomUUID().toString())
@@ -389,7 +392,7 @@ public class CSBackgroundSchedulerTest {
             verify(guIdGenerator, times(1)).getId()
             verify(timeStampGenerator, times(1)).getTimeStamp()
             verify(networkManager, times(1)).processEvent(any())
-            verify(logger, atLeastOnce()).debug(any())
+            verify(logger, atLeastOnce()).debug { "" }
             verify(networkManager, atLeastOnce()).isSocketAvailable()
             verify(healthEventProcessor, atLeastOnce()).insertBatchEvent(
                 any(),

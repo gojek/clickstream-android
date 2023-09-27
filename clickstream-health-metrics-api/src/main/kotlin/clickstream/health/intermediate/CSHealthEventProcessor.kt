@@ -53,7 +53,7 @@ public interface CSHealthEventProcessor {
      * Returns flow of health events with type.
      *
      * */
-    public fun getHealthEventFlow(type: String, deleteEvents: Boolean): Flow<List<Health>>
+    public fun getHealthEventFlow(type: String, deleteEvents: Boolean = false): Flow<List<Health>>
 
 
     /**
