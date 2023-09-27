@@ -193,7 +193,7 @@ internal class CSHealthEventProcessorTest {
     }
 
     @Test
-    fun `Given destination is contains CS verify that health flow returns correct list`() {
+    fun `Given destination is contains INTERNAL verify that health flow returns correct list`() {
         runBlocking {
             sut = getEventProcessor(
                 fakeCSInfo().copy(
@@ -224,13 +224,12 @@ internal class CSHealthEventProcessorTest {
 
             assert(fetchedHealth.numberOfEvents == 51L)
             assert(fetchedHealth.numberOfBatches == 1L)
-            assert(csHealthEventRepository.getEventCount(CSEventTypesConstant.AGGREGATE) == 0)
             verify(healthEventLogger, never()).logEvent(any(), any())
         }
     }
 
     @Test
-    fun `Given destination is contains CT verify that health flow returns correct list`() {
+    fun `Given destination is contains EXTERNAL verify that push event to upstream works correctly`() {
         runBlocking {
             sut = getEventProcessor(
                 fakeCSInfo().copy(
@@ -256,14 +255,15 @@ internal class CSHealthEventProcessorTest {
 
             sut.insertBatchEvent(healthEvent, csEvents)
 
-            sut.getHealthEventFlow(CSEventTypesConstant.AGGREGATE).toList()
-
+            sut.pushEventToUpstream(CSEventTypesConstant.AGGREGATE, true)
             verify(healthEventLogger, atLeast(1)).logEvent(any(), any())
+            assert(csHealthEventRepository.getEventCount(CSEventTypesConstant.AGGREGATE) == 0)
+
         }
     }
 
     @Test
-    fun `Given destination is contains CT verify that upstream listener is invoked with correct data`() {
+    fun `Given destination is contains EXTERNAL verify that upstream listener is invoked with correct data`() {
         runBlocking {
             sut = getEventProcessor(
                 fakeCSInfo().copy(
@@ -318,8 +318,8 @@ internal class CSHealthEventProcessorTest {
                 sut.insertBatchEvent(health, 34)
             }
 
-            val list = sut.getHealthEventFlow(CSEventTypesConstant.AGGREGATE).toList()
-            assert(list.isEmpty())
+            sut.pushEventToUpstream(CSEventTypesConstant.AGGREGATE, true)
+            assert(csHealthEventRepository.getEventCount(CSEventTypesConstant.AGGREGATE) == 0)
 
             verify(healthEventLogger, times(9)).logEvent(any(), any())
         }
@@ -341,7 +341,7 @@ internal class CSHealthEventProcessorTest {
                 )
             )
 
-            val list = sut.getHealthEventFlow(CSEventTypesConstant.AGGREGATE).toList()
+            val list = sut.getHealthEventFlow(CSEventTypesConstant.AGGREGATE, true).toList()
 
             assert(list.isEmpty())
         }

@@ -19,7 +19,9 @@ import com.gojek.clickstream.internal.HealthDetails
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 
@@ -87,19 +89,20 @@ internal open class CSHealthEventProcessorImpl(
      *
      * */
     override fun getHealthEventFlow(type: String, deleteEvents: Boolean): Flow<List<Health>> =
-        getHealthEventFlowInternal(type, deleteEvents).map {
-            if (healthEventConfig.destination.contains(INTERNAL)) {
+        if (healthEventConfig.destination.contains(INTERNAL)) {
+            getHealthEventFlowInternal(type, deleteEvents).map {
                 getProtoListForInternalTracking(it)
-            } else emptyList()
-        }
+            }
+        } else emptyFlow()
+
 
     /**
      * If it contains [EXTERNAL] they are pushed to upstream.
      * */
     override suspend fun pushEventToUpstream(type: String, deleteEvents: Boolean) {
         doSuspendedIfHealthEnabled {
-            getHealthEventFlowInternal(type, deleteEvents).collect {
-                if (healthEventConfig.destination.contains(EXTERNAL)) {
+            if (healthEventConfig.destination.contains(EXTERNAL)) {
+                getHealthEventFlowInternal(type, deleteEvents).collect {
                     pushEventToUpstream(it)
                 }
             }
@@ -109,7 +112,7 @@ internal open class CSHealthEventProcessorImpl(
     private fun getHealthEventFlowInternal(type: String, deleteEvents: Boolean) = flow {
         logger.debug { "$tag#getAggregateEventsBasedOnEventName" }
         var totalEventCount = healthEventRepository.getEventCount(type)
-        if (!doSuspendedIfHealthEnabled {
+        if (totalEventCount != 0 && !doSuspendedIfHealthEnabled {
                 while (totalEventCount <= healthEventRepository.getEventCount(type)) {
                     val batch = healthEventRepository.getEventsByTypeAndLimit(type, 30)
                     emit(batch)
