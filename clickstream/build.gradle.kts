@@ -64,7 +64,6 @@ dependencies {
 
     // Unit Test
     deps.android.test.unitTest.list.forEach(::testImplementation)
-    testImplementation(files("$rootDir/libs/proto-consumer-1.18.6.jar"))
     testImplementation(projects.clickstreamHealthMetrics)
     testImplementation(projects.clickstreamApi)
     testImplementation(projects.clickstreamHealthMetricsApi)

@@ -90,7 +90,7 @@ internal class CSConnectionDroppedTest {
         val event = CSEvent(
             guid = guid,
             timestamp = Timestamp.getDefaultInstance(),
-            message = AdCardEvent.newBuilder()
+            message = App.newBuilder()
                 .setMeta(
                     EventMeta.newBuilder()
                         .setApp(App.newBuilder().setVersion("4.35.0"))

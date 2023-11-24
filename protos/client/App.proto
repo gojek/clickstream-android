@@ -1,0 +1,28 @@
+
+syntax = "proto3";
+
+package clickstream.proto;
+
+option java_multiple_files = true;
+option java_package = "com.clickstream.app.proto";
+option java_outer_classname = "AppProto";
+
+
+//
+// Corresponds to the details for the app used by the user.
+//
+message App {
+
+  //
+  // Version of the client app. Use this property to send version with every event.
+  // This allows for segmentation based on the app version.
+  // Sample values: "1.0.0", "1.0.1".
+  //
+  string version = 1;
+
+  //
+  // Package name of the client app. Use this property to send package name with every event.
+  // Sample values: "com.clickstream.app".
+  //
+  string package_name = 2;
+}

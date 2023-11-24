@@ -1,0 +1,38 @@
+
+syntax = "proto3";
+
+package clickstream.proto;
+
+option java_multiple_files = true;
+option java_package = "com.clickstream.app.proto";
+option java_outer_classname = "DeviceProto";
+
+//
+// Corresponds to the device being used by the customer. Holds the respective details for the device under use.
+//
+message Device {
+
+  //
+  // Operating system of the device.
+  // Sample values: "iOS", "Android".
+  //
+  string operating_system = 1;
+
+  //
+  // Version of the Operating system.
+  // Sample values: "29", "15.1".
+  //
+  string operating_system_version = 2;
+
+  //
+  // Device manufacturer name.
+  // Sample values: "Samsung", "HMD Global", "Apple"
+  //
+  string device_make = 3;
+
+  //
+  // Device model information.
+  // Sample values: "iPhone 11", "Samsung M90".
+  //
+  string device_model = 4;
+}
