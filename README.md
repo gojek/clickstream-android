@@ -19,7 +19,7 @@ The word “Clickstream” is a trail of digital breadcrumbs left by users as th
 
 **To know more about Clickstream, you can read our [Medium post](https://www.gojek.io/blog/introducing-clickstream?utm_source=blog&utm_medium=medium%20blog&utm_campaign=blog_clickstream)**
 
-**Clickstream provides an end to end solution for event ingestion. For setting up the backend infrastructure please check out [raccoon](https://github.com/odpf/raccoon)**
+**Clickstream provides an end to end solution for event ingestion. For setting up the backend infrastructure please check out [raccoon](https://github.com/goto/raccoon)**
 
 
 ## Architecture
