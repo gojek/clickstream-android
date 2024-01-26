@@ -33,10 +33,8 @@ android {
             useSupportLibrary = true
         }
 
-        buildConfigField("String", "ACCOUNT_ID", "\"${props.getProperty("accountId")}\"")
-        buildConfigField("String", "SECRET_KEY", "\"${props.getProperty("secretKey")}\"")
         buildConfigField("String", "ENDPOINT", "\"${props.getProperty("endpoint")}\"")
-        buildConfigField("String", "STUB_BEARER", "\"${props.getProperty("bearer")}\"")
+        buildConfigField("String", "API_KEY", "\"${props.getProperty("apiKey")}\"")
     }
 
     sourceSets {

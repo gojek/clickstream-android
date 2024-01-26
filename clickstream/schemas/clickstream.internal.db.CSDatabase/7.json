@@ -1,0 +1,168 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 7,
+    "identityHash": "a70167a035fbe00ca5eed3a0b6a3fae7",
+    "entities": [
+      {
+        "tableName": "EventData",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`eventGuid` TEXT NOT NULL, `eventRequestGuid` TEXT, `eventTimeStamp` INTEGER NOT NULL, `isOnGoing` INTEGER NOT NULL, `messageAsBytes` BLOB NOT NULL, `messageName` TEXT NOT NULL, PRIMARY KEY(`eventGuid`))",
+        "fields": [
+          {
+            "fieldPath": "eventGuid",
+            "columnName": "eventGuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "eventRequestGuid",
+            "columnName": "eventRequestGuid",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "eventTimeStamp",
+            "columnName": "eventTimeStamp",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isOnGoing",
+            "columnName": "isOnGoing",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "messageAsBytes",
+            "columnName": "messageAsBytes",
+            "affinity": "BLOB",
+            "notNull": true
+          },
+          {
+            "fieldPath": "messageName",
+            "columnName": "messageName",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "eventGuid"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "HealthStats",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`healthEventID` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `eventName` TEXT NOT NULL, `eventType` TEXT NOT NULL, `timestamp` TEXT NOT NULL, `eventId` TEXT NOT NULL, `eventBatchId` TEXT NOT NULL, `error` TEXT NOT NULL, `sessionId` TEXT NOT NULL, `count` INTEGER NOT NULL, `networkType` TEXT NOT NULL, `startTime` INTEGER NOT NULL, `stopTime` INTEGER NOT NULL, `bucketType` TEXT NOT NULL, `batchSize` INTEGER NOT NULL, `appVersion` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "healthEventID",
+            "columnName": "healthEventID",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "eventName",
+            "columnName": "eventName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "eventType",
+            "columnName": "eventType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timestamp",
+            "columnName": "timestamp",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "eventId",
+            "columnName": "eventId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "eventBatchId",
+            "columnName": "eventBatchId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "error",
+            "columnName": "error",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sessionId",
+            "columnName": "sessionId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "count",
+            "columnName": "count",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "networkType",
+            "columnName": "networkType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "startTime",
+            "columnName": "startTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "stopTime",
+            "columnName": "stopTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "bucketType",
+            "columnName": "bucketType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "batchSize",
+            "columnName": "batchSize",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "appVersion",
+            "columnName": "appVersion",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "healthEventID"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a70167a035fbe00ca5eed3a0b6a3fae7')"
+    ]
+  }
+}

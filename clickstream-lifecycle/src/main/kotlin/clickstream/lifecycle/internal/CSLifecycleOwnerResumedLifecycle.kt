@@ -23,7 +23,9 @@ internal class CSLifecycleOwnerResumedLifecycle(
     private inner class ALifecycleObserver : LifecycleObserver {
         @OnLifecycleEvent(androidx.lifecycle.Lifecycle.Event.ON_PAUSE)
         fun onPause() {
-            logger.debug { "CSLifecycleOwnerResumedLifecycle#onPause" }
+            logger.debug {
+                "CSLifecycleOwnerResumedLifecycle#onPause"
+            }
 
             lifecycleRegistry.onNext(
                 Lifecycle.State.Stopped.WithReason(ShutdownReason(1000, "Paused"))

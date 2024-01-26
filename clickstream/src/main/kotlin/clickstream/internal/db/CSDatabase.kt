@@ -2,10 +2,13 @@ package clickstream.internal.db
 
 import android.content.Context
 import androidx.annotation.GuardedBy
+import androidx.room.AutoMigration
 import androidx.room.Database
+import androidx.room.DeleteTable
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import androidx.room.migration.AutoMigrationSpec
 import clickstream.internal.eventscheduler.CSEventData
 import clickstream.internal.eventscheduler.CSEventDataDao
 import clickstream.internal.eventscheduler.CSEventDataTypeConverters
@@ -15,7 +18,10 @@ import clickstream.internal.eventscheduler.CSEventDataTypeConverters
  *
  * The Events are cached, processed and then cleared.
  */
-@Database(entities = [CSEventData::class], version = 9)
+@Database(
+    entities = [CSEventData::class], version = 8,
+    autoMigrations = [AutoMigration(from = 7, to = 8, spec = CSDbAutoMigrationFrom7to8::class)],
+)
 @TypeConverters(CSEventDataTypeConverters::class)
 internal abstract class CSDatabase : RoomDatabase() {
 
@@ -53,3 +59,7 @@ internal abstract class CSDatabase : RoomDatabase() {
                 .build()
     }
 }
+
+@DeleteTable(tableName = "HealthStats")
+private class CSDbAutoMigrationFrom7to8 : AutoMigrationSpec
+

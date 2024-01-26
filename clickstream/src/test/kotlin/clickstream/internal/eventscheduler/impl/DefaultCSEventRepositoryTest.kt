@@ -39,7 +39,7 @@ public class DefaultCSEventRepositoryTest {
     @Test
     public fun `given a data should successfully insert into db`() {
         runBlocking {
-            val (eventData, eventHealthData) = CSEventData.create(defaultEventWrapperData())
+            val eventData = CSEventData.create(defaultEventWrapperData())
             whenever(dao.insert(eventData)).then {
                 println("adding item")
                 dbItems.add(it.getArgument(0))
@@ -57,7 +57,7 @@ public class DefaultCSEventRepositoryTest {
     @Test
     public fun `given a list of data should successfully insert all into db`() {
         runBlocking {
-            val (eventData, eventHealthData) = CSEventData.create(defaultEventWrapperData())
+            val eventData = CSEventData.create(defaultEventWrapperData())
             val eventDatas = listOf(eventData)
             whenever(dao.insertAll(eventDatas)).then {
                 dbItems.addAll(it.getArgument(0))
@@ -75,7 +75,7 @@ public class DefaultCSEventRepositoryTest {
     @Test
     public fun `Given an event id should successfully delete from db`() {
         runBlocking {
-            val (eventData, eventHealthData) = CSEventData.create(defaultEventWrapperData())
+            val eventData = CSEventData.create(defaultEventWrapperData())
             val eventBatchID = UUID.randomUUID().toString()
             val eventBatch = eventData.copy(eventRequestGuid = eventBatchID)
             dbItems.add(eventBatch)

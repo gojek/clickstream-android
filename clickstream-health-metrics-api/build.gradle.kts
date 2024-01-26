@@ -35,6 +35,8 @@ android {
 dependencies {
     // Clickstream
     compileOnly(files("$rootDir/libs/proto-sdk-1.18.6.jar"))
+    implementation(deps.kotlin.coroutines.core)
+
 
     implementation(deps.android.core.annotation)
 }

@@ -1,18 +1,25 @@
 package clickstream.health
 
 import androidx.annotation.RestrictTo
-import clickstream.health.intermediate.CSEventHealthListener
-import clickstream.health.intermediate.CSHealthEventFactory
 import clickstream.health.intermediate.CSHealthEventProcessor
-import clickstream.health.intermediate.CSHealthEventRepository
 
+/**
+ * Wrapper class that creates [CSHealthEventProcessor].
+ *
+ * */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public interface CSHealthGateway {
-    public val eventHealthListener: CSEventHealthListener
 
-    public val healthEventRepository: CSHealthEventRepository
+    /**
+     * Class to process health events.
+     *
+     * */
+    public val healthEventProcessor: CSHealthEventProcessor?
 
-    public val healthEventProcessor: CSHealthEventProcessor
+    /**
+     * Clears health events on app version upgrade.
+     *
+     * */
+    public suspend fun clearHealthEventsForVersionChange()
 
-    public val healthEventFactory: CSHealthEventFactory
 }

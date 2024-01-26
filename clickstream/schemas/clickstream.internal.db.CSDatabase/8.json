@@ -1,0 +1,64 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 8,
+    "identityHash": "f5221e9fbd9aaf0faca6ed4654347879",
+    "entities": [
+      {
+        "tableName": "EventData",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`eventGuid` TEXT NOT NULL, `eventRequestGuid` TEXT, `eventTimeStamp` INTEGER NOT NULL, `isOnGoing` INTEGER NOT NULL, `messageAsBytes` BLOB NOT NULL, `messageName` TEXT NOT NULL, PRIMARY KEY(`eventGuid`))",
+        "fields": [
+          {
+            "fieldPath": "eventGuid",
+            "columnName": "eventGuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "eventRequestGuid",
+            "columnName": "eventRequestGuid",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "eventTimeStamp",
+            "columnName": "eventTimeStamp",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isOnGoing",
+            "columnName": "isOnGoing",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "messageAsBytes",
+            "columnName": "messageAsBytes",
+            "affinity": "BLOB",
+            "notNull": true
+          },
+          {
+            "fieldPath": "messageName",
+            "columnName": "messageName",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "eventGuid"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f5221e9fbd9aaf0faca6ed4654347879')"
+    ]
+  }
+}

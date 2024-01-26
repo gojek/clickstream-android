@@ -2,7 +2,7 @@ package clickstream.internal.eventprocessor.impl
 
 import clickstream.api.CSInfo
 import clickstream.api.CSLocationInfo
-import clickstream.api.CSMetaProvider
+import clickstream.internal.eventprocessor.CSMetaProvider
 import com.gojek.clickstream.internal.HealthMeta.App
 import com.gojek.clickstream.internal.HealthMeta.Customer
 import com.gojek.clickstream.internal.HealthMeta.Device
@@ -14,7 +14,7 @@ import com.gojek.clickstream.internal.HealthMeta.Session
  *
  * @param info contains data for location, device, customer, session
  */
-public class DefaultCSMetaProvider(
+internal class DefaultCSMetaProvider(
     private val info: CSInfo
 ) : CSMetaProvider {
 

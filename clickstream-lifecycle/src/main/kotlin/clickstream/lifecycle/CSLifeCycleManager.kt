@@ -13,6 +13,8 @@ public abstract class CSLifeCycleManager(
     private val appLifeCycleObserver: CSAppLifeCycle
 ) : LifecycleObserver {
 
+    public abstract val tag: String
+
     /**
      * Subscribes to the application LifeCycle
      */

@@ -13,38 +13,41 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
  */
 @ExperimentalCoroutinesApi
 internal class CSWorkManager(
-    appLifeCycle: CSAppLifeCycle,
-    internal val context: Context,
+    appLifeCycleObserver: CSAppLifeCycle,
+    private val context: Context,
     private val eventSchedulerConfig: CSEventSchedulerConfig,
     private val logger: CSLogger,
     private val remoteConfig: CSRemoteConfig
-) : CSLifeCycleManager(appLifeCycle) {
+) : CSLifeCycleManager(appLifeCycleObserver) {
 
     init {
-        logger.debug { "CSWorkManager#init" }
+        logger.debug { "$tag#init" }
         addObserver()
     }
 
+    override val tag: String
+        get() = "CSWorkManager"
+
     override fun onStart() {
         logger.debug {
-            "CSWorkManager#onStart : " +
-            "backgroundTaskEnabled ${eventSchedulerConfig.backgroundTaskEnabled}, " +
-            "isForegroundEventFlushEnabled ${remoteConfig.isForegroundEventFlushEnabled}"
+            "$tag#onStart -" +
+                    "backgroundTaskEnabled ${eventSchedulerConfig.backgroundTaskEnabled}, " +
+                    "isForegroundEventFlushEnabled ${remoteConfig.isForegroundEventFlushEnabled}"
         }
-
+        cancelBackgroundWork()
         if (remoteConfig.isForegroundEventFlushEnabled && eventSchedulerConfig.backgroundTaskEnabled) {
             setupFutureWork()
         }
     }
 
     override fun onStop() {
-        logger.debug { "CSWorkManager#onStop" }
+        logger.debug { "$tag#onStop" }
 
         executeOneTimeWork()
     }
 
     internal fun executeOneTimeWork() {
-        logger.debug { "CSWorkManager#enqueueImmediateService - backgroundTaskEnabled ${eventSchedulerConfig.backgroundTaskEnabled}" }
+        logger.debug { "$tag#enqueueImmediateService - backgroundTaskEnabled ${eventSchedulerConfig.backgroundTaskEnabled}" }
 
         if (eventSchedulerConfig.backgroundTaskEnabled) {
             CSEventFlushOneTimeWorkManager.enqueueWork(context)
@@ -52,8 +55,12 @@ internal class CSWorkManager(
     }
 
     private fun setupFutureWork() {
-        logger.debug { "CSWorkManager#setupFutureWork" }
+        logger.debug { "$tag#setupFutureWork" }
 
         CSEventFlushPeriodicWorkManager.enqueueWork(context)
+    }
+
+    private fun cancelBackgroundWork() {
+        CSEventFlushOneTimeWorkManager.cancelWork(context)
     }
 }

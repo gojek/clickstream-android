@@ -10,10 +10,6 @@ import com.tinder.scarlet.ShutdownReason
  * @property reason Reason for shutting down.
  */
 public data class CSShutdownReason(val code: Int, val reason: String) {
-    override fun toString(): String {
-        return "Code : ${code}, Reason : ${reason}"
-    }
-
     public companion object {
         private const val NORMAL_CLOSURE_STATUS_CODE = 1000
         private const val NORMAL_CLOSURE_REASON = "Normal closure"

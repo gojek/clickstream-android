@@ -1,4 +1,4 @@
-    import plugin.AndroidLibraryConfigurationPlugin
+import plugin.AndroidLibraryConfigurationPlugin
 
 apply<AndroidLibraryConfigurationPlugin>()
 apply(from = "$rootDir/scripts/versioning.gradle")
@@ -25,11 +25,17 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
         freeCompilerArgs = listOf("-XXLanguage:+InlineClasses", "-Xexplicit-api=strict")
+
     }
     defaultConfig {
         multiDexEnabled = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("$rootDir/proguard/consumer-proguard-rules.pro")
+        javaCompileOptions {
+            annotationProcessorOptions {
+                argument("room.schemaLocation", "$projectDir/schemas")
+            }
+        }
     }
 }
 
@@ -37,8 +43,8 @@ dependencies {
     // Clickstream
     implementation(files("$rootDir/libs/proto-sdk-1.18.6.jar"))
     api(projects.clickstreamLogger)
-    api(projects.clickstreamHealthMetricsNoop)
     api(projects.clickstreamEventListener)
+    api(projects.clickstreamHealthMetricsNoop)
     compileOnly(projects.clickstreamApi)
     compileOnly(projects.clickstreamHealthMetricsApi)
     compileOnly(projects.clickstreamLifecycle)

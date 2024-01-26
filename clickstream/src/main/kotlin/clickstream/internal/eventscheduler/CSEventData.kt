@@ -3,9 +3,10 @@ package clickstream.internal.eventscheduler
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import clickstream.extension.eventName
-import clickstream.health.model.CSEventHealth
-import clickstream.model.CSEvent
+import clickstream.CSEvent
+import clickstream.eventName
+import clickstream.health.model.CSEventForHealth
+import clickstream.internal.CSEventInternal
 import com.gojek.clickstream.de.Event
 import com.google.protobuf.ByteString
 import com.google.protobuf.MessageLite
@@ -37,8 +38,14 @@ public data class CSEventData(
      *
      * @return [Event]
      */
-    public fun event(): Event {
-        val messageType = messageName.split(".").last().toLowerCase(Locale.getDefault())
+    public fun event(appPrefix: String? = null): Event {
+        val messageType = with(messageName.split(".").last().lowercase(Locale.getDefault())) {
+            if (!appPrefix.isNullOrEmpty()) {
+                "$appPrefix-$this"
+            } else {
+                this
+            }
+        }
         return Event.newBuilder().apply {
             eventBytes = ByteString.copyFrom(messageAsBytes)
             type = messageType
@@ -71,19 +78,20 @@ public data class CSEventData(
         return result
     }
 
+    internal fun toCSEventForHealth(batchId: String? = null) =
+        CSEventForHealth(eventGuid = eventGuid, batchGuid = batchId ?: eventRequestGuid ?: "")
+
     public companion object {
 
         /**
          * Creates a new instance of EventData with the given [CSEvent]
          */
-        public fun create(event: CSEvent): Pair<CSEventData, CSEventHealth> {
+        public fun create(event: CSEvent): CSEventData {
             val eventGuid: String = event.guid
             val eventTimeStamp: Long = event.timestamp.seconds
             val message: MessageLite = event.message
             val messageAsBytes: ByteArray = message.toByteArray()
-            val messageSerializedSizeInBytes: Int = message.serializedSize
             val messageName: String = event.message::class.qualifiedName.orEmpty()
-            val eventName: String = message.eventName() ?: ""
 
             return CSEventData(
                 eventGuid = eventGuid,
@@ -92,13 +100,35 @@ public data class CSEventData(
                 messageAsBytes = messageAsBytes,
                 messageName = messageName,
                 isOnGoing = false
-            ) to CSEventHealth(
-                eventGuid = eventGuid,
-                eventTimeStamp = eventTimeStamp,
-                messageSerializedSizeInBytes = messageSerializedSizeInBytes,
-                messageName = messageName,
-                eventName = eventName
             )
+        }
+
+        /**
+         * Creates a new instance of EventData with the given [CSEventInternal]
+         */
+        internal fun create(event: CSEventInternal): CSEventData {
+            when (event) {
+                is CSEventInternal.CSEvent -> {
+                    return CSEventData(
+                        eventGuid = event.guid,
+                        eventRequestGuid = null,
+                        eventTimeStamp = event.timestamp.seconds,
+                        messageAsBytes = event.message.toByteArray(),
+                        messageName = event.message::class.qualifiedName.orEmpty(),
+                        isOnGoing = false
+                    )
+                }
+                is CSEventInternal.CSBytesEvent -> {
+                    return CSEventData(
+                        eventGuid = event.guid,
+                        eventRequestGuid = null,
+                        eventTimeStamp = event.timestamp.seconds,
+                        messageAsBytes = event.eventData,
+                        messageName = event.eventName,
+                        isOnGoing = false
+                    )
+                }
+            }
         }
 
         private const val IN_KB = 1024
