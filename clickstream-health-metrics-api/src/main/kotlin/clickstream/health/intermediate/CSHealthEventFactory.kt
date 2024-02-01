@@ -1,7 +1,7 @@
 package clickstream.health.intermediate
 
 import androidx.annotation.RestrictTo
-import com.gojek.clickstream.internal.Health
+import clickstream.health.proto.Health
 
 /**
  * This is responsible for creating an event object in proto format when provided with user-generated,

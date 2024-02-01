@@ -5,8 +5,8 @@ import clickstream.api.CSMetaProvider
 import clickstream.health.time.CSTimeStampGenerator
 import clickstream.health.identity.CSGuIdGenerator
 import clickstream.health.intermediate.CSHealthEventFactory
-import com.gojek.clickstream.internal.Health
-import com.gojek.clickstream.internal.HealthMeta
+import clickstream.health.proto.Health
+import clickstream.health.proto.HealthMeta
 
 /**
  * This is the implementation of [CSHealthEventFactory]

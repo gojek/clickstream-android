@@ -13,5 +13,6 @@ include ':clickstream-event-listener'
 include ':clickstream-event-visualiser-ui'
 include ':clickstream-event-visualiser-noop'
 include ':clickstream-event-visualiser-ui-noop'
+include ':clickstream-health-proto'
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")

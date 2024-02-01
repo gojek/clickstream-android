@@ -123,7 +123,6 @@ dependencies {
     implementation(projects.clickstreamHealthMetrics)
     implementation(projects.clickstreamEventVisualiser)
     implementation(projects.clickstreamEventVisualiserUi)
-    implementation(files("$rootDir/libs/proto-consumer-1.18.6.jar"))
 
     // Common
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.4.1")

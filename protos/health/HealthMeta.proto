@@ -1,0 +1,49 @@
+//platform="ios,android"
+syntax = "proto3";
+
+package clickstream.health.proto;
+
+option java_multiple_files = true;
+option java_package = "clickstream.health.proto";
+option java_outer_classname = "HealthMetaProto";
+
+option go_package = "source.golabs.io/mobile/clickstream-go-proto/sdk-internal/clickstream";
+
+message HealthMeta {
+
+  message App {
+    string version = 1;
+  }
+
+  message Customer {
+    string signed_up_country = 1;
+    string current_country = 2;
+    int32 identity = 3;
+    string email = 4;
+  }
+
+  message Device {
+    string operating_system = 1;
+    string operating_system_version = 2;
+    string device_make = 3;
+    string device_model = 4;
+  }
+
+  message Location {
+    double latitude = 1;
+    double longitude = 2;
+  }
+
+  message Session {
+    string session_id = 1;
+  }
+
+  string event_guid = 1;
+
+  Location location = 4;
+  Customer customer = 5;
+  Device device = 6;
+  Session session = 7;
+  App app = 8;
+}
+

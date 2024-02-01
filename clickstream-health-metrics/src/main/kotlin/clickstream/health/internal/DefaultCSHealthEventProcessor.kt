@@ -9,14 +9,12 @@ import clickstream.health.intermediate.CSHealthEventRepository
 import clickstream.health.internal.CSHealthEventEntity.Companion.dtosMapTo
 import clickstream.health.model.CSHealthEventConfig
 import clickstream.health.model.CSHealthEventDTO
+import clickstream.health.proto.Health
+import clickstream.health.proto.HealthDetails
 import clickstream.lifecycle.CSAppLifeCycle
 import clickstream.lifecycle.CSLifeCycleManager
 import clickstream.logger.CSLogger
 import clickstream.util.CSAppVersionSharedPref
-import com.gojek.clickstream.internal.ErrorDetails
-import com.gojek.clickstream.internal.Health
-import com.gojek.clickstream.internal.HealthDetails
-import com.gojek.clickstream.internal.TraceDetails
 import com.google.protobuf.Timestamp
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -114,16 +112,6 @@ public class DefaultCSHealthEventProcessor(
                     HealthDetails.newBuilder()
                         .addEventGuids(event.eventGuid)
                         .addEventBatchGuids(event.eventBatchGuid)
-                        .build()
-                )
-                .setTraceDetails(
-                    TraceDetails.newBuilder()
-                        .setTimeToConnection(event.timeToConnection.toString())
-                        .setErrorDetails(
-                            ErrorDetails.newBuilder()
-                                .setReason(event.error)
-                                .build()
-                        )
                         .build()
                 )
                 .build()

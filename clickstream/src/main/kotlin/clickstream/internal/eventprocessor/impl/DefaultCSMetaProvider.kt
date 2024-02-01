@@ -3,11 +3,7 @@ package clickstream.internal.eventprocessor.impl
 import clickstream.api.CSInfo
 import clickstream.api.CSLocationInfo
 import clickstream.api.CSMetaProvider
-import com.gojek.clickstream.internal.HealthMeta.App
-import com.gojek.clickstream.internal.HealthMeta.Customer
-import com.gojek.clickstream.internal.HealthMeta.Device
-import com.gojek.clickstream.internal.HealthMeta.Location
-import com.gojek.clickstream.internal.HealthMeta.Session
+import clickstream.health.proto.HealthMeta
 
 /**
  * This is the implementation of [CSMetaProvider].
@@ -18,24 +14,24 @@ public class DefaultCSMetaProvider(
     private val info: CSInfo
 ) : CSMetaProvider {
 
-    override suspend fun location(): Location =
+    override suspend fun location(): HealthMeta.Location =
         with(info.locationInfo) {
             val currentLocation = CSLocationInfo.Location(latitude, longitude)
-            return@with Location.newBuilder().apply {
+            return@with HealthMeta.Location.newBuilder().apply {
                 latitude = currentLocation.latitude
                 longitude = currentLocation.longitude
             }.build()
         }
 
-    override val app: App by lazy {
-        App.newBuilder().apply {
+    override val app: HealthMeta.App by lazy {
+        HealthMeta.App.newBuilder().apply {
             version = info.appInfo.appVersion
         }.build()
     }
 
-    override val customer: Customer by lazy {
+    override val customer: HealthMeta.Customer by lazy {
         with(info.userInfo) {
-            Customer.newBuilder()
+            HealthMeta.Customer.newBuilder()
                 .setSignedUpCountry(signedUpCountry)
                 .setCurrentCountry(currentCountry)
                 .setIdentity(identity)
@@ -44,9 +40,9 @@ public class DefaultCSMetaProvider(
         }
     }
 
-    override val device: Device by lazy {
+    override val device: HealthMeta.Device by lazy {
         with(info.deviceInfo) {
-            Device.newBuilder().apply {
+            HealthMeta.Device.newBuilder().apply {
                 deviceModel = this@with.getDeviceModel()
                 deviceMake = this@with.getDeviceManufacturer()
                 operatingSystem = this@with.getOperatingSystem()
@@ -55,8 +51,8 @@ public class DefaultCSMetaProvider(
         }
     }
 
-    override val session: Session by lazy {
-        Session.newBuilder().apply {
+    override val session: HealthMeta.Session by lazy {
+        HealthMeta.Session.newBuilder().apply {
             sessionId = info.sessionInfo.sessionID
         }.build()
     }

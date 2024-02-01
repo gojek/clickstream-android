@@ -1,7 +1,7 @@
 package clickstream.fake
 
 import clickstream.api.CSMetaProvider
-import com.gojek.clickstream.internal.HealthMeta
+import clickstream.health.proto.HealthMeta
 
 internal class FakeCSMetaProvider : CSMetaProvider {
     override suspend fun location(): HealthMeta.Location {

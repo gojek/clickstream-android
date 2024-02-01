@@ -93,7 +93,6 @@ public class DefaultCSHealthEventProcessorTest {
                 assertTrue(event.healthMeta.session.sessionId == fakeCSInfo.sessionInfo.sessionID)
                 assertTrue(event.numberOfBatches == fakeCSHealthEventDTOs.map { it.eventBatchGuid }.size.toLong())
                 assertTrue(event.numberOfEvents == fakeCSHealthEventDTOs.map { it.eventGuid }.size.toLong())
-                assertFalse(event.traceDetails.hasErrorDetails())
             }
         }
     }
@@ -122,8 +121,6 @@ public class DefaultCSHealthEventProcessorTest {
                 assertTrue(event.healthMeta.session.sessionId == fakeCSInfo.sessionInfo.sessionID)
                 assertTrue(event.numberOfBatches == 0L)
                 assertTrue(event.numberOfEvents == 1L)
-                assertTrue(event.traceDetails.errorDetails.reason == fakeCSHealthEventDTOs[index].error)
-                assertTrue(event.traceDetails.timeToConnection == fakeCSHealthEventDTOs[index].timeToConnection.toString())
             }
         }
     }

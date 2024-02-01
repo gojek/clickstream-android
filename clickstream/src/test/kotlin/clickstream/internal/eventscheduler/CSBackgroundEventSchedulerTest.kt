@@ -16,8 +16,8 @@ import clickstream.internal.utils.CSBatteryStatusObserver
 import clickstream.internal.utils.CSNetworkStatusObserver
 import clickstream.logger.CSLogLevel
 import clickstream.logger.CSLogger
+import clickstream.proto.User
 import clickstream.utils.CoroutineTestRule
-import com.gojek.clickstream.products.events.AdCardEvent
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.times
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -75,14 +75,14 @@ public class CSBackgroundEventSchedulerTest {
     @Test
     public fun `verify flushEvents`() {
         coroutineRule.testDispatcher.runBlockingTest {
-            val adCardEvent = AdCardEvent.newBuilder().build()
+            val userEvent = User.newBuilder().build()
             val event = CSEventData(
                 eventGuid = "1",
                 eventRequestGuid = "2",
                 eventTimeStamp = 3L,
                 isOnGoing = true,
-                messageAsBytes = adCardEvent.toByteArray(),
-                messageName = adCardEvent.messageName()
+                messageAsBytes = userEvent.toByteArray(),
+                messageName = userEvent.messageName()
             )
 
             val events = listOf(event)

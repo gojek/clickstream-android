@@ -1,0 +1,64 @@
+
+syntax = "proto3";
+
+package clickstream.proto;
+
+option java_multiple_files = true;
+option java_package = "com.clickstream.app.proto";
+option java_outer_classname = "UserProto";
+
+
+import "App.proto";
+import "Device.proto";
+import "google/protobuf/timestamp.proto";
+
+//
+// Corresponds to the details for the user.
+//
+message User {
+	
+	//
+	// Unique identy of the user.
+	//
+	string guid = 1;
+
+	//
+	// User's full name.
+	//
+	string name = 2;
+
+	//
+	// User's age.
+	//
+	int32 age = 3;
+
+	//
+	// User's gender.
+	//
+	string gender = 4;
+
+	//
+	// User's phone number.
+	//
+	int64 phone_number = 5;
+
+	//
+	// User's email address.
+	//
+	string email = 6;
+
+	//
+	// User's app details.
+	//
+	App app = 7;
+
+	//
+	// User's device details.
+	//
+	Device device = 8;
+
+	//
+	// Timestamp for the event.
+	//
+	google.protobuf.Timestamp device_timestamp = 9;
+}

@@ -18,6 +18,7 @@ import clickstream.health.intermediate.CSEventHealthListener
 import clickstream.health.intermediate.CSHealthEventProcessor
 import clickstream.health.intermediate.CSHealthEventRepository
 import clickstream.health.model.CSEventHealth
+import clickstream.health.proto.Health
 import clickstream.health.time.CSEventGeneratedTimestampListener
 import clickstream.health.time.CSTimeStampGenerator
 import clickstream.internal.di.CSServiceLocator
@@ -28,9 +29,8 @@ import clickstream.internal.utils.CSNetworkStatusObserver
 import clickstream.lifecycle.CSBackgroundLifecycleManager
 import clickstream.logger.CSLogLevel
 import clickstream.logger.CSLogger
+import clickstream.proto.User
 import clickstream.utils.CoroutineTestRule
-import com.gojek.clickstream.internal.Health
-import com.gojek.clickstream.products.events.AdCardEvent
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.times
@@ -145,14 +145,14 @@ public class CSBackgroundSchedulerTest {
     @Test
     public fun `Given one event exists When scheduler is called Then One event will be forwarded to network layer`() {
         coroutineRule.testDispatcher.runBlockingTest {
-            val adCardEvent = AdCardEvent.newBuilder().build()
+            val userEvent = User.newBuilder().build()
             val event = CSEventData(
                 eventGuid = "1",
                 eventRequestGuid = "2",
                 eventTimeStamp = 3L,
                 isOnGoing = true,
-                messageAsBytes = adCardEvent.toByteArray(),
-                messageName = adCardEvent.messageName()
+                messageAsBytes = userEvent.toByteArray(),
+                messageName = userEvent.messageName()
             )
 
             whenever(networkStatusObserver.isNetworkAvailable()).thenReturn(true)
@@ -171,14 +171,14 @@ public class CSBackgroundSchedulerTest {
     @Test
     public fun `Given multiple events exists When scheduler is called Then Multiple event will be sent to network layer`() {
         coroutineRule.testDispatcher.runBlockingTest {
-            val adCardEvent = AdCardEvent.newBuilder().build()
+            val userEvent = User.newBuilder().build()
             val event = CSEventData(
                 eventGuid = "1",
                 eventRequestGuid = "2",
                 eventTimeStamp = 3L,
                 isOnGoing = true,
-                messageAsBytes = adCardEvent.toByteArray(),
-                messageName = adCardEvent.messageName()
+                messageAsBytes = userEvent.toByteArray(),
+                messageName = userEvent.messageName()
             )
 
             whenever(networkStatusObserver.isNetworkAvailable()).thenReturn(true)
@@ -215,14 +215,14 @@ public class CSBackgroundSchedulerTest {
     @Test
     public fun `Given one health event and one event exists When scheduler is called Then both will be forwarded to network layer`() {
         coroutineRule.testDispatcher.runBlockingTest {
-            val adCardEvent = AdCardEvent.newBuilder().build()
+            val userEvent = User.newBuilder().build()
             val event = CSEventData(
                 eventGuid = "1",
                 eventRequestGuid = "2",
                 eventTimeStamp = 3L,
                 isOnGoing = true,
-                messageAsBytes = adCardEvent.toByteArray(),
-                messageName = adCardEvent.messageName()
+                messageAsBytes = userEvent.toByteArray(),
+                messageName = userEvent.messageName()
             )
             val health = Health.newBuilder().build()
 
@@ -242,14 +242,14 @@ public class CSBackgroundSchedulerTest {
     @Test
     public fun `Given multiple health and app event exists When scheduler is called Then All will be forwarded to network layer`() {
         coroutineRule.testDispatcher.runBlockingTest {
-            val adCardEvent = AdCardEvent.newBuilder().build()
+            val userEvent = User.newBuilder().build()
             val event = CSEventData(
                 eventGuid = "1",
                 eventRequestGuid = "2",
                 eventTimeStamp = 3L,
                 isOnGoing = true,
-                messageAsBytes = adCardEvent.toByteArray(),
-                messageName = adCardEvent.messageName()
+                messageAsBytes = userEvent.toByteArray(),
+                messageName = userEvent.messageName()
             )
             val health = Health.newBuilder().build()
 

@@ -11,11 +11,9 @@ import com.clickstream.app.main.MainIntent.DisconnectIntent
 import com.clickstream.app.main.MainIntent.InputIntent
 import com.clickstream.app.main.MainIntent.SendIntent
 import com.clickstream.app.main.MainState.InFlight
-import com.gojek.clickstream.common.EventMeta
-import com.gojek.clickstream.products.common.AppType
-import com.gojek.clickstream.products.common.DroppedProperties
-import com.gojek.clickstream.products.common.DroppedPropertiesBatch
-import com.gojek.clickstream.products.common.Product
+import com.clickstream.app.proto.App
+import com.clickstream.app.proto.Device
+import com.clickstream.app.proto.User
 import com.google.protobuf.Timestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -49,14 +47,22 @@ class MainViewModel @Inject constructor(val dispatcher: Dispatcher) : ViewModel(
     }
 
     private fun sendMockCSEvent() {
-        val customerProto = DroppedPropertiesBatch.newBuilder().apply {
-            appType = AppType.Consumer
-            product = Product.GoSend
-            meta = EventMeta.newBuilder().apply {
-                eventGuid = "123"
+        val customerProto = User.newBuilder().apply {
+            guid = "Some Guid"
+            name = "John Doe"
+            age = 35
+            gender = "male"
+            phoneNumber = 1234567890
+            email = "john.doe@example.com"
+            app = App.newBuilder().apply {
+                version = "0.0.1"
+                packageName = "com.clickstream"
             }.build()
-            eventTimestamp = Timestamp.newBuilder().apply {
-                seconds = System.currentTimeMillis() / 1000L
+            device = Device.newBuilder().apply {
+                operatingSystem = "android"
+                operatingSystemVersion = "29"
+                deviceMake = "Samsung"
+                deviceModel = "SM2028"
             }.build()
         }.build()
 

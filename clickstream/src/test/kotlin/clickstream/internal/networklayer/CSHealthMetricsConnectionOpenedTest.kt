@@ -6,14 +6,15 @@ import clickstream.health.constant.CSEventNamesConstant
 import clickstream.health.constant.CSEventTypesConstant
 import clickstream.health.intermediate.CSHealthEventRepository
 import clickstream.health.model.CSHealthEventDTO
+import clickstream.internal.networklayer.proto.raccoon.SendEventRequest
+import clickstream.internal.networklayer.proto.raccoon.SendEventResponse
 import clickstream.utils.CoroutineTestRule
-import com.gojek.clickstream.de.EventRequest
-import com.gojek.clickstream.de.common.EventResponse
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.times
 import com.nhaarman.mockitokotlin2.verify
 import com.tinder.scarlet.WebSocket
+import com.tinder.scarlet.ws.Send
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -86,7 +87,7 @@ internal class CSHealthMetricsConnectionOpenedTest {
     }
 
     private class FakeCSEventService : CSEventService {
-        override fun observeResponse(): Flow<EventResponse> {
+        override fun observeResponse(): Flow<SendEventResponse> {
             throw IllegalAccessException("broken")
         }
 
@@ -96,7 +97,7 @@ internal class CSHealthMetricsConnectionOpenedTest {
             }
         }
 
-        override fun sendEvent(streamBatchEvents: EventRequest): Boolean {
+        override fun sendEvent(streamBatchEvents: SendEventRequest): Boolean {
             throw IllegalAccessException("broken")
         }
     }

@@ -35,7 +35,7 @@ android {
 
 dependencies {
     // Clickstream
-    implementation(files("$rootDir/libs/proto-sdk-1.18.6.jar"))
+    implementation(projects.clickstreamHealthProto)
     api(projects.clickstreamLogger)
     api(projects.clickstreamHealthMetricsNoop)
     api(projects.clickstreamEventListener)
@@ -64,7 +64,6 @@ dependencies {
 
     // Unit Test
     deps.android.test.unitTest.list.forEach(::testImplementation)
-    testImplementation(files("$rootDir/libs/proto-consumer-1.18.6.jar"))
     testImplementation(projects.clickstreamHealthMetrics)
     testImplementation(projects.clickstreamApi)
     testImplementation(projects.clickstreamHealthMetricsApi)

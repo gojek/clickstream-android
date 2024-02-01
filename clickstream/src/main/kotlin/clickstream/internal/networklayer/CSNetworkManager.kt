@@ -15,11 +15,11 @@ import clickstream.health.constant.CSEventTypesConstant
 import clickstream.health.intermediate.CSHealthEventRepository
 import clickstream.health.model.CSHealthEventDTO
 import clickstream.internal.analytics.CSErrorReasons
+import clickstream.internal.networklayer.proto.raccoon.SendEventRequest
 import clickstream.internal.utils.CSResult
 import clickstream.lifecycle.CSAppLifeCycle
 import clickstream.lifecycle.CSLifeCycleManager
 import clickstream.logger.CSLogger
-import com.gojek.clickstream.de.EventRequest
 import com.tinder.scarlet.WebSocket
 import java.io.EOFException
 import java.net.SocketTimeoutException
@@ -133,7 +133,7 @@ internal open class CSNetworkManager(
      * @param eventRequest - The data which hold the analytic events
      * @param eventGuids - a guid list within string the comma separate "1, 2, 3"
      */
-    fun processEvent(eventRequest: EventRequest, eventGuids: String) {
+    fun processEvent(eventRequest: SendEventRequest, eventGuids: String) {
         logger.debug { "CSNetworkManager#processEvent" }
 
         networkRepository.sendEvents(eventRequest, eventGuids, callback)
@@ -145,7 +145,7 @@ internal open class CSNetworkManager(
      * @param eventRequest - The data which hold the analytic events
      */
     fun processInstantEvent(
-        eventRequest: EventRequest
+        eventRequest: SendEventRequest
     ) {
         logger.debug { "CSNetworkManager#processInstantEvent" }
         networkRepository.sendInstantEvents(eventRequest = eventRequest)

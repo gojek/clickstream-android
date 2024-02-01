@@ -4,6 +4,7 @@ import clickstream.config.CSNetworkConfig
 import clickstream.fake.fakeCSInfo
 import clickstream.health.intermediate.CSHealthEventRepository
 import clickstream.health.time.CSTimeStampGenerator
+import clickstream.internal.networklayer.proto.raccoon.SendEventRequest
 import clickstream.internal.utils.CSFlowStreamAdapterFactory
 import clickstream.logger.CSLogLevel.OFF
 import clickstream.logger.CSLogger
@@ -12,7 +13,6 @@ import clickstream.utils.TestFlowObserver
 import clickstream.utils.any
 import clickstream.utils.flowTest
 import clickstream.utils.newWebSocketFactory
-import com.gojek.clickstream.de.EventRequest
 import com.nhaarman.mockitokotlin2.mock
 import com.tinder.scarlet.Lifecycle
 import com.tinder.scarlet.Scarlet
@@ -57,7 +57,7 @@ public class CSRetryableCallbackTest {
         givenConnectionIsEstablished()
 
         // When
-        val eventRequest = EventRequest.newBuilder()
+        val eventRequest = SendEventRequest.newBuilder()
             .build()
 
         // Then

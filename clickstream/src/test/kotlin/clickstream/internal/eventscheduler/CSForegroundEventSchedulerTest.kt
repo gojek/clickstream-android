@@ -20,8 +20,8 @@ import clickstream.internal.utils.CSResult
 import clickstream.logger.CSLogLevel
 import clickstream.logger.CSLogger
 import clickstream.model.CSEvent
+import clickstream.proto.User
 import clickstream.utils.CoroutineTestRule
-import com.gojek.clickstream.products.events.AdCardEvent
 import com.google.protobuf.Timestamp
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.never
@@ -95,14 +95,14 @@ public class CSForegroundEventSchedulerTest {
     @Test
     public fun `Given an AdCard Event When app state is active Then verify event should went to network manager`() {
         coroutineRule.testDispatcher.runBlockingTest {
-            val adCardEvent = AdCardEvent.newBuilder().build()
+            val userEvent = User.newBuilder().build()
             val event = CSEventData(
                 eventGuid = "1",
                 eventRequestGuid = "2",
                 eventTimeStamp = 3L,
                 isOnGoing = true,
-                messageAsBytes = adCardEvent.toByteArray(),
-                messageName = adCardEvent.messageName()
+                messageAsBytes = userEvent.toByteArray(),
+                messageName = userEvent.messageName()
             )
 
             whenever(eventRepository.getEventDataList())
@@ -175,11 +175,11 @@ public class CSForegroundEventSchedulerTest {
     @Test
     public fun `verify scheduleEvent`() {
         coroutineRule.testDispatcher.runBlockingTest {
-            val adCardEvent = AdCardEvent.newBuilder().build()
+            val userEvent = User.newBuilder().build()
             val event = CSEvent(
                 guid = "1",
                 timestamp = Timestamp.getDefaultInstance(),
-                message = adCardEvent
+                message = userEvent
             )
 
             sut.scheduleEvent(event)
@@ -203,11 +203,11 @@ public class CSForegroundEventSchedulerTest {
     @Test
     public fun `verify sendInstantEvent`() {
         coroutineRule.testDispatcher.runBlockingTest {
-            val adCardEvent = AdCardEvent.newBuilder().build()
+            val userEvent = User.newBuilder().build()
             val event = CSEvent(
                 guid = "1",
                 timestamp = Timestamp.getDefaultInstance(),
-                message = adCardEvent
+                message = userEvent
             )
 
             whenever(timeStampGenerator.getTimeStamp())
