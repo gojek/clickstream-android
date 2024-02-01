@@ -2,14 +2,9 @@ package clickstream.fake
 
 import clickstream.internal.utils.CSTimeStampMessageBuilder
 import clickstream.model.CSEvent
-import com.gojek.clickstream.common.Customer
-import com.gojek.clickstream.common.Device
-import com.gojek.clickstream.common.Location
-import com.gojek.clickstream.common.Session
-import com.gojek.clickstream.products.common.ServiceInfo
-import com.gojek.clickstream.products.events.AdCardEvent
-import com.gojek.clickstream.products.events.AdCardType
-import com.gojek.clickstream.products.shuffle.ShuffleCard
+import clickstream.proto.App
+import clickstream.proto.Device
+import clickstream.proto.User
 import java.util.UUID
 
 /**
@@ -17,24 +12,28 @@ import java.util.UUID
  * with default data every time invoked.
  */
 public fun defaultEventWrapperData(): CSEvent {
-    val event = AdCardEvent.newBuilder().apply {
-        meta = meta.toBuilder().apply {
-            val objectID = UUID.randomUUID().toString()
-            eventGuid = objectID
-            eventTimestamp = CSTimeStampMessageBuilder.build(System.currentTimeMillis())
-            location = Location.getDefaultInstance()
-            device = Device.getDefaultInstance()
-            customer = Customer.getDefaultInstance()
-            session = Session.getDefaultInstance()
+    val event = User.newBuilder().apply {
+        guid = "Some Guid"
+        name = "John Doe"
+        age = 35
+        gender = "male"
+        phoneNumber = 1234567890
+        email = "john.doe@example.com"
+        app = App.newBuilder().apply {
+            version = "0.0.1"
+            packageName = "com.clickstream"
         }.build()
-        type = AdCardType.Clicked
-        shuffleCard = ShuffleCard.getDefaultInstance()
-        serviceInfo = ServiceInfo.getDefaultInstance()
+        device = Device.newBuilder().apply {
+            operatingSystem = "android"
+            operatingSystemVersion = "29"
+            deviceMake = "Samsung"
+            deviceModel = "SM2028"
+        }.build()
     }.build()
 
     return CSEvent(
-        guid = event.meta.eventGuid,
-        timestamp = event.eventTimestamp,
+        guid = UUID.randomUUID().toString(),
+        timestamp = CSTimeStampMessageBuilder.build(System.currentTimeMillis()),
         message = event
     )
 }

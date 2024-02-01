@@ -1,10 +1,7 @@
 package clickstream.extension
 
-import com.gojek.clickstream.products.common.*
-import com.gojek.clickstream.products.telemetry.Protocol
-import com.gojek.clickstream.products.telemetry.PubSubHealth
-import com.gojek.clickstream.products.telemetry.QOS
-import com.gojek.clickstream.products.telemetry.Topic
+import clickstream.proto.App
+import clickstream.proto.User
 import org.junit.Test
 
 internal class CSMessageExtTest {
@@ -12,60 +9,47 @@ internal class CSMessageExtTest {
     @Test
     fun `Given proto with basic data types as field check if toFlatMap returns valid map`() {
 
-        val address = Address.newBuilder().apply {
-            id = "1"
-            label = "home address"
-            pillPosition = 5
-            changedAddressSourceOnUi = true
-            locationDetails = "location details"
+        val user = User.newBuilder().apply {
+            guid = "Some Guid"
+            name = "John Doe"
+            age = 35
+            gender = "male"
+            phoneNumber = 1234567890
+            email = "john.doe@example.com"
         }.build()
 
-        val addressMap = address.toFlatMap()
+        val userMap = user.toFlatMap()
 
-        assert(addressMap["id"] == "1")
-        assert(addressMap["label"] == "home address")
-        assert(addressMap["pillPosition"] == 5)
-        assert(addressMap["changedAddressSourceOnUi"] == true)
-        assert(addressMap["locationDetails"] == "location details")
+        assert(userMap["guid"] == "Some Guid")
+        assert(userMap["name"] == "John Doe")
+        assert(userMap["age"] == 35)
+        assert(userMap["gender"] == "male")
+        assert(userMap["phoneNumber"] == 1234567890.toLong())
+        assert(userMap["email"] == "john.doe@example.com")
 
     }
 
     @Test
     fun `Given proto with a nested proto as field check if toFlatMap returns valid map`() {
 
-        val pubSubHealth = PubSubHealth.newBuilder().apply {
-            val topic = Topic.newBuilder()
-                .setTopic("test topic")
-                .setQosValue(QOS.QOS_ZERO_VALUE)
-                .build()
+        val pubSubHealth = User.newBuilder().apply {
+            guid = "Some Guid"
+            name = "John Doe"
+            val appProto = App.newBuilder().apply {
+                version = "0.0.1"
+                packageName = "com.clickstream"
+            }.build()
 
-            setTopic(topic)
-            protocol = Protocol.PROTOCOL_MQTT
-            appType = AppType.Consumer
+            app = appProto
+
 
         }.build()
 
         pubSubHealth.toFlatMap().run {
-            assert(get("topic.topic") == "test topic")
-            assert(get("topic.qos") == QOS.QOS_ZERO_VALUE)
-            assert(get("protocol") == Protocol.PROTOCOL_MQTT.ordinal)
-            assert(get("appType") == AppType.Consumer.ordinal)
-        }
-    }
-
-    @Test
-    fun `Given proto with nested proto and list type as field check if toFlatMap returns valid map`() {
-        val originalBadgeList = listOf("badge1", "badge2")
-        val apiParameter = Outlet.newBuilder().apply {
-            addAllBadges(originalBadgeList)
-        }.build()
-
-        apiParameter.toFlatMap().run {
-            val badgesList = get("badges")
-            assert(badgesList is List<*>)
-            (badgesList as List<*>).forEachIndexed { index, badge ->
-                assert(badge is String && badge == originalBadgeList[index])
-            }
+            assert(get("app.version") == "0.0.1")
+            assert(get("app.packageName") == "com.clickstream")
+            assert(get("guid") == "Some Guid")
+            assert(get("name") == "John Doe")
         }
     }
 }

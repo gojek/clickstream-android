@@ -12,11 +12,11 @@ import clickstream.internal.networklayer.proto.raccoon.SendEventRequest
 import clickstream.internal.utils.CSFlowStreamAdapterFactory
 import clickstream.logger.CSLogLevel
 import clickstream.logger.CSLogger
+import clickstream.proto.User
 import clickstream.utils.CoroutineTestRule
 import clickstream.utils.TestFlowObserver
 import clickstream.utils.flowTest
 import clickstream.utils.newWebSocketFactory
-import com.gojek.clickstream.products.events.AdCardEvent
 import com.google.protobuf.Timestamp
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.times
@@ -73,7 +73,7 @@ internal class CSHealthMetricsBatchTimeoutTest {
             .setSentTime(Timestamp.getDefaultInstance())
             .addEvents(
                 Event.newBuilder()
-                    .setEventBytes(AdCardEvent.newBuilder().build().toByteString())
+                    .setEventBytes(User.newBuilder().build().toByteString())
                     .setType("AdcardEvent")
                     .build()
             )

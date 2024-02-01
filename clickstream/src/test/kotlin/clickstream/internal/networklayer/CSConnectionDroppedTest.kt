@@ -6,14 +6,13 @@ import clickstream.internal.networklayer.proto.raccoon.SendEventResponse
 import clickstream.internal.utils.CSFlowStreamAdapterFactory
 import clickstream.internal.utils.CSTimeStampMessageBuilder
 import clickstream.model.CSEvent
+import clickstream.proto.App
+import clickstream.proto.User
 import clickstream.utils.TestFlowObserver
 import clickstream.utils.any
 import clickstream.utils.containingBytes
 import clickstream.utils.flowTest
 import clickstream.utils.newWebSocketFactory
-import com.gojek.clickstream.common.App
-import com.gojek.clickstream.common.EventMeta
-import com.gojek.clickstream.products.events.AdCardEvent
 import com.google.protobuf.Timestamp
 import com.tinder.scarlet.Lifecycle
 import com.tinder.scarlet.Scarlet
@@ -90,13 +89,11 @@ internal class CSConnectionDroppedTest {
         val event = CSEvent(
             guid = guid,
             timestamp = Timestamp.getDefaultInstance(),
-            message = App.newBuilder()
-                .setMeta(
-                    EventMeta.newBuilder()
-                        .setApp(App.newBuilder().setVersion("4.35.0"))
-                        .build()
-                )
-                .build()
+            message = User.newBuilder()
+                .setApp(
+                    App.newBuilder()
+                        .setVersion("4.35.0")
+                ).build()
         )
         val (eventData, eventHealthData) = CSEventData.create(event)
         return transformToEventRequest(eventData = listOf(eventData))
